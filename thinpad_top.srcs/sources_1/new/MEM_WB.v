@@ -21,8 +21,8 @@
 `include "def.v"
 
 module MEM_WB(
-    input wire clk,
     input wire rst,
+    input wire clk,
     input wire [4:0] mem_wd_i,
     input wire mem_wreg_i,
     input wire [31:0] mem_wdata_i,

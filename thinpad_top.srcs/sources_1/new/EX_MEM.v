@@ -25,7 +25,7 @@ module EX_MEM(
     input wire rst_i,
     input wire [4:0] ex_wd_i,
     input wire ex_wreg_i,
-    input wire [31:0] ex_data_i,
+    input wire [31:0] ex_wdata_i,
     output reg [4:0] mem_wd_o,
     output reg mem_wreg_o,
     output reg [31:0] mem_wdata_o
@@ -39,7 +39,7 @@ module EX_MEM(
         end else begin
             mem_wd_o<=ex_wd_i;
             mem_wreg_o<=ex_wreg_i;
-            mem_wdata_o<=ex_data_i;
+            mem_wdata_o<=ex_wdata_i;
         end
     end
 endmodule
