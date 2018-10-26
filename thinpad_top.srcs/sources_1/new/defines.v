@@ -1,5 +1,5 @@
 //global
-`define RstEnable 1`b1
+`define RstEnable 1'b1
 `define RstDisable 1'b0
 `define WriteEnable 1'b1
 `define WriteDisable 1'b0
@@ -7,7 +7,13 @@
 `define InstInvalid 1'b1
 `define ZeroWord 32'h0
 
+//instructions
+`define EXE_ORI 6'b001101
+`define EXE_NOP 6'b000000
+
 //AluOp
+`define EXE_OR_OP    8'b00100101
+
 `define EXE_ORI_OP  8'b01011010
 
 `define EXE_NOP_OP    8'b00000000

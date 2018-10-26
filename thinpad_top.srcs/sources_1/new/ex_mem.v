@@ -1,4 +1,3 @@
-
 `include "defines.v"
 
 module ex_mem(
@@ -24,7 +23,7 @@ module ex_mem(
 		if(rst == `RstEnable) begin
 			mem_wd <= `NOPRegAddr;
 			mem_wreg <= `WriteDisable;
-		  mem_wdata <= `ZeroWord;	
+		    mem_wdata <= `ZeroWord;	
 		end 
         else begin
 			mem_wd <= ex_wd;
