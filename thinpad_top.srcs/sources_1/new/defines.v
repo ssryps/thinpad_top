@@ -6,6 +6,8 @@
 `define InstValid 1'b0
 `define InstInvalid 1'b1
 `define ZeroWord 32'h0
+`define Enable 1'b1
+`define Disable 0'b1
 
 //instructions
 `define EXE_ORI 6'b001101

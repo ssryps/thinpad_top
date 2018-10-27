@@ -9,7 +9,7 @@
 // Project Name:
 // Target Devices:
 // Tool Versions:
-// Description:
+// Description: Only test "ori" and data dependency with delta is 3 
 //
 // Dependencies:
 //
@@ -116,6 +116,11 @@ wire mem_wb_wreg_o;
 wire [4:0]mem_wb_wd_o;
 wire [31:0]mem_wb_wdata_o;
 
+// input to registers section
+reg[4:0] wb_wd_o;
+reg wb_wreg_o;
+reg[31:0] wb_wdata_o;
+
 // Reg & ID
 
 initial begin
@@ -127,13 +132,17 @@ initial begin
   //wb_wdata_o = 32'b00000000;
   #20;
   rst = 0;
-  rom_data_i=32'h34011100;//ori $1,$0,0x1100
+  rom_data_i=32'h34011100;
   #20;
-  rom_data_i=32'h34220001;//ori $2,$1,0x1   delta=1 result=1101
+  rom_data_i=32'h34020020;
   #20;
-  rom_data_i=32'h34230002;//ori $3,$1,0x2   delta=2 result=1102
+  rom_data_i=32'h3403ff00;
   #20;
-  rom_data_i=32'h34240003;//ori $4,$1,0x3   delta=3 result=1103
+  rom_data_i=32'h3404ffff;//
+  #20;
+  rom_data_i=32'h3404ffff;
+  #20;
+  rom_data_i=32'h3485FFFF;//Error 
 //   reg1 = 32'h55555555;
 //   reg2 = 32'h55555555;
 //  inst = 32'h34220000;
@@ -162,12 +171,6 @@ id id0 (
     .inst_i(rom_data_i),
     .reg1_data_i(reg1),
     .reg2_data_i(reg2),
-    .ex_wdata_i(wdata_o),
-    .ex_wd_i(wd_o),
-    .ex_wreg_i(wreg_o),
-    .mem_wdata_i(mem_wdata_o),
-    .mem_wd_i(mem_wd_o),
-    .mem_wreg_i(mem_wreg_o),
     .reg1_read_o(reg1_read),
     .reg2_read_o(reg2_read),
     .reg1_addr_o(reg1_addr),
