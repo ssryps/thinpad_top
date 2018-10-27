@@ -33,12 +33,12 @@ module MEM(
     always @(*) begin
         if (rst_i==`ENABLE) begin
             wd_o<=`ZERO;
-            wreg_o=`ZERO;
-            wdata_o=`ZERO;
+            wreg_o<=`ZERO;
+            wdata_o<=`ZERO;
         end else begin
             wd_o<=wd_i;
-            wreg_o=wreg_i;
-            wdata_o=wdata_i;
+            wreg_o<=wreg_i;
+            wdata_o<=wdata_i;
         end
     end
 endmodule

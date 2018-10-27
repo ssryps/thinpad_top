@@ -134,6 +134,14 @@ initial begin
   rom_data_i=32'h34230002;//ori $3,$1,0x2   delta=2 result=1102
   #20;
   rom_data_i=32'h34240003;//ori $4,$1,0x3   delta=3 result=1103
+  #20;
+  rom_data_i=32'h34210004;//ori $1,$1,0x4   delta=3 result=1104
+  #20;
+  rom_data_i=32'h34210008;//ori $1,$1,0x8   delta=3 result=110c
+  #20;
+  rom_data_i=32'h34210010;//ori $1,$1,0x10  delta=3 result=1113
+  #20;
+  rom_data_i=32'h34210011;//ori $1,$1,0x11  delta=3 result=111d
 //   reg1 = 32'h55555555;
 //   reg2 = 32'h55555555;
 //  inst = 32'h34220000;
