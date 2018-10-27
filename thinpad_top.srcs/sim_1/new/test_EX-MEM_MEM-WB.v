@@ -67,7 +67,7 @@ end
 reg ex_wreg_i;
 reg [31:0]ex_wd_i;
 reg [31:0]ex_wdata_i;
-
+reg mem_wreg_o;
 initial begin
     ex_wd_i=1;
     ex_wreg_i=1;
@@ -83,7 +83,7 @@ wire [31:0]mem_wdata_o;
 wire [4:0]mem_wb_wd_o;
 wire [31:0]mem_wb_wdata_o;
 
-EX_MEM Ex_mem(
+ex_mem Ex_mem(
     .clk_i(clk_50M),
     .rst_i(rst),
     .ex_wd_i(ex_wd_i),
