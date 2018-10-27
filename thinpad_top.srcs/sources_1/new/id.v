@@ -33,11 +33,20 @@ module id(
     output reg[`RegAddrBus] wd_o,
     output reg wreg_o
 );
+    //wire[5:0] op = inst_i[31:26];
+    //wire[4:0] op2 = inst_i[10:6];
+    //wire[5:0] op3 = inst_i[5:0];
+    //wire[4:0] op4 = inst_i[20:16];
     wire[5:0] op = inst_i[31:26];
-    wire[4:0] op2 = inst_i[10:6];
-    wire[5:0] op3 = inst_i[5:0];
-    wire[4:0] op4 = inst_i[20:16];
-    reg[`RegBus] imm;
+    wire[4:0] rs = inst_i[25:21];
+    wire[4:0] rt = inst_i[20:16];
+    wire[4:0] rd = inst_i[15:11];
+    wire[4:0] sa = inst_i[10:6];
+    wire[5:0] fn = inst_i[5:0];
+    wire[25:0] target = ins_i[25:0];
+    wire[15:0] imm = ins_i[15:0];// 
+
+    reg[`RegBus] eimm;
     reg instvalid;
 
     always @ (*) begin
@@ -51,27 +60,36 @@ module id(
             reg2_read_o <= 1'b0;
             reg1_addr_o <= `NOPRegAddr;
             reg2_addr_o <= `NOPRegAddr;
-            imm <= `ZeroWord;
+            eimm <= `ZeroWord;
             end 
         else begin
             aluop_o <= `EXE_NOP_OP;
             alusel_o <= `EXE_RES_NOP;
             wd_o <= inst_i[15:11];
             wreg_o <= `WriteDisable;
-            instvalid <= `InstInvalid;	
+            instvalid <= `InstInvalid;
             reg1_read_o <= 1'b0;
             reg2_read_o <= 1'b0;
             reg1_addr_o <= inst_i[25:21];
             reg2_addr_o <= inst_i[20:16];
-            imm <= `ZeroWord;
+            eimm <= `ZeroWord;
             case (op)
+                //TODO: add first special instruction
+                `EXE_SPECIAL_OP: begin
+                    wreg_o <= `WriteEnable;
+                    wd_o <= `rt;
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    reg2_o<=reg2_data_i;
+                    // add case ....
+                end
                 `EXE_ORI: begin
                     wreg_o <= `WriteEnable;
                     aluop_o <= `EXE_OR_OP;
                     alusel_o <= `EXE_RES_LOGIC;
                     reg1_read_o <= 1'b1;
                     reg2_read_o <= 1'b0;
-                    imm <= {16'h0, inst_i[15:0]};
+                    eimm <= {16'h0, imm};
                     wd_o <= inst_i[20:16];
                     instvalid <= `InstValid;
                 end
@@ -91,7 +109,7 @@ module id(
         end else if(reg1_read_o == 1'b1) begin
             reg1_o <= reg1_data_i;
         end else if(reg1_read_o == 1'b0) begin
-            reg1_o <= imm;
+            reg1_o <= eimm;
         end else begin
             reg1_o <= `ZeroWord;
         end
@@ -107,7 +125,7 @@ module id(
         end else if(reg2_read_o == 1'b1) begin
             reg2_o <= reg2_data_i;
         end else if(reg2_read_o == 1'b0) begin
-            reg2_o <= imm;
+            reg2_o <= eimm;
         end else begin
             reg2_o <= `ZeroWord;
         end

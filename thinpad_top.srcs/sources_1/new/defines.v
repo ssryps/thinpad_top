@@ -10,8 +10,9 @@
 `define Disable 0'b1
 
 //instructions
-`define EXE_ORI 6'b001101
-`define EXE_NOP 6'b000000
+`define EXE_SPECIAL_OP  6'b000000
+`define EXE_ORI         6'b001101
+`define EXE_NOP         6'b000000
 
 //AluOp
 `define EXE_OR_OP    8'b00100101
