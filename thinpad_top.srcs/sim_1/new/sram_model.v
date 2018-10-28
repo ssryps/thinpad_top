@@ -212,6 +212,7 @@ initial
           Address_write2 <= Address_write1;  
           dummy_array0[Address_write1] <= dataIO1[7:0]; 
                 dummy_array1[Address_write1] <= dataIO1[15:8] ;
+                 $display("write %h %h ",Address_write1, $time);
                 activate_webar <= 1'b1;
             end 
             else 
@@ -283,6 +284,8 @@ end
  
  always @(Address)
    begin
+     $display("address change: %h", $time);
+     
      write_address_time <= $time;
      write_address1_time <= write_address_time;
      write_WE_n_start_time1 <=$time;
@@ -310,6 +313,7 @@ always@(activate_cebar or activate_webar or activate_wecebar)
   begin
      if ( (activate_cebar == 1'b1) || (activate_webar == 1'b1) || (activate_wecebar == 1'b1) ) 
      begin
+      $display("active : %h", $time);
          if ( ( ($time - write_data1_time) >= tdw) && ( ($time - write_address1_time) >= twc) )
             initiate_write1 <= 1'b1;
          else
@@ -325,11 +329,13 @@ end
 
 always@( initiate_write1 )   
   begin
+     $display("enter %h %h %h", $time, write_WE_n_start_time, write_CE_n_start_time);
    if ( ( ($time - write_WE_n_start_time) >=twp1) && ( ($time - write_CE_n_start_time) >=tcw) )   
       begin
     if(UB_n == 1'b0 && (($time - UB_n_start_time) >= tbw))
     begin
-                  mem_array1[Address_write2] <= dummy_array1[Address_write2];
+                  $display("write really 1");
+            mem_array1[Address_write2] <= dummy_array1[Address_write2];
         end
     if (LB_n == 1'b0 && (($time - LB_n_start_time) >= tbw))
     begin
@@ -341,10 +347,13 @@ end
 
 always @(initiate_write2 )  
 begin
-       if ( ( ($time - write_WE_n_start_time) >=twp1) && ( ($time - write_CE_n_start_time) >=tcw))
+       $display("enter2 %h %h %h", $time, write_WE_n_start_time, write_CE_n_start_time);
+    if ( ( ($time - write_WE_n_start_time) >=twp1) && ( ($time - write_CE_n_start_time) >=tcw))
        begin
     if(UB_n == 1'b0 && (($time - UB_n_start_time) >= tbw))
-    begin
+    begin            
+      $display("write really ");
+
                   mem_array1[Address_write2] <= dummy_array1[Address_write2];
         end
     if (LB_n == 1'b0 && (($time - LB_n_start_time) >= tbw))
@@ -361,10 +370,13 @@ end
 
 always @(initiate_write3 )  
 begin
+     $display("enter3 %h %h %h", $time, write_WE_n_start_time, write_CE_n_start_time);
+         
        if ( ( ($time - write_WE_n_start_time) >=twp1) && ( ($time - write_CE_n_start_time) >=tcw))
        begin
     if(UB_n == 1'b0 && (($time - UB_n_start_time) >= tbw))
     begin
+            $display("write really 3");
                   mem_array1[Address_write2] <= dummy_array1[Address_write2];
         end
     if (LB_n == 1'b0 && (($time - LB_n_start_time) >= tbw))
@@ -435,13 +447,13 @@ always@(initiate_read1 or initiate_read2)
          begin
              if ( ( ($time - read_WE_n_start_time) >=trc) && ( ($time -read_CE_n_start_time) >=tace) && ( ($time - read_OE_n_start_time) >=toe))
              begin
-      if((LB_n == 1'b0) && (($time - LB_n_start_time) >= tba))              
-      data_read[7:0] <= mem_array0[Address_read2];
-      else
-          data_read[7:0] <= 8'bzz;
-      if((UB_n == 1'b0) && ( ($time - UB_n_start_time) >= tba)) 
-                data_read[15:8] <= mem_array1[Address_read2];
-          else
+                  if((LB_n == 1'b0) && (($time - LB_n_start_time) >= tba))  begin
+                      data_read[7:0] <= mem_array0[Address_read2];
+                  end else
+                      data_read[7:0] <= 8'bzz;
+                  if((UB_n == 1'b0) && ( ($time - UB_n_start_time) >= tba)) begin
+                            data_read[15:8] <= mem_array1[Address_read2];
+                  end else
                   data_read[15:8] <= 8'bzz;
              end
          end

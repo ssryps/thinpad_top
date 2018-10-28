@@ -166,7 +166,7 @@ always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
         ext_uart_avai <= 0;
     end
 end
-always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
+always @(posedge clk_50M ) begin //将缓冲区ext_uart_buffer发送出去
     if(!ext_uart_busy && ext_uart_avai)begin 
         ext_uart_tx <= ext_uart_buffer;
         ext_uart_start <= 1;
@@ -185,7 +185,7 @@ async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发送模块，9600�
     );
 
 //图像输出演示，分辨率800x600@75Hz，像素时钟为50MHz
-wire [11:0] hdata;
+wire [11:0] hdata; 
 assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
 assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
 assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
