@@ -8,6 +8,7 @@
 `define ZeroWord 32'h0
 `define Enable 1'b1
 `define Disable 0'b1
+`define 
 
 //instructions_top_six_bits
 `define EXE_SPECIAL_INST  6'b000000

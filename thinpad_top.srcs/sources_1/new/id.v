@@ -233,19 +233,50 @@ module id(
                             //registers
                             reg1_read_o <= 1'b0;
                             reg2_read_o <= 1'b0; 
-                            
                             //ex
-                            aluop_o <= `EXE_MOVZ_OP;
+                            aluop_o <= `EXE_MFHI_OP;
                             alusel_o <= `EXE_RES_MOVE;
                             //mem
-                            if(reg2_o == `ZeroWord) begin 
-                                wreg_o <= `WriteEnable;
-                            end else begin 
-                                wreg_o <= `WriteDisable;
-                            end
+                            wreg_o <= `WriteEnable;
 
                             instvalid <= `InstValid;
                         end 
+                        `EXE_MFLO: begin
+                            //registers
+                            reg1_read_o <= 1'b0;
+                            reg2_read_o <= 1'b0; 
+                            //ex
+                            aluop_o <= `EXE_MFLO_OP;
+                            alusel_o <= `EXE_RES_MOVE;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end 
+                        `EXE_MTHI: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b0; 
+                            //ex
+                            aluop_o <= `EXE_MTHI_OP;
+                            //no alusel_o
+                            //mem
+                            wreg_o <= `WriteDisable;
+
+                            instvalid <= `InstValid;
+                        end 
+                        `EXE_MTLO: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b0; 
+                            //ex
+                            aluop_o <= `EXE_MTLO_OP;
+                            //no alusel_o
+                            //mem
+                            wreg_o <= `WriteDisable;
+
+                            instvalid <= `InstValid;
+                        end
                     endcase  
                 end
                 `EXE_ORI: begin

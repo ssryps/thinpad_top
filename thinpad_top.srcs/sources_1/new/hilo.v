@@ -12,15 +12,15 @@ module hilo(
     output wire[`RegBus] dataHi_o,
     output wire[`RegBus] dataLo_o,
 );
-    wire[`RegBus] hi;
-    wire[`RegBus] lo;
 
 	always @ (posedge clk) begin
 		if(rst == `RstEnable) begin
-        
+            dataHi_o <= `ZeroWord;
+            dataLo_o <= `ZeroWord;
 		end 
-        else begin
-					
+        else if (writeEnable_i == `WriteEnable) begin
+			dataHi_o <= writeHi_i;
+            dataLo_o <= writeLo_i;
 		end    //if
 	end      //always
 			

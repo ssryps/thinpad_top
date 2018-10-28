@@ -18,27 +18,42 @@
 // Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
-`include "def.v"
+`include "defines.v"
 
 module MEM(
     input wire rst_i,
-    input wire [4:0] wd_i,
+    input wire [`RegAddrBus] wd_i,
     input wire wreg_i,
-    input wire [31:0] wdata_i,
-    output reg [4:0] wd_o,
+    input wire [`RegBus] wdata_i,
+
+    input wire[`RegBus] hi_i,
+    input wire[`RegBus] lo_i,
+    input wire whilo_i,
+
+    output reg [`RegAddrBus] wd_o,
     output reg wreg_o,
-    output reg [31:0] wdata_o
+    output reg [`RegBus] wdata_o,
+
+    output reg[`RegBus] hi_o,
+    output reg[`RegBus] lo_o,
+    output reg whilo_o
     );
 
     always @(*) begin
-        if (rst_i==`ENABLE) begin
-            wd_o<=`ZERO;
-            wreg_o<=`ZERO;
-            wdata_o<=`ZERO;
+        if (rst_i==`RstEnable) begin
+            wd_o<=`NOPRegAddr;
+            wreg_o<=`WriteDisable;
+            wdata_o<=`ZeroWord;
+            hi_o <= `ZeroWord;
+            lo_o <= `ZeroWord;
+            whilo_o <= `WriteDisable;
         end else begin
             wd_o<=wd_i;
             wreg_o<=wreg_i;
             wdata_o<=wdata_i;
+            hi_o <= hi_i;
+            lo_o <= lo_i;
+            whilo_o <= whilo_i;
         end
     end
 endmodule
