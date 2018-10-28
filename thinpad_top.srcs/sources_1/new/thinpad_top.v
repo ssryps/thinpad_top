@@ -1,4 +1,4 @@
-`default_nettype none
+// `default_nettype none
 
 module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
@@ -85,7 +85,7 @@ module thinpad_top(
 
 // PLL分频示例
 wire locked, clk_10M, clk_20M;
-pll_example clock_gen 
+pll_example clock_gen
  (
   // Clock out ports
   .clk_out1(clk_10M), // 时钟输出1，频率在IP配置界面中设置
@@ -157,20 +157,20 @@ async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无�
         .RxD_clear(ext_uart_ready),       //清除接收标志
         .RxD_data(ext_uart_rx)             //接收到的一字节数据
     );
-    
+
 always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
     if(ext_uart_ready)begin
         ext_uart_buffer <= ext_uart_rx;
         ext_uart_avai <= 1;
-    end else if(!ext_uart_busy && ext_uart_avai)begin 
+    end else if(!ext_uart_busy && ext_uart_avai)begin
         ext_uart_avai <= 0;
     end
 end
 always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
-    if(!ext_uart_busy && ext_uart_avai)begin 
+    if(!ext_uart_busy && ext_uart_avai)begin
         ext_uart_tx <= ext_uart_buffer;
         ext_uart_start <= 1;
-    end else begin 
+    end else begin
         ext_uart_start <= 0;
     end
 end
@@ -191,7 +191,7 @@ assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
 assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
 assign video_clk = clk_50M;
 vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
-    .clk(clk_50M), 
+    .clk(clk_50M),
     .hdata(hdata), //横坐标
     .vdata(),      //纵坐标
     .hsync(video_hsync),
