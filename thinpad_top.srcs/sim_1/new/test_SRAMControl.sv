@@ -79,11 +79,11 @@ clock osc(
 SRAMControl sram_control(
             .clk(clk_50M),
             .rst(rst),
-            .enabled(enabled),
-            .operation(operation),
-            .data(data), 
-            .address(address),
-            .result(result), 
+            .enabled_i(enabled),
+            .op_i(operation),
+            .data_i(data), 
+            .addr_i(address),
+            .result_o(result), 
     // control signal to sram
             .ram1_data(ram1_data),
             .ram1_addr(ram1_addr),
