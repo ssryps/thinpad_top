@@ -277,6 +277,104 @@ module id(
 
                             instvalid <= `InstValid;
                         end
+                        //TODO: changes start from here
+                        `EXE_ADD: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_ADD_OP;
+                            alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_ADDU: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_ADDU_OP;
+                            alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_SUB: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_SUB_OP;
+                            alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_SUBU: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_SUBU_OP;
+                            alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_SLT: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_SLT_OP;
+                            alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_SLTU: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_SLTU_OP;
+                            alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_MULT: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_MULT_OP;
+                            // TODO:why no sel???
+                            //alusel_o<=`EXE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_MULTU: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_MULTU_OP;
+                            //alusel_o<=E`XE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteEnable;
+
+                            instvalid <= `InstValid;
+                        end
                     endcase  
                 end
                 `EXE_ORI: begin
@@ -334,6 +432,113 @@ module id(
                     wreg_o <= `WriteEnable;
 
                     instvalid <= `InstValid;
+                end
+                //TODO: start from here
+                `EXE_SLTI: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                    //ex
+                    aluop_o <= `EXE_SLT_OP;
+                    alusel_o <= `EXE_RES_ARITHMETIC;
+                    //mem
+                    wd_o <= rt;
+                    wreg_o <= `WriteEnable;
+
+                    instvalid <= `InstValid;
+                end
+                `EXE_SLTIU: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                    //ex
+                    aluop_o <= `EXE_SLTU_OP;
+                    alusel_o <= `EXE_RES_ARITHMETIC;
+                    //mem
+                    wd_o <= rt;
+                    wreg_o <= `WriteEnable;
+
+                    instvalid <= `InstValid;
+                end
+                `EXE_ADDI: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                    //ex
+                    aluop_o <= `EXE_ADD_OP;
+                    alusel_o <= `EXE_RES_ARITHMETIC;
+                    //mem
+                    wd_o <= rt;
+                    wreg_o <= `WriteEnable;
+
+                    instvalid <= `InstValid;
+                end
+                `EXE_ADDIU: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                    //ex
+                    aluop_o <= `EXE_ADDU_OP;
+                    alusel_o <= `EXE_RES_ARITHMETIC;
+                    //mem
+                    wd_o <= rt;
+                    wreg_o <= `WriteEnable;
+
+                    instvalid <= `InstValid;
+                end
+                `EXE_SPECIAL2_INST: begin
+                    case (fn)
+                        `EXE_CLZ: begin
+                        //registers
+                        reg1_read_o <= 1'b1;
+                        reg2_read_o <= 1'b0;
+                        //eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                        //ex
+                        aluop_o <= `EXE_CLZ_OP;
+                        alusel_o <= `EXE_RES_ARITHMETIC;
+                        //mem
+                        //wd_o <= rt;
+                        wreg_o <= `WriteEnable;
+
+                        instvalid <= `InstValid;
+                        end
+
+                        `EXE_CLO: begin
+                        //registers
+                        reg1_read_o <= 1'b1;
+                        reg2_read_o <= 1'b0;
+                        //eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                        //ex
+                        aluop_o <= `EXE_CLO_OP;
+                        alusel_o <= `EXE_RES_ARITHMETIC;
+                        //mem
+                        //wd_o <= rt;
+                        wreg_o <= `WriteEnable;
+
+                        instvalid <= `InstValid;
+                        end
+
+                        `EXE_MUL: begin
+                        //registers
+                        reg1_read_o <= 1'b1;
+                        reg2_read_o <= 1'b1;
+                        //eimm <= {{16{inst_i[15]}},inst_i[15:0]};
+                        //ex
+                        aluop_o <= `EXE_MUL_OP;
+                        alusel_o <= `EXE_RES_MUL;
+                        //mem
+                        //wd_o <= rt;
+                        wreg_o <= `WriteEnable;
+
+                        instvalid <= `InstValid;
+                        end
+                    default: begin
+                    end
+                    endcase
                 end
 
                 default: begin 
