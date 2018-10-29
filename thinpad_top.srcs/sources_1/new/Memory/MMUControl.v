@@ -1,3 +1,7 @@
+`timescale 1ns / 1ps
+
+
+
 `include"MemoryUtils.v"
 
 `define MMU_ADDR_ROM_START    32'hbfc00000
@@ -29,6 +33,8 @@ module MMUControl (
 	input wire[`MEMCONTROL_ADDR_LEN - 1:0] 	addr_i,
 	input wire[31:0]						data_i,
 
+    input wire[31:0]                       sram_data_i,
+    input wire[31:0]                       serial_data_i,            
 	//output signal to lower layer
 	//SRAM 
 	output wire 						      sram_enabled,
@@ -51,19 +57,22 @@ module MMUControl (
 
 	reg[`MEMCONTROL_ADDR_LEN - 1:0] mmu_addr;
 	reg[`DEVICE_CHOICE_LEN - 1:0] device;
-	reg cur_state;
+	reg [2:0]cur_state;
     reg sram_enabled_reg;
     reg serial_enabled_reg;
-    reg result_o_reg;
-    reg sram_op_reg;
-    reg sram_addr_reg;
-    reg sram_data_reg;
+    reg [31:0]result_o_reg;
+    reg [`SRAMCONTROL_OP_LEN - 1:0]sram_op_reg;
+    reg [`SRAMCONTROL_ADDR_LEN - 1:0]sram_addr_reg;
+    reg [31:0] sram_data_reg;
     assign sram_enabled = sram_enabled_reg;
     assign serial_enabled = serial_enabled_reg;
-    assign result_o =   result_o_reg;
-	assign sram_op = sram_op_reg;
 	assign sram_addr = sram_addr_reg;
 	assign sram_data = sram_data_reg;
+    
+    assign pause_pipeline_o = (cur_state == `MMUCONTROL_STATE_PAUSE);
+    assign result_o = (cur_state == `MMUCONTROL_STATE_RESULT? sram_data_i: `SRAMCONTROL_DEFAULT_DATA);
+
+    assign sram_op = (op_i == `MEMCONTROL_OP_WRITE? `SRAMCONTROL_OP_WRITE : (op_i == `MEMCONTROL_OP_READ? `SRAMCONTROL_OP_READ: `SRAMCONTROL_OP_NOP));
 	
 	always @(*) begin 
 		if(~rst) begin
@@ -93,23 +102,21 @@ module MMUControl (
 		end
 	end
 
-	assign pause_pipeline_o = (cur_state == `MMUCONTROL_STATE_PAUSE);
 	always @(posedge clk) begin 
-		sram_enabled_reg  <= 0;
+		sram_enabled_reg  <= 1;
 		serial_enabled_reg  <= 0;
 		result_o_reg <= `SRAMCONTROL_DEFAULT_DATA;
 		if(rst) begin
-			cur_state <= `MMUCONTROL_STATE_PAUSE;		
+			cur_state <= `MMUCONTROL_STATE_INIT;		
 		end else begin
 			if(cur_state == `MMUCONTROL_STATE_INIT) begin
 				if(op_i == `MEMCONTROL_OP_READ || op_i == `MEMCONTROL_OP_WRITE) begin
 					cur_state <= `MMUCONTROL_STATE_PAUSE;
 					case (device)
 						`DEVICE_RAM: begin
-							sram_enabled_reg = 1;
-							sram_op_reg = `SRAMCONTROL_OP_WRITE;
-							sram_addr_reg = addr_i[23: 3];
-							sram_data_reg = data_i;
+							sram_enabled_reg <= 1;
+                            sram_addr_reg <= addr_i[22: 2];
+							sram_data_reg <= data_i;
 						end
 						default : /* default */;
 					endcase
@@ -121,10 +128,14 @@ module MMUControl (
 				cur_state <= `MMUCONTROL_STATE_RESULT;
 				case (device)
 					`DEVICE_RAM: begin
-                            sram_enabled_reg = 1;
-                            sram_op_reg = `SRAMCONTROL_OP_WRITE;
-                            sram_addr_reg = addr_i[23: 3];
-                            sram_data_reg = data_i;
+                        sram_enabled_reg <= 1;
+//                        if(op_i == `MEMCONTROL_OP_WRITE) begin
+//                               sram_op_reg <= `SRAMCONTROL_OP_WRITE;
+//                        end else begin
+//                            sram_op_reg <= `SRAMCONTROL_OP_READ;
+//                        end
+//                        sram_addr_reg <= addr_i[23: 3];
+//                        sram_data_reg <= data_i;
 					end
 					default : /* default */;
 				endcase
@@ -133,11 +144,10 @@ module MMUControl (
 					cur_state <= `MMUCONTROL_STATE_PAUSE;
 					case (device)
 						`DEVICE_RAM: begin
-							sram_enabled_reg = 1;
-                            sram_op_reg = `SRAMCONTROL_OP_WRITE;
-                            sram_addr_reg = addr_i[23: 3];
-                            sram_data_reg = data_i;
-						end
+                            sram_enabled_reg <= 1;
+                            sram_addr_reg <= addr_i[22: 2];
+                            sram_data_reg <= data_i;
+  					end
 						default : /* default */;
 					endcase
 				end else begin

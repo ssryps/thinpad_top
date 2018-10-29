@@ -59,69 +59,63 @@ module SRAMControl(
     
 
     assign ram1_be =  4'b0000;
-    assign ram1_ce =  (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)  
-                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 
+    assign ram1_ce =  (cur_state == `SRAMCONTROL_INIT && 1)  
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)  
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 &&
                         (
-                      (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
+                      (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_WRITE_PHASE2 && 0)
                    || (cur_state == `SRAMCONTROL_READ_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_READ_PHASE2 && 0)
-                        ))
-                   ;
-    assign ram1_we =  (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)
+                        ));
+    assign ram1_we =  (cur_state == `SRAMCONTROL_INIT && 1) 
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 
                         (
-                      (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
+                      (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_WRITE_PHASE2 && 1)
                    || (cur_state == `SRAMCONTROL_READ_PHASE1 && 1)
                    || (cur_state == `SRAMCONTROL_READ_PHASE2 && 1)
-                        ))
-                   ; 
-    assign ram1_oe =  (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)
+                        )); 
+    assign ram1_oe =  (cur_state == `SRAMCONTROL_INIT && 1)
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 
                         (
-                      (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 1)
+                      (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 1)
                    || (cur_state == `SRAMCONTROL_WRITE_PHASE2 && 1)
                    || (cur_state == `SRAMCONTROL_READ_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_READ_PHASE2 && 0)
-                        )) 
-                  ;
+                        ));
 
 
     assign ram2_be =  4'b0000;
-    assign ram2_ce =  (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)  
+    assign ram2_ce =  (cur_state == `SRAMCONTROL_INIT && 1) 
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)  
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 
                         (
-                      (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
+                      (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_WRITE_PHASE2 && 0)
                    || (cur_state == `SRAMCONTROL_READ_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_READ_PHASE2 && 0)
-                        ))
-                   ;
-    assign ram2_we =  (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)
+                        ));
+    assign ram2_we =  (cur_state == `SRAMCONTROL_INIT && 1) 
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 
                         (
-                      (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
+                      (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_WRITE_PHASE2 && 1)
                    || (cur_state == `SRAMCONTROL_READ_PHASE1 && 1)
                    || (cur_state == `SRAMCONTROL_READ_PHASE2 && 1)
-                        ))
-                   ; 
-    assign ram2_oe =  (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)
+                        )); 
+    assign ram2_oe =  (cur_state == `SRAMCONTROL_INIT && 1) 
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 
                         (
-                      (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 1)
+                      (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 1)
                    || (cur_state == `SRAMCONTROL_WRITE_PHASE2 && 1)
                    || (cur_state == `SRAMCONTROL_READ_PHASE1 && 0)
                    || (cur_state == `SRAMCONTROL_READ_PHASE2 && 0)
-                        )) 
-                  ;
+                        ));
 
 
 

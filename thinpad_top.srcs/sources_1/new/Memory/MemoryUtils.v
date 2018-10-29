@@ -7,13 +7,13 @@
 // definition for MemControl
 // memcontrol parameters
 `define MEMCONTROL_ADDR_LEN		32
-`define MEMCONTROL_OP_LEN		3
 
 // input to memcontrol 
 // operation
-`define MEMCONTROL_OP_NOP   	2'b00
-`define MEMCONTROL_OP_READ  	2'b01
-`define MEMCONTROL_OP_WRITE 	2'b10
+`define MEMCONTROL_OP_LEN		3
+`define MEMCONTROL_OP_NOP   	3'b000
+`define MEMCONTROL_OP_READ  	3'b001
+`define MEMCONTROL_OP_WRITE 	3'b010
 
 // operation data length
 `define MEMECONTROL_OP_WORD				5'b11111
