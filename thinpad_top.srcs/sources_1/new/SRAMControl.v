@@ -39,24 +39,31 @@ module SRAMControl(
     output wire[31:0] result_o,
 
     // control signal to sram
-    output wire ram1_ce,
-    output wire ram1_oe,
-    output wire ram1_we,    
+    output wire ram1_ce_o,
+    output wire ram1_oe_o,
+    output wire ram1_we_o,    
     output wire[3:0]  ram1_be,
     inout wire[31:0] ram1_data,
     output wire[`SRAM_ADDR_LEN - 1:0] ram1_addr, 
     
-    output wire ram2_ce,
-    output wire ram2_oe,
-    output wire ram2_we,    
+    output wire ram2_ce_o,
+    output wire ram2_oe_o,
+    output wire ram2_we_o,    
     output wire[3:0]  ram2_be,
     inout wire[31:0] ram2_data,
     output wire[`SRAM_ADDR_LEN - 1:0] ram2_addr
 
     );
     
+    wire ram1_ce, ram1_we, ram1_oe;
+    wire ram2_ce, ram2_we, ram2_oe;
     reg[2:0] cur_state;
-    
+    assign ram1_ce_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_ce);
+    assign ram1_we_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_we);
+    assign ram1_oe_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_oe);
+    assign ram2_ce_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram2_ce);
+    assign ram2_we_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram2_we);
+    assign ram2_oe_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram2_oe);
 
     assign ram1_be =  4'b0000;
     assign ram1_ce =  (cur_state == `SRAMCONTROL_INIT && 1)  
@@ -128,7 +135,7 @@ module SRAMControl(
     assign result_o   = (cur_state == `SRAMCONTROL_READ_PHASE2? (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data): `SRAMCONTROL_DEFAULT_DATA); 
 
       //currently just use baseram, seems that extram will be used later
-    always @(posedge clk) begin
+    always @(posedge clk or enabled_i) begin
         if(rst == 1 || enabled_i == 0) begin
             cur_state <= `SRAMCONTROL_INIT;
         end else begin

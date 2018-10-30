@@ -21,13 +21,24 @@
 
 `include "MemoryUtils.v"
 
-module test_MMUControl;
+module test_MemControl;
 wire clk_50M, clk_11M0592;
 reg rst;
 
-reg[`MEMCONTROL_OP_LEN - 1  : 0]	op_i;
-reg[`MEMCONTROL_ADDR_LEN - 1 : 0] 	addr_i;
-reg[31:0]						data_i;
+reg[`MEMCONTROL_ADDR_LEN - 1:0] pc_addr_i;
+reg[31:0] mem_addr_i;
+reg[31:0] mem_data_i;
+reg[5:0]	 mem_data_sz_i;	
+reg[`MEMCONTROL_OP_LEN - 1:0] mem_op_i;
+wire skip_next_edge;
+
+wire[31:0] pc_data_o;
+wire[31:0] mem_data_o;
+wire pause_pipeline_final_o;
+
+wire[`MEMCONTROL_OP_LEN - 1  : 0]	op_i;
+wire[`MEMCONTROL_ADDR_LEN - 1 : 0] 	addr_i;
+wire[31:0]						data_i;
 
 wire [31:0] sram_data_i;
 wire [31:0] serial_data_i;
@@ -67,50 +78,31 @@ wire[3:0] ram2_be_n;  //BaseRAM字节使能，低有效。如果不使用字节�
 
 initial begin
     rst = 1;
-    #30;
+    #20;
     rst  = 0;
-    op_i = `MEMCONTROL_OP_WRITE;
-    addr_i   = 32'h0000_0004;
-    data_i = 32'h1234_5678;
-    #40 ;
-    op_i = `MEMCONTROL_OP_NOP;
-    #40
-    rst  = 0;
-    op_i = `MEMCONTROL_OP_WRITE;
-    addr_i   = 32'hffff_ffff;
-    data_i = 32'h8765_4321;
-    #40
-    op_i = `MEMCONTROL_OP_WRITE;
-    addr_i   = 32'h0000_0008;
-    data_i = 32'h1111_1111;
-    #40;
-    op_i = `MEMCONTROL_OP_READ;
-    addr_i   = 32'h0000_0004;
-    #40 ;   
-    op_i = `MEMCONTROL_OP_READ;
-    addr_i   = 32'hffff_ffff;
-     #40;
-    op_i = `MEMCONTROL_OP_READ;
-     addr_i   = 32'h0000_0008;
-     #40
-     op_i = `MEMCONTROL_OP_WRITE;
-     addr_i   = 32'h0000_0008;
-     data_i = 32'h1111_2222;
-     #40;
-     op_i = `MEMCONTROL_OP_WRITE;
-    addr_i   = 32'h0000_0008;
-    data_i = 32'h1111_3333;
-     #40;
-    op_i = `MEMCONTROL_OP_READ;
-     addr_i   = 32'h0000_0008;
-     #40;
-    op_i = `MEMCONTROL_OP_READ;
-     addr_i   = 32'h0000_0008;
-          
-     
-   
-      #60;
-     op_i = `MEMCONTROL_OP_NOP;
+    pc_addr_i = 32'h0000_0000;
+    mem_addr_i = 32'h0000_0000;
+    mem_data_i = 32'h1111_1111;
+    mem_data_sz_i = `MEMECONTROL_OP_WORD;
+    mem_op_i = `MEMCONTROL_OP_WRITE;
+    #120;
+    pc_addr_i = 32'h0000_0000;
+    mem_addr_i = 32'h2222_2222;
+    mem_data_i = 32'h3333_3333;
+    mem_data_sz_i = `MEMECONTROL_OP_WORD;
+    mem_op_i = `MEMCONTROL_OP_WRITE;
+    #120;
+    pc_addr_i = 32'h0000_0000;
+    mem_addr_i = 32'h2222_2222;
+    mem_data_i = 32'h2222_2222;
+    mem_data_sz_i = `MEMECONTROL_OP_WORD;
+    mem_op_i = `MEMCONTROL_OP_READ;
+    #120;
+    pc_addr_i = 32'h2222_2222;
+    mem_addr_i = 32'h2222_2222;
+    mem_data_i = 32'h2222_2222;
+    mem_data_sz_i = `MEMECONTROL_OP_WORD;
+    mem_op_i = `MEMCONTROL_OP_NOP;
       
 end
 
@@ -120,11 +112,28 @@ clock osc(
     .clk_50M    (clk_50M)
 );
 
+MemControl mem_control(
+    .clk(clk_50M),
+	.rst(rst),
+	.pc_addr_i(pc_addr_i),
+	.mem_addr_i(mem_addr_i),
+    .mem_data_i(mem_data_i),
+    .mem_data_sz_i(mem_data_sz_i),
+    .mem_op_i(mem_op_i),
+    .mmu_result_i(result_o),
+    .pause_pipeline_i(pause_pipeline_o),
+    .op_o(op_i),
+    .addr_o(addr_i),
+    .data_o(data_i),
+    .pc_data_o(pc_data_o),
+    .mem_data_o(mem_data_o),
+    .pause_pipeline_o(pause_pipeline_final_o)
+    );
 
 MMUControl mmu_control(
 	.clk(clk_50M),
 	.rst(rst),
-	.op_i(op_i),
+    .op_i(op_i),
 	.addr_i(addr_i),
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),

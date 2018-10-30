@@ -25,7 +25,7 @@ module Serial(
 		input wire rst,
 		input wire enabled,
 		input wire[`SERIALCONTROL_DATA_LEN - 1:0] data,
-		input wire[`SERIALCONTROL_OP_LEN - 1: 0]  operation,
+		input wire[`SERIALCONTROL_OP_LEN - 1: 0]  operation
 		
     );
 endmodule

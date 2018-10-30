@@ -1,4 +1,0 @@
-`define MEMCONTROL_OP_NOP   2'b00;
-`define MEMCONTROL_OP_READ  2'b01;
-`define MEMCONTROL_OP_WRITE 2'b10;
-
