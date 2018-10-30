@@ -14,6 +14,9 @@ module ex_mem(
 	input wire[`RegBus] ex_hi,
 	input wire[`RegBus] ex_lo,
 	input wire ex_whilo,	
+
+    //Stall singal from CTRL
+    input wire [`StallBus] stall_i,
 	
 	//ouput to mem
 	output reg[`RegAddrBus] mem_wd,
@@ -34,8 +37,14 @@ module ex_mem(
 			mem_hi <= `ZeroWord;
 			mem_lo <= `ZeroWord;
 			mem_whilo <= `WriteDisable;
-		end 
-        else begin
+		end else if(stall_i[3]==`Stall&&stall_i[4]==`NotStall) begin
+			mem_wd <= `NOPRegAddr;
+			mem_wreg <= `WriteDisable;
+		    mem_wdata <= `ZeroWord;	
+			mem_hi <= `ZeroWord;
+			mem_lo <= `ZeroWord;
+			mem_whilo <= `WriteDisable;
+		end else if (stall_i[3]==`NotStall) begin
 			mem_wd <= ex_wd;
 			mem_wreg <= ex_wreg;
 			mem_wdata <= ex_wdata;

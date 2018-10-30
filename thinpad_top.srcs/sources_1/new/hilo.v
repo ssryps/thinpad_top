@@ -9,8 +9,8 @@ module hilo(
     input wire[`RegBus] writeHi_i,
     input wire[`RegBus] writeLo_i,
 
-    output wire[`RegBus] dataHi_o,
-    output wire[`RegBus] dataLo_o,
+    output reg[`RegBus] dataHi_o,
+    output reg[`RegBus] dataLo_o
 );
 
 	always @ (posedge clk) begin

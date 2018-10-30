@@ -31,6 +31,9 @@ module MEM_WB(
     input wire[`RegBus] mem_lo,
     input wire mem_whilo,
 
+    //Stall singal from CTRL
+    input wire [`StallBus] stall_i,
+
     output reg [`RegAddrBus] wb_wd_o,
     output reg wb_wreg_o,
     output reg [`RegBus] wb_wdata_o,
@@ -48,7 +51,14 @@ module MEM_WB(
             wb_hi <= `ZeroWord;
             wb_lo <= `ZeroWord;
             wb_whilo <= `WriteDisable;
-        end else begin
+        end else if (stall_i[4]==`Stall&&stall_i[5]==`NotStall) begin
+            wb_wd_o<=`NOPRegAddr;
+            wb_wreg_o<=`WriteDisable;
+            wb_wdata_o<=`ZeroWord;
+            wb_hi <= `ZeroWord;
+            wb_lo <= `ZeroWord;
+            wb_whilo <= `WriteDisable;
+        end else if (stall_i[4]==`NotStall) begin
             wb_wd_o<=mem_wd_i;
             wb_wreg_o<=mem_wreg_i;
             wb_wdata_o<=mem_wdata_i;

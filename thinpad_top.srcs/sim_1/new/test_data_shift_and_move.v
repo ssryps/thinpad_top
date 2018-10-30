@@ -28,22 +28,58 @@
 `define InstValid 1'b0
 `define InstInvalid 1'b1
 `define ZeroWord 32'h0
+`define Enable 1'b1
+`define Disable 0'b1
 
-//instructions
+//instructions_top_six_bits
+`define EXE_SPECIAL_INST  6'b000000
 `define EXE_ORI 6'b001101
-`define EXE_NOP 6'b000000
+`define EXE_ANDI 6'b001100
+`define EXE_XORI 6'b001110
+`define EXE_LUI 6'b001111
+
+//instructions_lowest_six_bits
+`define EXE_AND 6'b100100
+`define EXE_OR 6'b100101
+`define EXE_XOR 6'b100110
+`define EXE_NOR 6'b100111
+
+`define EXE_SLL 6'b000000
+`define EXE_SRL 6'b000010
+`define EXE_SRA 6'b000011
+`define EXE_SLLV 6'b000100
+`define EXE_SRLV 6'b000110
+`define EXE_SRAV 6'b000111
+
+`define EXE_MOVN 6'b001011
+`define EXE_MOVZ 6'b001010
+`define EXE_MFHI 6'b010000
+`define EXE_MTHI  6'b010001
+`define EXE_MFLO  6'b010010
+`define EXE_MTLO  6'b010011
 
 //AluOp
-`define EXE_OR_OP    8'b00100101
+`define EXE_OR_OP 6'b000010
+`define EXE_AND_OP 6'b000011
+`define EXE_XOR_OP 6'b000100
+`define EXE_NOR_OP 6'b000101
 
-`define EXE_ORI_OP  8'b01011010
+`define EXE_SLL_OP 6'b000110
+`define EXE_SRL_OP 6'b000111
+`define EXE_SRA_OP 6'b001000
 
-`define EXE_NOP_OP    8'b00000000
+`define EXE_MOVN_OP  6'b001001
+`define EXE_MOVZ_OP  6'b001010
+`define EXE_MFHI_OP  6'b001011
+`define EXE_MTHI_OP  6'b001100
+`define EXE_MFLO_OP  6'b001101
+`define EXE_MTLO_OP  6'b001110
+
 
 //AluSel
-`define EXE_RES_LOGIC 3'b001
-
-`define EXE_RES_NOP 3'b000
+`define EXE_RES_LOGIC 3'b000
+`define EXE_RES_SHIFT 3'b001
+`define EXE_RES_MOVE 3'b010
 
 //instruction and address of instruction
 `define InstAddrBus 31:0
@@ -56,9 +92,9 @@
 `define NOPRegAddr 5'b00000
 
 //ALU instruction type and subtype
-`define AluOpBus 7:0
+`define AluOpBus 5:0
 `define AluSelBus 2:0
-module test_data_denpendency;
+module test_data_shift_and_move;
 wire my_clk_50M, my_clk_11M0592;
 reg rst;
 
@@ -109,9 +145,9 @@ wire[`RegAddrBus] wd_o;
 wire wreg_o;
 wire[`RegBus] wdata_o;
 
-output reg[`RegBus] ex_hi_o;
-output reg[`RegBus] ex_lo_o;
-output reg ex_whilo_o;
+wire[`RegBus] ex_hi_o;
+wire[`RegBus] ex_lo_o;
+wire ex_whilo_o;
 
 wire[`RegAddrBus] mem_wd;
 wire mem_wreg;
@@ -130,17 +166,10 @@ wire mem_wreg_o;
 wire mem_wb_wreg_o;
 wire [4:0]mem_wb_wd_o;
 wire [31:0]mem_wb_wdata_o;
-wire[`RegBus] mem_hi;
-wire[`RegBus] mem_lo;
-wire mem_whilo;
 
 wire[`RegBus] mem_hi_o;
 wire[`RegBus] mem_lo_o;
 wire mem_whilo_o;
-
-wire[`RegBus] wb_hi;
-wire[`RegBus] wb_lo;
-wire wb_whilo_o;
 
 // Reg & ID
 

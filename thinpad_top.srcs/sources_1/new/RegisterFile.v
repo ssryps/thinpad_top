@@ -48,12 +48,12 @@ module RegisterFile(
     always @(* ) begin
         choice1 = read_addr_1;
         choice2 = read_addr_2;
-        same1 = (read_addr_1 == write_addr && read_enable_1 == 1);
-        same2 = (read_addr_2 == write_addr && read_enable_2 == 1);
+        same1 = (read_addr_1 == write_addr && read_enable_1 == 1 && write_enable == 1);
+        same2 = (read_addr_2 == write_addr && read_enable_2 == 1 && write_enable == 1);
     end
 
-    assign result1 = (read_enable_1 ? (read_addr_1 == `ZERO_REGISTER? `ZERO_VALUE :(same1? write_data: registers[choice1]) ): `REGISTER_NOT_ENABLED);
-    assign result2 = (read_enable_2 ? (read_addr_2 == `ZERO_REGISTER? `ZERO_VALUE :(same2? write_data: registers[choice2]) ): `REGISTER_NOT_ENABLED);
+    assign result1 = (rst ? 0:(read_enable_1 ? (read_addr_1 == `ZERO_REGISTER? `ZERO_VALUE :(same1? write_data: registers[choice1]) ): `REGISTER_NOT_ENABLED));
+    assign result2 = (rst ? 0:(read_enable_2 ? (read_addr_2 == `ZERO_REGISTER? `ZERO_VALUE :(same2? write_data: registers[choice2]) ): `REGISTER_NOT_ENABLED));
           
     always @(posedge clk) begin
         if(rst) begin
@@ -91,8 +91,9 @@ module RegisterFile(
                 registers[31] <= 0;
                                 
         end else begin
-            choice3 = write_addr;
-            registers[choice3] = write_data;            
+            if((write_enable==1'b1) & (write_addr != `ZERO_REGISTER)) begin 
+                registers[write_addr] = write_data; 
+            end           
         end
     end
 endmodule
