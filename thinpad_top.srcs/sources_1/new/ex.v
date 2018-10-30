@@ -24,6 +24,10 @@ module ex(
     input wire[`RegBus] mem_hi_i,
 	input wire[`RegBus] mem_lo_i,
 	input wire mem_whilo_i,
+    
+    //input from DIV
+    input wire [`DoubleRegBus] div_result_i,
+    input wire div_ready_i,
 
     //output to ex_mem
     output reg[`RegAddrBus] wd_o,
@@ -36,7 +40,13 @@ module ex(
 	output reg whilo_o,
     
     //output to CTRL
-    output reg stallreq_o
+    output reg stallreq_o,
+    
+    //output to DIV
+    output reg signed_div_o,
+    output reg [`RegBus] div_op1_o,
+    output reg [`RegBus] div_op2_o,
+    output reg div_start_o
 );
 
     reg[`RegBus] logicout;
@@ -57,6 +67,9 @@ module ex(
     wire[`RegBus] operand2_mult;
     wire[`DoubleRegBus] hilo_temp;
     reg[`DoubleRegBus] mulres; // result of  multiplication
+
+    //DIV
+    reg stallreq_for_div;
 
     assign reg2_i_mux=((aluop_i==`EXE_SUB_OP)||(aluop_i==`EXE_SUBU_OP)||
         (aluop_i==`EXE_SLT_OP))?(~reg2_i)+1:reg2_i;
@@ -150,6 +163,22 @@ module ex(
 					reg1_i_not[1]?30:
 					reg1_i_not[0]?31:32;
              	end
+                `EXE_DIV_OP,`EXE_DIVU_OP: begin
+                    if (div_ready_i==`Disable) begin
+                        div_op1_o<=reg1_i;
+                        div_op2_o<=reg2_i;
+                        div_start_o<=`Enable;
+                        stallreq_for_div<=`Enable;
+                        signed_div_o<=(aluop_i==`EXE_DIV_OP)?1'b1:1'b0;
+                    end else begin
+                        div_op1_o<=reg1_i;
+                        div_op2_o<=reg2_i;
+                        div_start_o<=`Disable;
+                        stallreq_for_div<=`Disable;
+                        signed_div_o<=(aluop_i==`EXE_DIV_OP)?1'b1:1'b0;
+                    end
+                    //TODO: else???
+                end
 				default: begin
 					arithmetic_result<=`ZeroWord;
 				end
@@ -315,11 +344,19 @@ module ex(
 			whilo_o <= `WriteEnable;
 			hi_o <= HI;
 			lo_o <= reg1_i;
+		end else if(aluop_i == `EXE_DIV_OP||aluop_i == `EXE_DIVU_OP) begin
+			whilo_o <= `WriteEnable;
+			hi_o <= div_result_i[63:32];
+			lo_o <= div_result_i[31:0];
 		end else begin
 			whilo_o <= `WriteDisable;
 			hi_o <= `ZeroWord;
 			lo_o <= `ZeroWord;
         end			
 	end	
+
+    always @ (*) begin
+        stallreq_o<=stallreq_for_div;
+    end
 
 endmodule

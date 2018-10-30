@@ -11,447 +11,19 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="718490000fs"></ZoomStartTime>
-      <ZoomEndTime time="851890001fs"></ZoomEndTime>
-      <Cursor1Time time="839490000fs"></Cursor1Time>
+      <ZoomStartTime time="127830000fs"></ZoomStartTime>
+      <ZoomEndTime time="194330001fs"></ZoomEndTime>
+      <Cursor1Time time="160030000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="182"></NameColumnWidth>
-      <ValueColumnWidth column_width="130"></ValueColumnWidth>
+      <ValueColumnWidth column_width="126"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="151" />
-   <wvobject type="logic" fp_name="/closemips_testbench/inst_rom0/ce">
-      <obj_property name="ElementShortName">ce</obj_property>
-      <obj_property name="ObjectShortName">ce</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/inst_rom0/addr">
-      <obj_property name="ElementShortName">addr[31:0]</obj_property>
-      <obj_property name="ObjectShortName">addr[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/Mem_wb/rst">
-      <obj_property name="ElementShortName">rst</obj_property>
-      <obj_property name="ObjectShortName">rst</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/Mem_wb/clk">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/mem_wd_i">
-      <obj_property name="ElementShortName">mem_wd_i[4:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_wd_i[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/Mem_wb/mem_wreg_i">
-      <obj_property name="ElementShortName">mem_wreg_i</obj_property>
-      <obj_property name="ObjectShortName">mem_wreg_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/mem_wdata_i">
-      <obj_property name="ElementShortName">mem_wdata_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_wdata_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/mem_hi">
-      <obj_property name="ElementShortName">mem_hi[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_hi[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/mem_lo">
-      <obj_property name="ElementShortName">mem_lo[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_lo[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/Mem_wb/mem_whilo">
-      <obj_property name="ElementShortName">mem_whilo</obj_property>
-      <obj_property name="ObjectShortName">mem_whilo</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/wb_wd_o">
-      <obj_property name="ElementShortName">wb_wd_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">wb_wd_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/Mem_wb/wb_wreg_o">
-      <obj_property name="ElementShortName">wb_wreg_o</obj_property>
-      <obj_property name="ObjectShortName">wb_wreg_o</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/wb_wdata_o">
-      <obj_property name="ElementShortName">wb_wdata_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">wb_wdata_o[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/wb_hi">
-      <obj_property name="ElementShortName">wb_hi[31:0]</obj_property>
-      <obj_property name="ObjectShortName">wb_hi[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Mem_wb/wb_lo">
-      <obj_property name="ElementShortName">wb_lo[31:0]</obj_property>
-      <obj_property name="ObjectShortName">wb_lo[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/Mem_wb/wb_whilo">
-      <obj_property name="ElementShortName">wb_whilo</obj_property>
-      <obj_property name="ObjectShortName">wb_whilo</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/clk">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/rst">
-      <obj_property name="ElementShortName">rst</obj_property>
-      <obj_property name="ObjectShortName">rst</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/read_addr_1">
-      <obj_property name="ElementShortName">read_addr_1[4:0]</obj_property>
-      <obj_property name="ObjectShortName">read_addr_1[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/read_enable_1">
-      <obj_property name="ElementShortName">read_enable_1</obj_property>
-      <obj_property name="ObjectShortName">read_enable_1</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/read_addr_2">
-      <obj_property name="ElementShortName">read_addr_2[4:0]</obj_property>
-      <obj_property name="ObjectShortName">read_addr_2[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/read_enable_2">
-      <obj_property name="ElementShortName">read_enable_2</obj_property>
-      <obj_property name="ObjectShortName">read_enable_2</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/write_addr">
-      <obj_property name="ElementShortName">write_addr[4:0]</obj_property>
-      <obj_property name="ObjectShortName">write_addr[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/write_enable">
-      <obj_property name="ElementShortName">write_enable</obj_property>
-      <obj_property name="ObjectShortName">write_enable</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/write_data">
-      <obj_property name="ElementShortName">write_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">write_data[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/result1">
-      <obj_property name="ElementShortName">result1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">result1[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/result2">
-      <obj_property name="ElementShortName">result2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">result2[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/registers">
-      <obj_property name="ElementShortName">registers[31:0][31:0]</obj_property>
-      <obj_property name="ObjectShortName">registers[31:0][31:0]</obj_property>
+   <WVObjectSize size="25" />
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/Ctrl/stall_o">
+      <obj_property name="ElementShortName">stall_o[5:0]</obj_property>
+      <obj_property name="ObjectShortName">stall_o[5:0]</obj_property>
       <obj_property name="isExpanded"></obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/inst_rom0/inst">
-      <obj_property name="ElementShortName">inst[31:0]</obj_property>
-      <obj_property name="ObjectShortName">inst[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/reg1_i">
-      <obj_property name="ElementShortName">reg1_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/reg2_i">
-      <obj_property name="ElementShortName">reg2_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/ov_sum">
-      <obj_property name="ElementShortName">ov_sum</obj_property>
-      <obj_property name="ObjectShortName">ov_sum</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/result_sum">
-      <obj_property name="ElementShortName">result_sum[31:0]</obj_property>
-      <obj_property name="ObjectShortName">result_sum[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/choice1">
-      <obj_property name="ElementShortName">choice1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">choice1[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/choice2">
-      <obj_property name="ElementShortName">choice2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">choice2[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/choice3">
-      <obj_property name="ElementShortName">choice3[31:0]</obj_property>
-      <obj_property name="ObjectShortName">choice3[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/regisetrfile0/i">
-      <obj_property name="ElementShortName">i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/same1">
-      <obj_property name="ElementShortName">same1</obj_property>
-      <obj_property name="ObjectShortName">same1</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/regisetrfile0/same2">
-      <obj_property name="ElementShortName">same2</obj_property>
-      <obj_property name="ObjectShortName">same2</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/rst">
-      <obj_property name="ElementShortName">rst</obj_property>
-      <obj_property name="ObjectShortName">rst</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/pc_i">
-      <obj_property name="ElementShortName">pc_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">pc_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/inst_i">
-      <obj_property name="ElementShortName">inst_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">inst_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg1_data_i">
-      <obj_property name="ElementShortName">reg1_data_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_data_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg2_data_i">
-      <obj_property name="ElementShortName">reg2_data_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_data_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/ex_wdata_i">
-      <obj_property name="ElementShortName">ex_wdata_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ex_wdata_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/ex_wd_i">
-      <obj_property name="ElementShortName">ex_wd_i[4:0]</obj_property>
-      <obj_property name="ObjectShortName">ex_wd_i[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/ex_wreg_i">
-      <obj_property name="ElementShortName">ex_wreg_i</obj_property>
-      <obj_property name="ObjectShortName">ex_wreg_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/mem_wdata_i">
-      <obj_property name="ElementShortName">mem_wdata_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_wdata_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/mem_wd_i">
-      <obj_property name="ElementShortName">mem_wd_i[4:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_wd_i[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/mem_wreg_i">
-      <obj_property name="ElementShortName">mem_wreg_i</obj_property>
-      <obj_property name="ObjectShortName">mem_wreg_i</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/reg1_read_o">
-      <obj_property name="ElementShortName">reg1_read_o</obj_property>
-      <obj_property name="ObjectShortName">reg1_read_o</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/reg2_read_o">
-      <obj_property name="ElementShortName">reg2_read_o</obj_property>
-      <obj_property name="ObjectShortName">reg2_read_o</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg1_addr_o">
-      <obj_property name="ElementShortName">reg1_addr_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_addr_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg2_addr_o">
-      <obj_property name="ElementShortName">reg2_addr_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_addr_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/aluop_o">
-      <obj_property name="ElementShortName">aluop_o[5:0]</obj_property>
-      <obj_property name="ObjectShortName">aluop_o[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/alusel_o">
-      <obj_property name="ElementShortName">alusel_o[2:0]</obj_property>
-      <obj_property name="ObjectShortName">alusel_o[2:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg1_o">
-      <obj_property name="ElementShortName">reg1_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_o[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg2_o">
-      <obj_property name="ElementShortName">reg2_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_o[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/wd_o">
-      <obj_property name="ElementShortName">wd_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">wd_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/wreg_o">
-      <obj_property name="ElementShortName">wreg_o</obj_property>
-      <obj_property name="ObjectShortName">wreg_o</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/op">
-      <obj_property name="ElementShortName">op[5:0]</obj_property>
-      <obj_property name="ObjectShortName">op[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/rs">
-      <obj_property name="ElementShortName">rs[4:0]</obj_property>
-      <obj_property name="ObjectShortName">rs[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/rt">
-      <obj_property name="ElementShortName">rt[4:0]</obj_property>
-      <obj_property name="ObjectShortName">rt[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/rd">
-      <obj_property name="ElementShortName">rd[4:0]</obj_property>
-      <obj_property name="ObjectShortName">rd[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/sa">
-      <obj_property name="ElementShortName">sa[4:0]</obj_property>
-      <obj_property name="ObjectShortName">sa[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/fn">
-      <obj_property name="ElementShortName">fn[5:0]</obj_property>
-      <obj_property name="ObjectShortName">fn[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/target">
-      <obj_property name="ElementShortName">target[25:0]</obj_property>
-      <obj_property name="ObjectShortName">target[25:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/imm">
-      <obj_property name="ElementShortName">imm[15:0]</obj_property>
-      <obj_property name="ObjectShortName">imm[15:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/zeroImm">
-      <obj_property name="ElementShortName">zeroImm[32:0]</obj_property>
-      <obj_property name="ObjectShortName">zeroImm[32:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/upperImm">
-      <obj_property name="ElementShortName">upperImm[32:0]</obj_property>
-      <obj_property name="ObjectShortName">upperImm[32:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/shiftImm">
-      <obj_property name="ElementShortName">shiftImm[32:0]</obj_property>
-      <obj_property name="ObjectShortName">shiftImm[32:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/eimm">
-      <obj_property name="ElementShortName">eimm[31:0]</obj_property>
-      <obj_property name="ObjectShortName">eimm[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/instvalid">
-      <obj_property name="ElementShortName">instvalid</obj_property>
-      <obj_property name="ObjectShortName">instvalid</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/rst">
-      <obj_property name="ElementShortName">rst</obj_property>
-      <obj_property name="ObjectShortName">rst</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/pc_i">
-      <obj_property name="ElementShortName">pc_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">pc_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/inst_i">
-      <obj_property name="ElementShortName">inst_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">inst_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg1_data_i">
-      <obj_property name="ElementShortName">reg1_data_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_data_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg2_data_i">
-      <obj_property name="ElementShortName">reg2_data_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_data_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/ex_wdata_i">
-      <obj_property name="ElementShortName">ex_wdata_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ex_wdata_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/ex_wd_i">
-      <obj_property name="ElementShortName">ex_wd_i[4:0]</obj_property>
-      <obj_property name="ObjectShortName">ex_wd_i[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/ex_wreg_i">
-      <obj_property name="ElementShortName">ex_wreg_i</obj_property>
-      <obj_property name="ObjectShortName">ex_wreg_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/mem_wdata_i">
-      <obj_property name="ElementShortName">mem_wdata_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_wdata_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/mem_wd_i">
-      <obj_property name="ElementShortName">mem_wd_i[4:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_wd_i[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/mem_wreg_i">
-      <obj_property name="ElementShortName">mem_wreg_i</obj_property>
-      <obj_property name="ObjectShortName">mem_wreg_i</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/reg1_read_o">
-      <obj_property name="ElementShortName">reg1_read_o</obj_property>
-      <obj_property name="ObjectShortName">reg1_read_o</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/reg2_read_o">
-      <obj_property name="ElementShortName">reg2_read_o</obj_property>
-      <obj_property name="ObjectShortName">reg2_read_o</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg1_addr_o">
-      <obj_property name="ElementShortName">reg1_addr_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_addr_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg2_addr_o">
-      <obj_property name="ElementShortName">reg2_addr_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_addr_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/aluop_o">
-      <obj_property name="ElementShortName">aluop_o[5:0]</obj_property>
-      <obj_property name="ObjectShortName">aluop_o[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/alusel_o">
-      <obj_property name="ElementShortName">alusel_o[2:0]</obj_property>
-      <obj_property name="ObjectShortName">alusel_o[2:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg1_o">
-      <obj_property name="ElementShortName">reg1_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_o[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/reg2_o">
-      <obj_property name="ElementShortName">reg2_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_o[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/wd_o">
-      <obj_property name="ElementShortName">wd_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">wd_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/wreg_o">
-      <obj_property name="ElementShortName">wreg_o</obj_property>
-      <obj_property name="ObjectShortName">wreg_o</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/op">
-      <obj_property name="ElementShortName">op[5:0]</obj_property>
-      <obj_property name="ObjectShortName">op[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/rs">
-      <obj_property name="ElementShortName">rs[4:0]</obj_property>
-      <obj_property name="ObjectShortName">rs[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/rt">
-      <obj_property name="ElementShortName">rt[4:0]</obj_property>
-      <obj_property name="ObjectShortName">rt[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/rd">
-      <obj_property name="ElementShortName">rd[4:0]</obj_property>
-      <obj_property name="ObjectShortName">rd[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/sa">
-      <obj_property name="ElementShortName">sa[4:0]</obj_property>
-      <obj_property name="ObjectShortName">sa[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/fn">
-      <obj_property name="ElementShortName">fn[5:0]</obj_property>
-      <obj_property name="ObjectShortName">fn[5:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/target">
-      <obj_property name="ElementShortName">target[25:0]</obj_property>
-      <obj_property name="ObjectShortName">target[25:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/imm">
-      <obj_property name="ElementShortName">imm[15:0]</obj_property>
-      <obj_property name="ObjectShortName">imm[15:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/zeroImm">
-      <obj_property name="ElementShortName">zeroImm[32:0]</obj_property>
-      <obj_property name="ObjectShortName">zeroImm[32:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/upperImm">
-      <obj_property name="ElementShortName">upperImm[32:0]</obj_property>
-      <obj_property name="ObjectShortName">upperImm[32:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/shiftImm">
-      <obj_property name="ElementShortName">shiftImm[32:0]</obj_property>
-      <obj_property name="ObjectShortName">shiftImm[32:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/id0/eimm">
-      <obj_property name="ElementShortName">eimm[31:0]</obj_property>
-      <obj_property name="ObjectShortName">eimm[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/id0/instvalid">
-      <obj_property name="ElementShortName">instvalid</obj_property>
-      <obj_property name="ObjectShortName">instvalid</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/rst">
-      <obj_property name="ElementShortName">rst</obj_property>
-      <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/aluop_i">
       <obj_property name="ElementShortName">aluop_i[5:0]</obj_property>
@@ -461,65 +33,17 @@
       <obj_property name="ElementShortName">alusel_i[2:0]</obj_property>
       <obj_property name="ObjectShortName">alusel_i[2:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/reg1_i">
-      <obj_property name="ElementShortName">reg1_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_i[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/div_op1_o">
+      <obj_property name="ElementShortName">div_op1_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">div_op1_o[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/reg2_i">
-      <obj_property name="ElementShortName">reg2_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_i[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/div_op2_o">
+      <obj_property name="ElementShortName">div_op2_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">div_op2_o[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/wd_i">
-      <obj_property name="ElementShortName">wd_i[4:0]</obj_property>
-      <obj_property name="ObjectShortName">wd_i[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/wreg_i">
-      <obj_property name="ElementShortName">wreg_i</obj_property>
-      <obj_property name="ObjectShortName">wreg_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/hi_i">
-      <obj_property name="ElementShortName">hi_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">hi_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/lo_i">
-      <obj_property name="ElementShortName">lo_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">lo_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/wb_hi_i">
-      <obj_property name="ElementShortName">wb_hi_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">wb_hi_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/wb_lo_i">
-      <obj_property name="ElementShortName">wb_lo_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">wb_lo_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/wb_whilo_i">
-      <obj_property name="ElementShortName">wb_whilo_i</obj_property>
-      <obj_property name="ObjectShortName">wb_whilo_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/mem_hi_i">
-      <obj_property name="ElementShortName">mem_hi_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_hi_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/mem_lo_i">
-      <obj_property name="ElementShortName">mem_lo_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mem_lo_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/mem_whilo_i">
-      <obj_property name="ElementShortName">mem_whilo_i</obj_property>
-      <obj_property name="ObjectShortName">mem_whilo_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/wd_o">
-      <obj_property name="ElementShortName">wd_o[4:0]</obj_property>
-      <obj_property name="ObjectShortName">wd_o[4:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/wreg_o">
-      <obj_property name="ElementShortName">wreg_o</obj_property>
-      <obj_property name="ObjectShortName">wreg_o</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/wdata_o">
-      <obj_property name="ElementShortName">wdata_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">wdata_o[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/div_start_o">
+      <obj_property name="ElementShortName">div_start_o</obj_property>
+      <obj_property name="ObjectShortName">div_start_o</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/hi_o">
       <obj_property name="ElementShortName">hi_o[31:0]</obj_property>
@@ -529,100 +53,72 @@
       <obj_property name="ElementShortName">lo_o[31:0]</obj_property>
       <obj_property name="ObjectShortName">lo_o[31:0]</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/whilo_o">
-      <obj_property name="ElementShortName">whilo_o</obj_property>
-      <obj_property name="ObjectShortName">whilo_o</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/wreg_o">
+      <obj_property name="ElementShortName">wreg_o</obj_property>
+      <obj_property name="ObjectShortName">wreg_o</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/logicout">
-      <obj_property name="ElementShortName">logicout[31:0]</obj_property>
-      <obj_property name="ObjectShortName">logicout[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/div/clk_i">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/shiftout">
-      <obj_property name="ElementShortName">shiftout[31:0]</obj_property>
-      <obj_property name="ObjectShortName">shiftout[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/div/rst_i">
+      <obj_property name="ElementShortName">rst_i</obj_property>
+      <obj_property name="ObjectShortName">rst_i</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/moveout">
-      <obj_property name="ElementShortName">moveout[31:0]</obj_property>
-      <obj_property name="ObjectShortName">moveout[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/div/signed_div_i">
+      <obj_property name="ElementShortName">signed_div_i</obj_property>
+      <obj_property name="ObjectShortName">signed_div_i</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/HI">
-      <obj_property name="ElementShortName">HI[31:0]</obj_property>
-      <obj_property name="ObjectShortName">HI[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/op1_i">
+      <obj_property name="ElementShortName">op1_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">op1_i[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/LO">
-      <obj_property name="ElementShortName">LO[31:0]</obj_property>
-      <obj_property name="ObjectShortName">LO[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/op2_i">
+      <obj_property name="ElementShortName">op2_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">op2_i[31:0]</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/reg1_eq_reg2">
-      <obj_property name="ElementShortName">reg1_eq_reg2</obj_property>
-      <obj_property name="ObjectShortName">reg1_eq_reg2</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/div/start_i">
+      <obj_property name="ElementShortName">start_i</obj_property>
+      <obj_property name="ObjectShortName">start_i</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/reg1_lt_reg2">
-      <obj_property name="ElementShortName">reg1_lt_reg2</obj_property>
-      <obj_property name="ObjectShortName">reg1_lt_reg2</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/div/annul_i">
+      <obj_property name="ElementShortName">annul_i</obj_property>
+      <obj_property name="ObjectShortName">annul_i</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/ex_0/ov_sum">
-      <obj_property name="ElementShortName">ov_sum</obj_property>
-      <obj_property name="ObjectShortName">ov_sum</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/result_o">
+      <obj_property name="ElementShortName">result_o[63:0]</obj_property>
+      <obj_property name="ObjectShortName">result_o[63:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/arithmetic_result">
-      <obj_property name="ElementShortName">arithmetic_result[31:0]</obj_property>
-      <obj_property name="ObjectShortName">arithmetic_result[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/div/ready_o">
+      <obj_property name="ElementShortName">ready_o</obj_property>
+      <obj_property name="ObjectShortName">ready_o</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/reg2_i_mux">
-      <obj_property name="ElementShortName">reg2_i_mux[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg2_i_mux[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/div_temp">
+      <obj_property name="ElementShortName">div_temp[32:0]</obj_property>
+      <obj_property name="ObjectShortName">div_temp[32:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/reg1_i_not">
-      <obj_property name="ElementShortName">reg1_i_not[31:0]</obj_property>
-      <obj_property name="ObjectShortName">reg1_i_not[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/cnt">
+      <obj_property name="ElementShortName">cnt[5:0]</obj_property>
+      <obj_property name="ObjectShortName">cnt[5:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/result_sum">
-      <obj_property name="ElementShortName">result_sum[31:0]</obj_property>
-      <obj_property name="ObjectShortName">result_sum[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/dividend">
+      <obj_property name="ElementShortName">dividend[64:0]</obj_property>
+      <obj_property name="ObjectShortName">dividend[64:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/hilo_temp">
-      <obj_property name="ElementShortName">hilo_temp[63:0]</obj_property>
-      <obj_property name="ObjectShortName">hilo_temp[63:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/state">
+      <obj_property name="ElementShortName">state[1:0]</obj_property>
+      <obj_property name="ObjectShortName">state[1:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/mulres">
-      <obj_property name="ElementShortName">mulres[63:0]</obj_property>
-      <obj_property name="ObjectShortName">mulres[63:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/divisor">
+      <obj_property name="ElementShortName">divisor[31:0]</obj_property>
+      <obj_property name="ObjectShortName">divisor[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/operand1_mult">
-      <obj_property name="ElementShortName">operand1_mult[31:0]</obj_property>
-      <obj_property name="ObjectShortName">operand1_mult[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/temp_op1">
+      <obj_property name="ElementShortName">temp_op1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">temp_op1[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/ex_0/operand2_mult">
-      <obj_property name="ElementShortName">operand2_mult[31:0]</obj_property>
-      <obj_property name="ObjectShortName">operand2_mult[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/hilo0/clk">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/hilo0/rst">
-      <obj_property name="ElementShortName">rst</obj_property>
-      <obj_property name="ObjectShortName">rst</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/closemips_testbench/closemips0/hilo0/writeEnable_i">
-      <obj_property name="ElementShortName">writeEnable_i</obj_property>
-      <obj_property name="ObjectShortName">writeEnable_i</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/hilo0/writeHi_i">
-      <obj_property name="ElementShortName">writeHi_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">writeHi_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/hilo0/writeLo_i">
-      <obj_property name="ElementShortName">writeLo_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">writeLo_i[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/hilo0/dataHi_o">
-      <obj_property name="ElementShortName">dataHi_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dataHi_o[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/closemips_testbench/closemips0/hilo0/dataLo_o">
-      <obj_property name="ElementShortName">dataLo_o[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dataLo_o[31:0]</obj_property>
+   <wvobject type="array" fp_name="/closemips_testbench/closemips0/div/temp_op2">
+      <obj_property name="ElementShortName">temp_op2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">temp_op2[31:0]</obj_property>
    </wvobject>
 </wave_config>

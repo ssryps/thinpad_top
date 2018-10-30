@@ -30,8 +30,14 @@ module id_ex(
             ex_reg2 <= `ZeroWord;
             ex_wd <= `NOPRegAddr;
             ex_wreg <= `WriteDisable;
-        end
-        else begin
+        end else if (stall_i[2]==`Enable&&stall_i[3]==`Disable) begin
+            ex_aluop <= `EXE_SLL_OP;
+            ex_alusel <= `EXE_RES_SHIFT;
+            ex_reg1 <= `ZeroWord;
+            ex_reg2 <= `ZeroWord;
+            ex_wd <= `NOPRegAddr;
+            ex_wreg <= `WriteDisable;
+        end else if (stall_i[2]==`Disable)begin
             ex_aluop <= id_aluop;
             ex_alusel <= id_alusel;
             ex_reg1 <= id_reg1;

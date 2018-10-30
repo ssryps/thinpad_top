@@ -380,6 +380,30 @@ module id(
 
                             instvalid <= `InstValid;
                         end
+                        `EXE_DIV: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_DIV_OP;
+                            //alusel_o<=E`XE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteDisable;
+
+                            instvalid <= `InstValid;
+                        end
+                        `EXE_DIVU: begin
+                            //registers
+                            reg1_read_o <= 1'b1;
+                            reg2_read_o <= 1'b1; 
+                            //ex
+                            aluop_o <= `EXE_DIVU_OP;
+                            //alusel_o<=E`XE_RES_ARITHMETIC;
+                            //mem
+                            wreg_o <= `WriteDisable;
+
+                            instvalid <= `InstValid;
+                        end
                     endcase  
                 end
                 `EXE_ORI: begin

@@ -94,7 +94,7 @@
 //ALU instruction type and subtype
 `define AluOpBus 5:0
 `define AluSelBus 2:0
-module test_data_denpendency;
+module test_data_shift_and_move;
 wire my_clk_50M, my_clk_11M0592;
 reg rst;
 

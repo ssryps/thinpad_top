@@ -6,6 +6,7 @@
 `define InstValid 1'b0
 `define InstInvalid 1'b1
 `define ZeroWord 32'h0
+`define DoubleZeroWord 64'h0
 `define Enable 1'b1
 `define Disable 1'b0
 
@@ -109,7 +110,7 @@
 `define RegBus 31:0
 `define DoubleRegBus 63:0
 `define RegAddrBus 4:0
-`define StallBus 4:0
+`define StallBus 5:0
 
 `define NOPRegAddr 5'b00000
 
@@ -120,3 +121,9 @@
 //CTRL and stall
 `define Stall 1'b1
 `define NotStall 1'b0
+
+//DIV
+`define DIV_FREE 2'b00
+`define DIV_ON 2'b01
+`define DIV_BY_ZERO 2'b10
+`define DIV_END 2'b11

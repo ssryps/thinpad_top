@@ -108,6 +108,15 @@ wire [`StallBus] stall_ctrl_o;
 wire stallreq_id_o;
 wire stallreq_ex_o;
 
+//DIV
+wire signed_div_ex_o;
+wire [`RegBus] div_op1_ex_o;
+wire [`RegBus] div_op2_ex_o;
+wire start_ex_o;
+wire annul_ex_o;
+wire [`DoubleRegBus] result_div_o;
+wire ready_div_o;
+
 PC Pc(
     .rst_i(rst), .clk_i(clk), .stall_i(stall_ctrl_o), .pc_o(pc), .ce_o(rom_ce_o) 
 );
@@ -178,13 +187,20 @@ ex ex_0(
     .mem_hi_i(mem_hi),
     .mem_lo_i(mem_lo),
     .mem_whilo_i(mem_whilo),
+    .div_result_i(result_div_o),
+    .div_ready_i(ready_div_o),
+    
     .wd_o(wd_o),
     .wreg_o(wreg_o),
     .wdata_o(wdata_o),
     .hi_o(ex_hi_o),
     .lo_o(ex_lo_o),
     .whilo_o(ex_whilo_o),
-    .stallreq_o(stallreq_ex_o)
+    .stallreq_o(stallreq_ex_o),
+    .signed_div_o(signed_div_ex_o),
+    .div_op1_o(div_op1_ex_o),
+    .div_op2_o(div_op2_ex_o),
+    .div_start_o(start_ex_o)
 );
 
 ex_mem ex_mem0(
@@ -270,6 +286,21 @@ CTRL Ctrl(
     .stall_from_id_i(stallreq_id_o),
     .stall_from_ex_i(stallreq_ex_o),
     .stall_o(stall_ctrl_o)
+);
+
+DIV div(
+    .clk_i(clk),
+    .rst_i(rst),
+    .signed_div_i(signed_div_ex_o),
+    .op1_i(div_op1_ex_o),
+    .op2_i(div_op2_ex_o),
+    .start_i(start_ex_o),
+    // No annul at present
+    .annul_i(1'b0),
+    //.annul_i(annul_ex_o),
+    
+    .result_o(result_div_o),
+    .ready_o(ready_div_o)
 );
 
 endmodule
