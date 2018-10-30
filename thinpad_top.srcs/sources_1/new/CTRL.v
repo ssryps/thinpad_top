@@ -21,33 +21,22 @@
 //`include "def.v"
 `include "defines.v"
 
-module PC(
+module CTRL(
     input wire rst_i,
-    input wire clk_i,
-    input wire [`StallBus] stall_i,
+    input wire stall_from_id_i,
+    input wire stall_from_ex_i,
 
-    output reg [31:0] pc_o,
-    output reg ce_o
+    output reg [`StallBus] stall_o
     );
-    reg rsted;
-    always @(posedge clk_i) begin
-        if (rst_i==`Enable) begin
-            pc_o<=`ZeroWord;
-            rsted<=`Enable;
+    always @(*) begin
+        if (rst_i==`RstEnable) begin
+            stall_o<=6'b000000;
+        end else if (stall_from_ex_i==`Stall) begin
+            stall_o<=6'b001111;
+        end else if (stall_from_id_i==`Stall) begin
+            stall_o<=6'b000111;
         end else begin
-            if (rsted==`Enable) begin
-                rsted<=`Disable;
-            end else if (stall_i[0]==`NotStall) begin
-                pc_o<=pc_o+4'h4;
-            end
+            stall_o<=6'b000000;
         end
     end
-    
-    always @ (posedge clk_i) begin
-		if (rst_i==`Enable) begin
-			ce_o<=`Disable;
-		end else begin
-			ce_o<=`Enable;
-		end
-	end
 endmodule

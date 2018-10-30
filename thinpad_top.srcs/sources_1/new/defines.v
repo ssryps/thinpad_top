@@ -51,6 +51,9 @@
 `define EXE_MULT 6'b011000// is special instruction
 `define EXE_MULTU 6'b011001// is special instruction
 
+`define EXE_DIV 6'b011010// is special instruction
+`define EXE_DIVU 6'b011011// is special instruction
+
 // following are special2 instruction
 `define EXE_MUL 6'b000010 
 `define EXE_CLZ 6'b100000
@@ -86,6 +89,9 @@
 `define EXE_CLZ_OP 6'b010111
 `define EXE_CLO_OP 6'b011000
 
+`define EXE_DIV_OP 6'b011001
+`define EXE_DIVU_OP 6'b011010
+
 //AluSel
 `define EXE_RES_LOGIC 3'b000
 `define EXE_RES_SHIFT 3'b001
@@ -103,6 +109,7 @@
 `define RegBus 31:0
 `define DoubleRegBus 63:0
 `define RegAddrBus 4:0
+`define StallBus 4:0
 
 `define NOPRegAddr 5'b00000
 
@@ -110,3 +117,6 @@
 `define AluOpBus 5:0
 `define AluSelBus 2:0
 
+//CTRL and stall
+`define Stall 1'b1
+`define NotStall 1'b0

@@ -11,6 +11,7 @@ module id_ex(
     input wire[`RegBus] id_reg2,
     input wire[`RegAddrBus] id_wd,
     input wire id_wreg,
+    input wire [`StallBus] stall_i,
 
     //output to ex
     output reg[`AluOpBus] ex_aluop,

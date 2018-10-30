@@ -33,7 +33,10 @@ module ex(
     //output to ex_mem
     output reg[`RegBus] hi_o,
 	output reg[`RegBus] lo_o,
-	output reg whilo_o
+	output reg whilo_o,
+    
+    //output to CTRL
+    output reg stallreq_o
 );
 
     reg[`RegBus] logicout;

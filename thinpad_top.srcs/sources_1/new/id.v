@@ -18,6 +18,8 @@ module id(
     input wire[`RegAddrBus] mem_wd_i,
     input wire mem_wreg_i,
 
+    //Stall singal from CTRL
+    input wire [`StallBus] stall_i,
 
     //output to registers
     output reg reg1_read_o,
@@ -31,7 +33,10 @@ module id(
     output reg[`RegBus] reg1_o,
     output reg[`RegBus] reg2_o,
     output reg[`RegAddrBus] wd_o,
-    output reg wreg_o
+    output reg wreg_o,
+
+    //output to CTRL
+    output reg stallreq_o
 );
     wire[5:0] op = inst_i[31:26];
     wire[4:0] rs = inst_i[25:21];

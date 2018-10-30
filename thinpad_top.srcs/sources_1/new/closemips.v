@@ -98,18 +98,24 @@ wire mem_wb_wreg_o;
 wire [4:0]mem_wb_wd_o;
 wire [31:0]mem_wb_wdata_o;
 
+//HILO
 wire[`RegBus] mem_hi_o;
 wire[`RegBus] mem_lo_o;
 wire mem_whilo_o;
 
+//Stall singal from CTRL
+wire [`StallBus] stall_ctrl_o;
+wire stallreq_id_o;
+wire stallreq_ex_o;
+
 PC Pc(
-    .rst_i(rst), .clk_i(clk), .pc_o(pc), .ce_o(rom_ce_o) 
+    .rst_i(rst), .clk_i(clk), .stall_i(stall_ctrl_o), .pc_o(pc), .ce_o(rom_ce_o) 
 );
 assign rom_addr_o = pc;
 
 
 IF_ID If_id(
-    .rst_i(rst), .clk_i(clk), .if_pc_i(pc), .if_inst_i(rom_data_i),
+    .rst_i(rst), .clk_i(clk), .if_pc_i(pc), .if_inst_i(rom_data_i), .stall_i(stall_ctrl_o),
     .id_pc_o(id_pc) , .id_inst_o(id_inst)
 );
 
@@ -134,7 +140,8 @@ id id0 (
     .reg1_o(reg1_o),
     .reg2_o(reg2_o),
     .wd_o(wd),
-    .wreg_o(wreg)
+    .wreg_o(wreg),
+    .stallreq_o(stallreq_id_o)
 );
 
 id_ex id_ex0(
@@ -146,6 +153,7 @@ id_ex id_ex0(
     .id_reg2(reg2_o),
     .id_wd(wd),
     .id_wreg(wreg),
+    .stall_i(stall_ctrl_o),
     .ex_aluop(ex_aluop),
     .ex_alusel(ex_alusel),
     .ex_reg1(ex_reg1),
@@ -175,7 +183,8 @@ ex ex_0(
     .wdata_o(wdata_o),
     .hi_o(ex_hi_o),
     .lo_o(ex_lo_o),
-    .whilo_o(ex_whilo_o)
+    .whilo_o(ex_whilo_o),
+    .stallreq_o(stallreq_ex_o)
 );
 
 ex_mem ex_mem0(
@@ -187,6 +196,7 @@ ex_mem ex_mem0(
     .ex_hi(ex_hi_o),
     .ex_lo(ex_lo_o),
     .ex_whilo(ex_whilo_o),
+    .stall_i(stall_ctrl_o),
     .mem_wd(ex_mem_wd_o),
     .mem_wreg(ex_mem_wreg_o),
     .mem_wdata(ex_mem_wdata_o),
@@ -220,6 +230,7 @@ MEM_WB Mem_wb(
     .mem_hi(mem_hi_o),
     .mem_lo(mem_lo_o),
     .mem_whilo(mem_whilo_o),
+    .stall_i(stall_ctrl_o),
     .wb_wd_o(mem_wb_wd_o),
     .wb_wreg_o(mem_wb_wreg_o),
     .wb_wdata_o(mem_wb_wdata_o),
@@ -252,6 +263,13 @@ RegisterFile regisetrfile0(
     .result1(reg1),
     .result2(reg2)
 
+);
+
+CTRL Ctrl(
+    .rst_i(rst),
+    .stall_from_id_i(stallreq_id_o),
+    .stall_from_ex_i(stallreq_ex_o),
+    .stall_o(stall_ctrl_o)
 );
 
 endmodule
