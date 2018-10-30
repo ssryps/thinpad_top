@@ -29,7 +29,12 @@
 `define MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT 	4'b0101
 `define MEMCONTROL_STATE_PC_READ_OR_WRITE_MEM_RESULT	4'b0110
 `define MEMCONTROL_STATE_PC_READ_AND_WRITE	 			4'b0111
-`define MEMCONTROL_STATE_PC_READ_AND_WRITE_RESULT		4'b1000
+`define MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT	4'b1000
+`define MEMCONTROL_STATE_PC_READ_AND_WRITE1				4'b1001
+`define MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT	4'b1010
+`define MEMCONTROL_STATE_PC_READ_AND_WRITE2				4'b1011
+`define MEMCONTROL_STATE_PC_READ_AND_WRITE_WRITE_RESULT	4'b1100
+
 
 module MemControl(
 		input wire clk, 
@@ -72,6 +77,7 @@ module MemControl(
 	reg [31:0]read_or_write_temp_pc;
 	reg [31:0]read_and_write_temp_pc;
 	reg [31:0]read_and_write_temp_mem;
+	//reg [31:0]read_and_write_temp_
 
 	reg cur_stage;
 
@@ -85,11 +91,11 @@ module MemControl(
 	assign data_o = data_o_reg;
 	assign pc_data_o = pc_data_o_reg;
 	assign mem_data_o = mem_data_o_reg;
-	assign pause_pipeline_o = (cur_state == `MEMCONTROL_STATE_ONLY_PC || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT
-							|| cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_1);
-	//assign addr_o = (cur_state == `MEMCONTROL_STATE_ONLY_PC? pc_addr_i : 32'b0000_0000);
-	//assign op_o   = (cur_state == `MEMCONTROL_STATE_ONLY_PC? `MEMCONTROL_OP_READ: `MEMCONTROL_OP_NOP);
-	
+	assign pause_pipeline_o = (cur_state == `MEMCONTROL_STATE_ONLY_PC )
+							|| (cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_1)
+							|| (cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE1
+							|| cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2);
+
 	always @(posedge clk) begin 
 		if(rst) begin
 			cur_state <= `MEMCONTROL_STATE_INIT;
@@ -98,7 +104,7 @@ module MemControl(
 				if(mem_op_i == `MEMCONTROL_OP_NOP) begin
 					cur_state  <= `MEMCONTROL_STATE_ONLY_PC;
 					cur_stage <= 0;
-				end else if(mem_op_i == `MEMCONTROL_OP_WRITE || mem_op_i == `MEMCONTROL_OP_READ) begin
+				end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
 					if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
 						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
 						cur_stage <= 0;
@@ -106,6 +112,9 @@ module MemControl(
 						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
 						cur_stage <= 0;
 					end
+				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+						cur_stage <= 0;
 				end
 
 			end else if(cur_state == `MEMCONTROL_STATE_ONLY_PC) begin
@@ -118,7 +127,7 @@ module MemControl(
 				if(mem_op_i == `MEMCONTROL_OP_NOP) begin
 					cur_state  <= `MEMCONTROL_STATE_ONLY_PC;
 					cur_stage <= 0;
-				end else if(mem_op_i == `MEMCONTROL_OP_WRITE || mem_op_i == `MEMCONTROL_OP_READ) begin
+				end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
 					if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
 						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
 						cur_stage <= 0;
@@ -126,7 +135,11 @@ module MemControl(
 						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
 						cur_stage <= 0;
 					end
+				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+						cur_stage <= 0;
 				end
+
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE) begin
 				if(cur_stage == 0) begin
 					cur_stage = 1;
@@ -147,7 +160,7 @@ module MemControl(
 				if(mem_op_i == `MEMCONTROL_OP_NOP) begin
 					cur_state  <= `MEMCONTROL_STATE_ONLY_PC;
 					cur_stage <= 0;
-				end else if(mem_op_i == `MEMCONTROL_OP_WRITE || mem_op_i == `MEMCONTROL_OP_READ) begin
+				end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
 					if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
 						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
 						cur_stage <= 0;
@@ -155,7 +168,53 @@ module MemControl(
 						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
 						cur_stage <= 0;
 					end
+				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+						cur_stage <= 0;
 				end
+
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE) begin
+				if(cur_stage == 0) begin
+					cur_stage = 1;
+				end else begin
+					cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT;
+					cur_stage <= 0;
+				end	
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT) begin
+				cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE1;
+				cur_stage <= 0;
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE1) begin
+				if(cur_stage == 0) begin
+					cur_stage = 1;
+				end else begin
+					cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT;
+				end 			
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT) begin
+				cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE2;
+				cur_stage <= 0;
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) begin
+				if(cur_stage == 0) begin
+					cur_stage = 1;
+				end else begin
+					cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_WRITE_RESULT;
+				end 			
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_WRITE_RESULT) begin
+				if(mem_op_i == `MEMCONTROL_OP_NOP) begin
+					cur_state  <= `MEMCONTROL_STATE_ONLY_PC;
+					cur_stage <= 0;
+				end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
+					if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+						cur_stage <= 0;
+					end else begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
+						cur_stage <= 0;
+					end
+				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+						cur_stage <= 0;
+				end
+
 			end
 		end
 	end
@@ -212,6 +271,52 @@ module MemControl(
 					addr_o_reg <= pc_addr_i;
 					data_o_reg <=  mem_data_i;
 				//end
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE) begin
+				op_o_reg   <= `MEMCONTROL_OP_READ;
+				addr_o_reg <= pc_addr_i;
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT) begin
+				op_o_reg   <=  `MEMCONTROL_OP_READ;
+				addr_o_reg <=  mem_addr_i;
+				data_o_reg <=  mem_data_i;
+				// save temp pc result 
+				read_and_write_temp_pc <= mmu_result_i;
+
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE1) begin
+				op_o_reg   <= `MEMCONTROL_OP_READ;
+				addr_o_reg <= mem_addr_i;
+				data_o_reg <= mem_data_i;
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT) begin
+				op_o_reg   <= `MEMCONTROL_OP_WRITE;
+				addr_o_reg <= mem_addr_i;
+				if(mem_data_sz_i == `MEMECONTROL_OP_HALF_WORD) begin
+					if(mem_addr_i[1:0] == 2'b00) begin
+						data_o_reg <= {mmu_result_i[31: 16], mem_data_i[15:0]};
+					end else if(mem_addr_i[1:0] == 2'b10) begin
+						data_o_reg <= {mem_data_i[31: 16], mmu_result_i[15:0]};
+					end
+				end else if(mem_data_sz_i == `MEMECONTROL_OP_BYTE) begin
+					if(mem_addr_i[1:0] == 2'b00) begin
+						data_o_reg <= {mmu_result_i[31: 8], mem_data_i[7:0]};
+					end else if(mem_addr_i[1:0] == 2'b01) begin
+						data_o_reg <= {mmu_result_i[31: 16], mem_data_i[15:8], mmu_result_i[7:0]};
+					end else if(mem_addr_i[1:0] == 2'b10) begin
+						data_o_reg <= {mmu_result_i[31: 24], mem_data_i[23:16], mmu_result_i[15:0]};
+					end else if(mem_addr_i[1:0] == 2'b11) begin
+						data_o_reg <= {mem_data_i[31:24], mmu_result_i[23:0]};
+					end
+
+				end
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) begin
+				//op_o_reg   <= `MEMCONTROL_OP_WRITE;
+				//addr_o_reg <= pc_addr_i;
+			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_WRITE_RESULT) begin
+				pc_data_o_reg <= read_and_write_temp_pc;
+				mem_data_o_reg <= mmu_result_i;
+				op_o_reg   <=  `MEMCONTROL_OP_READ;
+				addr_o_reg <=  pc_addr_i;
+				data_o_reg <=  mem_data_i;
+				// save temp pc result 
+				
 			end
 		//end
 	end

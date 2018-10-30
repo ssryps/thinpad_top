@@ -103,7 +103,25 @@ initial begin
     mem_data_i = 32'h2222_2222;
     mem_data_sz_i = `MEMECONTROL_OP_WORD;
     mem_op_i = `MEMCONTROL_OP_NOP;
-      
+    #60;
+    pc_addr_i = 32'h0000_0000;
+    mem_addr_i = 32'h2222_2221;
+    mem_data_i = 32'h4444_4444;
+    mem_data_sz_i = `MEMECONTROL_OP_BYTE;
+    mem_op_i = `MEMCONTROL_OP_WRITE;
+    #160;
+    pc_addr_i = 32'h2222_2222;
+    mem_addr_i = 32'h2222_2222;
+    mem_data_i = 32'h5555_5555;
+    mem_data_sz_i = `MEMECONTROL_OP_HALF_WORD;
+    mem_op_i = `MEMCONTROL_OP_WRITE;
+    #160;
+    pc_addr_i = 32'h0000_0000;
+    mem_addr_i = 32'h2222_2222;
+    mem_data_i = 32'h2222_2222;
+    mem_data_sz_i = `MEMECONTROL_OP_HALF_WORD;
+    mem_op_i = `MEMCONTROL_OP_READ;
+    #120;
 end
 
 
