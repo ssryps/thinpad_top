@@ -26,6 +26,10 @@ module PC(
     input wire clk_i,
     input wire [`StallBus] stall_i,
 
+    //input from id
+    input wire branch_flag_i,
+    input wire[`RegBus] branch_target_address_i,
+
     output reg [31:0] pc_o,
     output reg ce_o
     );
@@ -38,7 +42,11 @@ module PC(
             if (rsted==`Enable) begin
                 rsted<=`Disable;
             end else if (stall_i[0]==`NotStall) begin
-                pc_o<=pc_o+4'h4;
+                if(branch_flag_i == `Branch) begin
+                    pc_o <= branch_target_address_i;
+                end else begin
+                    pc_o<=pc_o+4'h4;
+                end
             end
         end
     end

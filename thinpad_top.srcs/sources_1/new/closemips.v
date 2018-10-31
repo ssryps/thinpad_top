@@ -117,8 +117,19 @@ wire annul_ex_o;
 wire [`DoubleRegBus] result_div_o;
 wire ready_div_o;
 
+//jump and branch
+wire id_branch_flag_o;
+wire[`RegBus] branch_target_address;
+wire is_in_delayslot_i;
+wire is_in_delayslot_o;
+wire next_inst_in_delayslot_o;
+wire id_is_in_delayslot_o;
+wire[`RegBus] id_link_address_o;	
+wire ex_is_in_delayslot_i;	
+wire[`RegBus] ex_link_address_i;	
+
 PC Pc(
-    .rst_i(rst), .clk_i(clk), .stall_i(stall_ctrl_o), .pc_o(pc), .ce_o(rom_ce_o) 
+    .rst_i(rst), .clk_i(clk), .stall_i(stall_ctrl_o), .branch_flag_i(id_branch_flag_o), .branch_target_address_i(branch_target_address), .pc_o(pc), .ce_o(rom_ce_o) 
 );
 assign rom_addr_o = pc;
 
@@ -140,6 +151,7 @@ id id0 (
     .mem_wdata_i(mem_wdata_o),
     .mem_wd_i(mem_wd_o),
     .mem_wreg_i(mem_wreg_o),
+    .is_in_delayslot_i(is_in_delayslot_i),
     .reg1_read_o(reg1_read),
     .reg2_read_o(reg2_read),
     .reg1_addr_o(reg1_addr),
@@ -150,7 +162,12 @@ id id0 (
     .reg2_o(reg2_o),
     .wd_o(wd),
     .wreg_o(wreg),
-    .stallreq_o(stallreq_id_o)
+    .stallreq_o(stallreq_id_o),
+    .next_inst_in_delayslot_o(next_inst_in_delayslot_o),	
+    .branch_flag_o(id_branch_flag_o),
+    .branch_target_address_o(branch_target_address),       
+    .link_addr_o(id_link_address_o),
+    .is_in_delayslot_o(id_is_in_delayslot_o)
 );
 
 id_ex id_ex0(
@@ -162,13 +179,20 @@ id_ex id_ex0(
     .id_reg2(reg2_o),
     .id_wd(wd),
     .id_wreg(wreg),
+    .id_link_address(id_link_address_o),
+	.id_is_in_delayslot(id_is_in_delayslot_o),
+	.next_inst_in_delayslot_i(next_inst_in_delayslot_o),
     .stall_i(stall_ctrl_o),
+
     .ex_aluop(ex_aluop),
     .ex_alusel(ex_alusel),
     .ex_reg1(ex_reg1),
     .ex_reg2(ex_reg2),
     .ex_wd(ex_wd),
-    .ex_wreg(ex_wreg)
+    .ex_wreg(ex_wreg),
+    .ex_link_address(ex_link_address_i),
+  	.ex_is_in_delayslot(ex_is_in_delayslot_i),
+	.is_in_delayslot_o(is_in_delayslot_i)	
 );
 
 ex ex_0(
@@ -189,6 +213,8 @@ ex ex_0(
     .mem_whilo_i(mem_whilo),
     .div_result_i(result_div_o),
     .div_ready_i(ready_div_o),
+    .link_address_i(ex_link_address_i),
+	.is_in_delayslot_i(ex_is_in_delayslot_i),	
     
     .wd_o(wd_o),
     .wreg_o(wreg_o),

@@ -13,6 +13,7 @@
 //instructions_top_six_bits
 `define EXE_SPECIAL_INST  6'b000000
 `define EXE_SPECIAL2_INST  6'b011100
+`define EXE_REGIMM_INST 6'b000001
 `define EXE_ORI 6'b001101
 `define EXE_ANDI 6'b001100
 `define EXE_XORI 6'b001110
@@ -21,6 +22,18 @@
 `define EXE_ADDIU 6'b001001
 `define EXE_SLTI 6'b001010
 `define EXE_SLTIU 6'b001011
+`define EXE_J  6'b000010
+`define EXE_JAL  6'b000011
+`define EXE_BEQ  6'b000100
+`define EXE_BGTZ  6'b000111
+`define EXE_BLEZ  6'b000110
+`define EXE_BNE  6'b000101
+
+//instructions_[20:16]_six_bits
+`define EXE_BLTZ  5'b00000
+`define EXE_BGEZ  5'b00001
+`define EXE_BLTZAL  5'b10000
+`define EXE_BGEZAL  5'b10001
 
 //instructions_lowest_six_bits
 `define EXE_AND 6'b100100
@@ -54,6 +67,9 @@
 
 `define EXE_DIV 6'b011010// is special instruction
 `define EXE_DIVU 6'b011011// is special instruction
+
+`define EXE_JR  6'b001000
+`define EXE_JALR  6'b001001
 
 // following are special2 instruction
 `define EXE_MUL 6'b000010 
@@ -93,12 +109,26 @@
 `define EXE_DIV_OP 6'b011001
 `define EXE_DIVU_OP 6'b011010
 
+`define EXE_J_OP  6'b011011
+`define EXE_JAL_OP  6'b011100
+`define EXE_JALR_OP  6'b011101
+`define EXE_JR_OP  6'b011110
+`define EXE_BEQ_OP  6'b011111
+`define EXE_BGEZ_OP  6'b100000
+`define EXE_BGEZAL_OP  6'b100001
+`define EXE_BGTZ_OP  6'b100010
+`define EXE_BLEZ_OP  6'b100011
+`define EXE_BLTZ_OP  6'b100100
+`define EXE_BLTZAL_OP  6'b100101
+`define EXE_BNE_OP  6'b100110
+
 //AluSel
 `define EXE_RES_LOGIC 3'b000
 `define EXE_RES_SHIFT 3'b001
 `define EXE_RES_MOVE 3'b010
 `define EXE_RES_ARITHMETIC 3'b011 // excluding multiplication 
 `define EXE_RES_MUL 3'b100
+`define EXE_RES_JUMP_BRANCH 3'b101
 
 //instruction and address of instruction
 `define InstAddrBus 31:0
@@ -127,3 +157,9 @@
 `define DIV_ON 2'b01
 `define DIV_BY_ZERO 2'b10
 `define DIV_END 2'b11
+
+//branch instructions 
+`define Branch 1'b1
+`define NotBranch 1'b0
+`define InDelaySlot 1'b1
+`define NotInDelaySlot 1'b0
