@@ -46,7 +46,8 @@ module id(
 	output reg branch_flag_o,
 	output reg[`RegBus] branch_target_address_o,       
 	output reg[`RegBus] link_addr_o,
-	output reg is_in_delayslot_o	
+	output reg is_in_delayslot_o,
+    output wire[`RegBus] inst_o
 );
     wire[5:0] op = inst_i[31:26];
     wire[4:0] rs = inst_i[25:21];
@@ -68,6 +69,8 @@ module id(
     assign pc_plus_8 = pc_i + 8;
     assign pc_plus_4 = pc_i +4;
     assign imm_sll2_signedext = {{14{inst_i[15]}}, inst_i[15:0], 2'b00 };  
+
+    assign inst_o = inst_i;
 
     always @ (*) begin
         if (rst == `RstEnable) begin
@@ -686,6 +689,157 @@ module id(
                         next_inst_in_delayslot_o <= `InDelaySlot;
                     end
 
+                    instvalid <= `InstValid;
+                end
+                `EXE_LB: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    //ex
+                    aluop_o <= `EXE_LB_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+
+                    instvalid <= `InstValid;
+                end
+                `EXE_LBU: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    //ex
+                    aluop_o <= `EXE_LBU_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_LH: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    //ex
+                    aluop_o <= `EXE_LH_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_LHU: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    //ex
+                    aluop_o <= `EXE_LHU_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_LW: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b0;
+                    //ex
+                    aluop_o <= `EXE_LW_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_LWL: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_LWL_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_LWR: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_LWR_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteEnable;
+                    wd_o <= rt;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_SB: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_SB_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteDisable;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_SH: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_SH_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteDisable;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_SW: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_SW_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteDisable;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_SWL: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_SWL_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteDisable;
+                    
+                    instvalid <= `InstValid;
+                end
+                `EXE_SWR: begin
+                    //registers
+                    reg1_read_o <= 1'b1;
+                    reg2_read_o <= 1'b1;
+                    //ex
+                    aluop_o <= `EXE_SWR_OP;
+                    alusel_o <= `EXE_RES_LOAD_STORE;
+                    //mem
+                    wreg_o <= `WriteDisable;
+                    
                     instvalid <= `InstValid;
                 end
                 `EXE_SPECIAL2_INST: begin

@@ -17,6 +17,11 @@ module ex_mem(
 
     //Stall singal from CTRL
     input wire [`StallBus] stall_i,
+
+	//for load and store
+	input wire[`AluOpBus] ex_aluop,
+	input wire[`RegBus] ex_mem_addr,
+	input wire[`RegBus] ex_reg2,
 	
 	//ouput to mem
 	output reg[`RegAddrBus] mem_wd,
@@ -25,8 +30,12 @@ module ex_mem(
 	
 	output reg[`RegBus] mem_hi,
 	output reg[`RegBus] mem_lo,
-	output reg mem_whilo
-	
+	output reg mem_whilo,
+
+	//for load and store
+	output reg[`AluOpBus] mem_aluop,
+	output reg[`RegBus] mem_mem_addr,
+	output reg[`RegBus] mem_reg2,
 );
 
 	always @ (posedge clk) begin
@@ -37,6 +46,9 @@ module ex_mem(
 			mem_hi <= `ZeroWord;
 			mem_lo <= `ZeroWord;
 			mem_whilo <= `WriteDisable;
+			mem_aluop <= `EXE_SLL_OP;
+			mem_mem_addr <= `ZeroWord;
+			mem_reg2 <= `ZeroWord;
 		end else if(stall_i[3]==`Stall&&stall_i[4]==`NotStall) begin
 			mem_wd <= `NOPRegAddr;
 			mem_wreg <= `WriteDisable;
@@ -44,6 +56,9 @@ module ex_mem(
 			mem_hi <= `ZeroWord;
 			mem_lo <= `ZeroWord;
 			mem_whilo <= `WriteDisable;
+			mem_aluop <= `EXE_SLL_OP;
+			mem_mem_addr <= `ZeroWord;
+			mem_reg2 <= `ZeroWord;
 		end else if (stall_i[3]==`NotStall) begin
 			mem_wd <= ex_wd;
 			mem_wreg <= ex_wreg;
@@ -51,6 +66,9 @@ module ex_mem(
 			mem_hi <= ex_hi;
 			mem_lo <= ex_lo;
 			mem_whilo <= ex_whilo;
+			mem_aluop <= ex_aluop;
+			mem_mem_addr <= ex_mem_addr;
+			mem_reg2 <= ex_reg2;
 		end    //if
 	end      //always
 			

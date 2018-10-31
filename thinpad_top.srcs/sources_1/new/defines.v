@@ -29,6 +29,21 @@
 `define EXE_BLEZ  6'b000110
 `define EXE_BNE  6'b000101
 
+`define EXE_LB  6'b100000
+`define EXE_LBU  6'b100100
+`define EXE_LH  6'b100001
+`define EXE_LHU  6'b100101
+`define EXE_LL  6'b110000
+`define EXE_LW  6'b100011
+`define EXE_LWL  6'b100010
+`define EXE_LWR  6'b100110
+`define EXE_SB  6'b101000
+`define EXE_SC  6'b111000
+`define EXE_SH  6'b101001
+`define EXE_SW  6'b101011
+`define EXE_SWL  6'b101010
+`define EXE_SWR  6'b101110
+
 //instructions_[20:16]_six_bits
 `define EXE_BLTZ  5'b00000
 `define EXE_BGEZ  5'b00001
@@ -122,6 +137,21 @@
 `define EXE_BLTZAL_OP  6'b100101
 `define EXE_BNE_OP  6'b100110
 
+`define EXE_LB_OP  6'b100111
+`define EXE_LBU_OP  6'b101000
+`define EXE_LH_OP  6'b101001
+`define EXE_LHU_OP  6'b101010
+`define EXE_LL_OP  6'b101011
+`define EXE_LW_OP  6'b101100
+`define EXE_LWL_OP  6'b101101
+`define EXE_LWR_OP  6'b101110
+`define EXE_SB_OP  6'b101111
+`define EXE_SC_OP  6'b110000
+`define EXE_SH_OP  6'b110001
+`define EXE_SW_OP  6'b110010
+`define EXE_SWL_OP  6'b110011
+`define EXE_SWR_OP  6'b110100
+
 //AluSel
 `define EXE_RES_LOGIC 3'b000
 `define EXE_RES_SHIFT 3'b001
@@ -129,6 +159,7 @@
 `define EXE_RES_ARITHMETIC 3'b011 // excluding multiplication 
 `define EXE_RES_MUL 3'b100
 `define EXE_RES_JUMP_BRANCH 3'b101
+`define EXE_RES_LOAD_STORE 3'b110	
 
 //instruction and address of instruction
 `define InstAddrBus 31:0
@@ -163,3 +194,10 @@
 `define NotBranch 1'b0
 `define InDelaySlot 1'b1
 `define NotInDelaySlot 1'b0
+
+//ram parameters
+`define DataAddrBus 31:0
+`define DataBus 31:0
+`define DataMemNum 131071
+`define DataMemNumLog2 17
+`define ByteWidth 7:0
