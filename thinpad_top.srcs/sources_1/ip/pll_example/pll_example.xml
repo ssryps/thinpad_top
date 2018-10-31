@@ -1160,7 +1160,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:09 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:58 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1179,7 +1183,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:10 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:58 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1198,7 +1206,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:10 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:59 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1217,7 +1229,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:10 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:58 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1236,7 +1252,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:10 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:59 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1254,7 +1274,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:11 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:59 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1272,7 +1296,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:02:11 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:27:59 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
@@ -1290,7 +1318,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
+<<<<<<< HEAD
             <spirit:value>Wed Oct 24 15:03:39 UTC 2018</spirit:value>
+=======
+            <spirit:value>Fri Oct 26 12:30:10 UTC 2018</spirit:value>
+>>>>>>> chap9_1
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
