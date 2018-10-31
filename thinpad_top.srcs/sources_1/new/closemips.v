@@ -141,8 +141,8 @@ IF_ID If_id(
 
 id id0 (
     .rst(rst),
-    .pc_i(pc),
-    .inst_i(rom_data_i),
+    .pc_i(id_pc),
+    .inst_i(id_inst),
     .reg1_data_i(reg1),
     .reg2_data_i(reg2),
     .ex_wdata_i(wdata_o),

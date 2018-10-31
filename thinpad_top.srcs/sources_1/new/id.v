@@ -39,7 +39,7 @@ module id(
     output reg wreg_o,
 
     //output to CTRL
-    output reg stallreq_o
+    output reg stallreq_o,
 
     //related to jump_branch
     output reg next_inst_in_delayslot_o,
