@@ -35,7 +35,7 @@ module ex_mem(
 	//for load and store
 	output reg[`AluOpBus] mem_aluop,
 	output reg[`RegBus] mem_mem_addr,
-	output reg[`RegBus] mem_reg2,
+	output reg[`RegBus] mem_reg2
 );
 
 	always @ (posedge clk) begin

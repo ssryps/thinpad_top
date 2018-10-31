@@ -1,6 +1,6 @@
 `include "defines.v"
 
-module data_ram(
+module ram(
 	input wire clk,
 	input wire ce,
 	input wire we,
