@@ -146,7 +146,6 @@ wire[`AluOpBus] mem_aluop_i;
 wire[`RegBus] mem_mem_addr_i;
 wire[`RegBus] mem_reg2_i;	
 
-
 PC Pc(
     .rst_i(rst), .clk_i(clk), .stall_i(stall_ctrl_o), .branch_flag_i(id_branch_flag_o), .branch_target_address_i(branch_target_address), .pc_o(pc), .ce_o(rom_ce_o) 
 );
@@ -171,6 +170,8 @@ id id0 (
     .mem_wd_i(mem_wd_o),
     .mem_wreg_i(mem_wreg_o),
     .is_in_delayslot_i(is_in_delayslot_i),
+    .ex_aluop_i(ex_aluop_o),
+
     .reg1_read_o(reg1_read),
     .reg2_read_o(reg2_read),
     .reg1_addr_o(reg1_addr),

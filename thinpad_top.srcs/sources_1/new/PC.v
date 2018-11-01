@@ -60,6 +60,7 @@ module PC(
 	end*/
 	always @ (posedge clk_i) begin
         if (ce_o == 1'b0) begin
+                //pc_o <= 32'h00000000;
                 pc_o <= 32'h80000000;
         end else if(stall_i[0] == 1'b0) begin
                   if(branch_flag_i == `Branch) begin

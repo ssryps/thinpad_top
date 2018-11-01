@@ -14,6 +14,7 @@ always @ (*) begin
 	if (ce == `Disable) begin
 		inst <= `ZeroWord;
 	end else begin
+		//inst <= inst_mem[addr[`InstMemNumLog2:2]-30'h00000000];
 		inst <= inst_mem[addr[`InstMemNumLog2:2]-30'h20000000];
 	end
 end
