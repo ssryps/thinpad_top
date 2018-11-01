@@ -164,7 +164,7 @@
 //instruction and address of instruction
 `define InstAddrBus 31:0
 `define InstBus 31:0
-`define InstMemNum 131071
+`define InstMemNum 3010710
 `define InstMemNumLog2 31
 
 //register value and address
