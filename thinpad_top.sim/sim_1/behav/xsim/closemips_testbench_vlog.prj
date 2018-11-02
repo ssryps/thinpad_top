@@ -1,45 +1,27 @@
 # compile verilog/system verilog design source files
-verilog xil_defaultlib  --include "../../../../thinpad_top.srcs/sim_1/new/include" --include "../../../../thinpad_top.srcs/sources_1/ip/pll_example" --include "/home/eric/App/ViVado/Vivado/2018.1/data/xilinx_vip/include" \
-"../../../../thinpad_top.srcs/sources_1/ip/pll_example/pll_example_clk_wiz.v" \
-"../../../../thinpad_top.srcs/sources_1/ip/pll_example/pll_example.v" \
-"../../../../thinpad_top.srcs/sources_1/new/SEG7_LUT.v" \
-"../../../../thinpad_top.srcs/sources_1/new/async.v" \
-"../../../../thinpad_top.srcs/sources_1/new/vga.v" \
-"../../../../thinpad_top.srcs/sources_1/new/thinpad_top.v" \
-"../../../../thinpad_top.srcs/sources_1/new/PC.v" \
-"../../../../thinpad_top.srcs/sources_1/new/MEM_WB.v" \
-"../../../../thinpad_top.srcs/sources_1/new/IF_ID.v" \
-"../../../../thinpad_top.srcs/sources_1/new/MEM.v" \
-"../../../../thinpad_top.srcs/sources_1/new/def.v" \
-"../../../../thinpad_top.srcs/sources_1/new/id.v" \
-"../../../../thinpad_top.srcs/sources_1/new/id_ex.v" \
-"../../../../thinpad_top.srcs/sources_1/new/defines.v" \
-"../../../../thinpad_top.srcs/sources_1/new/ex.v" \
-"../../../../thinpad_top.srcs/sources_1/new/RegisterFile.v" \
-"../../../../thinpad_top.srcs/sources_1/new/MemoryUtils.v" \
-"../../../../thinpad_top.srcs/sources_1/new/ex_mem.v" \
-"../../../../thinpad_top.srcs/sources_1/new/closemips.v" \
-"../../../../thinpad_top.srcs/sources_1/new/inst_rom.v" \
-"../../../../thinpad_top.srcs/sources_1/new/hilo.v" \
+verilog xil_defaultlib "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/test_MMUControl.v" -i "../../../../thinpad_top.srcs/sources_1/new" -i "../../../../thinpad_top.srcs/sources_1/new/Memory" --include "../../../../thinpad_top.srcs/sim_1/new/include" --include "../../../../thinpad_top.srcs/sim_1/new" \
 "../../../../thinpad_top.srcs/sources_1/new/CTRL.v" \
 "../../../../thinpad_top.srcs/sources_1/new/DIV.v" \
-"../../../../thinpad_top.srcs/sim_1/new/28F640P30.v" \
+"../../../../thinpad_top.srcs/sources_1/new/IF_ID.v" \
+"../../../../thinpad_top.srcs/sources_1/new/MEM.v" \
+"../../../../thinpad_top.srcs/sources_1/new/MEM_WB.v" \
+"../../../../thinpad_top.srcs/sources_1/new/MMUControl.v" \
+"../../../../thinpad_top.srcs/sources_1/new/MemControl.v" \
+"../../../../thinpad_top.srcs/sources_1/new/PC.v" \
+"../../../../thinpad_top.srcs/sources_1/new/RegisterFile.v" \
+"../../../../thinpad_top.srcs/sources_1/new/SRAMControl.v" \
 "../../../../thinpad_top.srcs/sim_1/new/clock.v" \
+"../../../../thinpad_top.srcs/sources_1/new/closemem.v" \
+"../../../../thinpad_top.srcs/sources_1/new/closemips.v" \
+"../../../../thinpad_top.srcs/sources_1/new/ex.v" \
+"../../../../thinpad_top.srcs/sources_1/new/ex_mem.v" \
+"../../../../thinpad_top.srcs/sources_1/new/hilo.v" \
+"../../../../thinpad_top.srcs/sources_1/new/id.v" \
+"../../../../thinpad_top.srcs/sources_1/new/id_ex.v" \
 "../../../../thinpad_top.srcs/sim_1/new/sram_model.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_EX-MEM_MEM-WB.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_IF_ID.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_PC.v" \
-
-sv xil_defaultlib  --include "../../../../thinpad_top.srcs/sim_1/new/include" --include "../../../../thinpad_top.srcs/sources_1/ip/pll_example" --include "/home/eric/App/ViVado/Vivado/2018.1/data/xilinx_vip/include" \
-"../../../../thinpad_top.srcs/sim_1/new/tb.sv" \
-
-verilog xil_defaultlib  --include "../../../../thinpad_top.srcs/sim_1/new/include" --include "../../../../thinpad_top.srcs/sources_1/ip/pll_example" --include "/home/eric/App/ViVado/Vivado/2018.1/data/xilinx_vip/include" \
-"../../../../thinpad_top.srcs/sim_1/new/test_id_ex.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_register.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_data_shift_and_move.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_basic_pipeline.v" \
-"../../../../thinpad_top.srcs/sim_1/new/closemips_testbench.v" \
-"../../../../thinpad_top.srcs/sim_1/new/test_data_denpendency.v" \
+"../../../../thinpad_top.srcs/sim_1/new/sram_model1.v" \
+"../../../../thinpad_top.srcs/sim_1/new/sram_model2.v" \
+"../../../../thinpad_top.srcs/sources_1/new/testbench.v" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"

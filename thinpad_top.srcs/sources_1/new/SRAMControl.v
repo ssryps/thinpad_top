@@ -147,13 +147,11 @@ module SRAMControl(
                 if(op_i == `SRAMCONTROL_OP_READ) begin
                     cur_state <=  `SRAMCONTROL_READ_PHASE1;
                 end
-            end
+            end else if(cur_state == `SRAMCONTROL_WRITE_PHASE1) begin        
             // cur_state is write1
-            if(cur_state == `SRAMCONTROL_WRITE_PHASE1) begin        
                cur_state <= `SRAMCONTROL_WRITE_PHASE2;
-            end     
+            end else if(cur_state == `SRAMCONTROL_READ_PHASE1) begin        
             // cur_state is read1
-            if(cur_state == `SRAMCONTROL_READ_PHASE1) begin        
                cur_state <= `SRAMCONTROL_READ_PHASE2;
             end     
         end        

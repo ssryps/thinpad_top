@@ -272,7 +272,7 @@ module ex(
                     shiftout <= reg2_i >> reg1_i[4:0];
                 end
                 `EXE_SRA_OP: begin  
-                    shiftout <= ({32{reg2_i[32]}} << (6'd32 - {1'b0, reg1_i[4:0]})) | (reg2_i >> reg1_i[4:0]);
+                    shiftout <= ({32{reg2_i[31]}} << (6'd32 - {1'b0, reg1_i[4:0]})) | (reg2_i >> reg1_i[4:0]);
                 end
                 default: begin 
                     shiftout <= `ZeroWord;
@@ -297,7 +297,7 @@ module ex(
                 `EXE_MFHI_OP: begin 
                     moveout <= HI;
                 end 
-                `EXE_MTLO_OP: begin
+                `EXE_MFLO_OP: begin
                     moveout <= LO;
                 end
                 default: begin

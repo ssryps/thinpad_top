@@ -136,11 +136,22 @@ module MMUControl (
 				case (device)
 					`DEVICE_RAM: begin
                         sram_enabled_reg <= 0;
-                        result_o_reg <= sram_data_i;
+            
                 	end
 					default : /* default */;
 				endcase
 			end
+		end
+	end
+
+	always @(*) begin 
+		if(cur_state == `MMUCONTROL_STATE_RESULT) begin
+		 	case (device)
+				`DEVICE_RAM: begin
+    				result_o_reg <= sram_data_i;		
+	            end
+				default : /* default */;
+			endcase
 		end
 	end
 

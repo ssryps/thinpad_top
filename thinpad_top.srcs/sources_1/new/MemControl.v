@@ -81,40 +81,38 @@ module MemControl(
 
 	reg cur_stage;
 
-	reg [31:0]pc_addr_temp;
-	reg [31:0]mem_addr_temp;
-	reg [31:0]mem_data_temp;
-	reg [5:0] mem_data_sz_temp;
-	reg [`MEMCONTROL_OP_LEN - 1:0] mem_op_temp;
 	assign op_o = op_o_reg;
 	assign addr_o = addr_o_reg;
 	assign data_o = data_o_reg;
 	assign pc_data_o = pc_data_o_reg;
 	assign mem_data_o = mem_data_o_reg;
-	assign pause_pipeline_o = (cur_state == `MEMCONTROL_STATE_ONLY_PC )
-							|| (cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_1)
-							|| (cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE1
-							|| cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2);
+	assign pause_pipeline_o = !((cur_state == `MEMCONTROL_STATE_ONLY_PC || cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_1
+	 || cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) && cur_stage == 1);
 
 	always @(posedge clk) begin 
 		if(rst) begin
 			cur_state <= `MEMCONTROL_STATE_INIT;
+			cur_stage <= 0;
 		end else begin
 			if (cur_state == `MEMCONTROL_STATE_INIT ) begin
-				if(mem_op_i == `MEMCONTROL_OP_NOP) begin
-					cur_state  <= `MEMCONTROL_STATE_ONLY_PC;
-					cur_stage <= 0;
-				end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
-					if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
-						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+				if(cur_stage == 0) begin
+					cur_stage <= 1;
+				end else begin 
+					if(mem_op_i == `MEMCONTROL_OP_NOP) begin
+						cur_state  <= `MEMCONTROL_STATE_ONLY_PC;
 						cur_stage <= 0;
-					end else begin
-						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
+					end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
+						if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
+							cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
+							cur_stage <= 0;
+						end else begin
+							cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
+							cur_stage <= 0;
+						end
+					end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
 						cur_stage <= 0;
 					end
-				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
-						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
-						cur_stage <= 0;
 				end
 
 			end else if(cur_state == `MEMCONTROL_STATE_ONLY_PC) begin
@@ -183,6 +181,7 @@ module MemControl(
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT) begin
 				cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE1;
 				cur_stage <= 0;
+				//op_o_reg <= 2'b11;
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE1) begin
 				if(cur_stage == 0) begin
 					cur_stage = 1;
@@ -227,10 +226,13 @@ module MemControl(
 				// 	addr_o_reg <= 32'bzzzzzzzz_zzzzzzzz_zzzzzzzz_zzzzzzzz;
 				// 	data_o_reg <= 32'bzzzzzzzz_zzzzzzzz_zzzzzzzz_zzzzzzzz; 	
 				// end else if(mem_op_i == `MEMCONTROL_OP_WRITE || mem_op_i == `MEMCONTROL_OP_READ) begin
+				if(cur_stage == 0) begin
+					op_o_reg <= `MEMCONTROL_OP_NOP;
+				end else begin
 					op_o_reg   <= `MEMCONTROL_OP_READ;
 					addr_o_reg <= pc_addr_i;
 					data_o_reg <=  mem_data_i;
-				// end 
+				end 
 			end else if(cur_state == `MEMCONTROL_STATE_ONLY_PC) begin
 				op_o_reg   <= `MEMCONTROL_OP_READ;
 				addr_o_reg <= pc_addr_i; 

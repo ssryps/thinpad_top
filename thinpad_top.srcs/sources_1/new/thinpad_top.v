@@ -166,13 +166,9 @@ always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
         ext_uart_avai <= 0;
     end
 end
-<<<<<<< HEAD
-always @(posedge clk_50M ) begin //将缓冲区ext_uart_buffer发送出去
-    if(!ext_uart_busy && ext_uart_avai)begin 
-=======
+
 always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
     if(!ext_uart_busy && ext_uart_avai)begin
->>>>>>> chap9_1
         ext_uart_tx <= ext_uart_buffer;
         ext_uart_start <= 1;
     end else begin
