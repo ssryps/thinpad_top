@@ -112,7 +112,7 @@ module MEM(
 
 
     always @(*) begin
-	    if (rst_i==`RstEnable) begin
+        if (rst_i==`RstEnable) begin
             wd_o<=`NOPRegAddr;
             wreg_o<=`WriteDisable;
            // wdata_o<=`ZeroWord;
