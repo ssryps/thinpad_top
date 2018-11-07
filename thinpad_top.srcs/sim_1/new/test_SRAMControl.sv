@@ -48,7 +48,7 @@ wire[3:0] ram2_be_n;  //BaseRAM字节使能，低有效。如果不使用字节�
 initial begin
     rst = 1;
     enabled = 1;
-    #30;
+    #20;
     rst  = 0;
     operation = 2'b10;
     address   = 21'h111111;
@@ -87,15 +87,15 @@ SRAMControl sram_control(
     // control signal to sram
             .ram1_data(ram1_data),
             .ram1_addr(ram1_addr),
-            .ram1_ce(ram1_ce_n),
-            .ram1_oe(ram1_oe_n),
-            .ram1_we(ram1_we_n),
+            .ram1_ce_o(ram1_ce_n),
+            .ram1_oe_o(ram1_oe_n),
+            .ram1_we_o(ram1_we_n),
             .ram1_be(ram1_be_n),
             .ram2_data(ram2_data),
             .ram2_addr(ram2_addr),
-            .ram2_ce(ram2_ce_n),
-            .ram2_oe(ram2_oe_n),
-            .ram2_we(ram2_we_n),
+            .ram2_ce_o(ram2_ce_n),
+            .ram2_oe_o(ram2_oe_n),
+            .ram2_we_o(ram2_we_n),
             .ram2_be(ram2_be_n)
     );
 

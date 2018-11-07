@@ -89,28 +89,25 @@ initial begin
     #40 ;   
     op_i = `MEMCONTROL_OP_READ;
     addr_i   = 32'hffff_ffff;
-     #40;
+    #40;
     op_i = `MEMCONTROL_OP_READ;
-     addr_i   = 32'h0000_0008;
-     #40
-     op_i = `MEMCONTROL_OP_WRITE;
-     addr_i   = 32'h0000_0008;
-     data_i = 32'h1111_2222;
-     #40;
-     op_i = `MEMCONTROL_OP_WRITE;
+    addr_i   = 32'h0000_0008;
+    #40
+    op_i = `MEMCONTROL_OP_WRITE;
+    addr_i   = 32'h0000_0008;
+    data_i = 32'h1111_2222;
+    #40;
+    op_i = `MEMCONTROL_OP_WRITE;
     addr_i   = 32'h0000_0008;
     data_i = 32'h1111_3333;
-     #40;
+    #40;
     op_i = `MEMCONTROL_OP_READ;
-     addr_i   = 32'h0000_0008;
-     #40;
+    addr_i   = 32'h0000_0008;
+    #40;
     op_i = `MEMCONTROL_OP_READ;
-     addr_i   = 32'h0000_0008;
-          
-     
-   
-      #60;
-     op_i = `MEMCONTROL_OP_NOP;
+    addr_i   = 32'h0000_0008;
+    #40;
+    op_i = `MEMCONTROL_OP_NOP;
       
 end
 

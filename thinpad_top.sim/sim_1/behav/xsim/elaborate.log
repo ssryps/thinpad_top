@@ -4,4 +4,30 @@ Running: /media/mason/DATA/cstools/IDE/vivado/Vivado/2018.1/bin/unwrapped/lnx64.
 Using 8 slave threads.
 Starting static elaboration
 Completed static elaboration
-INFO: [XSIM 43-4323] No Change in HDL. Linking previously generated obj files to create kernel
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.clock
+Compiling module xil_defaultlib.PC
+Compiling module xil_defaultlib.IF_ID
+Compiling module xil_defaultlib.id
+Compiling module xil_defaultlib.id_ex
+Compiling module xil_defaultlib.ex
+Compiling module xil_defaultlib.ex_mem
+Compiling module xil_defaultlib.MEM
+Compiling module xil_defaultlib.MEM_WB
+Compiling module xil_defaultlib.hilo
+Compiling module xil_defaultlib.RegisterFile
+Compiling module xil_defaultlib.CTRL
+Compiling module xil_defaultlib.DIV
+Compiling module xil_defaultlib.closemips
+Compiling module xil_defaultlib.MemControl
+Compiling module xil_defaultlib.MMUControl
+Compiling module xil_defaultlib.SRAMControl
+Compiling module xil_defaultlib.closemem
+Compiling module xil_defaultlib.sram_model2
+Compiling module xil_defaultlib.sram_model1
+Compiling module xil_defaultlib.sram_model
+Compiling module xil_defaultlib.closemips_testbench
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot closemips_testbench_behav

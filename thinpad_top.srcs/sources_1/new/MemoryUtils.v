@@ -7,6 +7,7 @@
 // definition for MemControl
 // memcontrol parameters
 `define MEMCONTROL_ADDR_LEN		32
+`define MEMCONTROL_DEFAULT_DATA 32'bzzzzzzzz_zzzzzzzz_zzzzzzzz_zzzzzzzz
 
 // input to memcontrol 
 // operation

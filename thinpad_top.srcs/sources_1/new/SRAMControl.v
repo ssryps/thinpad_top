@@ -58,6 +58,8 @@ module SRAMControl(
     wire ram1_ce, ram1_we, ram1_oe;
     wire ram2_ce, ram2_we, ram2_oe;
     reg[2:0] cur_state;
+    reg[31:0] result_o_reg;
+
     assign ram1_ce_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_ce);
     assign ram1_we_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_we);
     assign ram1_oe_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_oe);
@@ -132,7 +134,8 @@ module SRAMControl(
     assign ram1_addr  = (cur_state == `SRAMCONTROL_INIT? `SRAMCONTROL_DEFALUT_ADDR:addr_i[`SRAM_ADDR_LEN - 1:0]);
     assign ram2_addr  = (cur_state == `SRAMCONTROL_INIT? `SRAMCONTROL_DEFALUT_ADDR:addr_i[`SRAM_ADDR_LEN - 1:0]);
 
-    assign result_o   = (cur_state == `SRAMCONTROL_READ_PHASE2? (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data): `SRAMCONTROL_DEFAULT_DATA); 
+    assign result_o   = (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data);
+    //result_o_reg;//(cur_state == `SRAMCONTROL_READ_PHASE2? (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data): `SRAMCONTROL_DEFAULT_DATA); 
 
       //currently just use baseram, seems that extram will be used later
     always @(posedge clk or enabled_i) begin
@@ -153,7 +156,22 @@ module SRAMControl(
             end else if(cur_state == `SRAMCONTROL_READ_PHASE1) begin        
             // cur_state is read1
                cur_state <= `SRAMCONTROL_READ_PHASE2;
+               //result_o_reg = (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data);
             end     
         end        
     end
+
+    always @(op_i) begin 
+      if(~rst) begin
+          if(cur_state == `SRAMCONTROL_READ_PHASE1 || cur_state == `SRAMCONTROL_WRITE_PHASE1) begin
+              if(op_i == `SRAMCONTROL_OP_WRITE) begin
+                    cur_state <= `SRAMCONTROL_WRITE_PHASE1;
+                end 
+                if(op_i == `SRAMCONTROL_OP_READ) begin
+                    cur_state <=  `SRAMCONTROL_READ_PHASE1;
+                end
+          end
+      end 
+    end
+
 endmodule

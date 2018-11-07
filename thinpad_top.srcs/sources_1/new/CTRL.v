@@ -33,7 +33,7 @@ module CTRL(
         if (rst_i==`RstEnable) begin
             stall_o<=6'b000000;
         end else if (stall_from_mem_i==`Stall) begin
-            stall_o<=6'b111111;    
+            stall_o<=6'b011111;    
         end else if (stall_from_ex_i==`Stall) begin
             stall_o<=6'b001111;
         end else if (stall_from_id_i==`Stall) begin

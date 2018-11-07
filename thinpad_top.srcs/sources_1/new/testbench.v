@@ -55,6 +55,8 @@ initial begin
   rst = 1;
   #20;
   rst = 0;
+  #1000;
+  rst = 0;
 end
 
 clock osc0 (

@@ -1,4 +1,4 @@
-Running: xsim.dir/closemips_testbench_behav/xsimk -simmode gui -wdb closemips_testbench_behav.wdb -simrunnum 0 -socket 33235
+Running: xsim.dir/closemips_testbench_behav/xsimk -simmode gui -wdb closemips_testbench_behav.wdb -simrunnum 0 -socket 44031
 Design successfully loaded
-Design Loading Memory Usage: 76532 KB (Peak: 76540 KB)
-Design Loading CPU Usage: 70 ms
+Design Loading Memory Usage: 76536 KB (Peak: 76544 KB)
+Design Loading CPU Usage: 80 ms

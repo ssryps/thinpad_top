@@ -1,0 +1,47 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/test_MMUControl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module test_MMUControl
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/CTRL.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module CTRL
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/DIV.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module DIV
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/IF_ID.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module IF_ID
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/MEM.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module MEM
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/MEM_WB.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module MEM_WB
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/MMUControl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module MMUControl
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/MemControl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module MemControl
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/PC.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module PC
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/RegisterFile.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module RegisterFile
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/SRAMControl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module SRAMControl
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/clock.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module clock
+WARNING: [VRFC 10-1315] redeclaration of ansi port clk_50M is not allowed [/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/clock.v:8]
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/closemem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module closemem
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/closemips.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module closemips
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/ex.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ex
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/ex_mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ex_mem
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/hilo.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hilo
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/id.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module id
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/id_ex.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module id_ex
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/sram_model.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module sram_model
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/sram_model1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module sram_model1
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/sram_model2.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module sram_model2
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/mason/CS/Code/vivado/thinpad_top/thinpad_top.srcs/sources_1/new/testbench.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module closemips_testbench
