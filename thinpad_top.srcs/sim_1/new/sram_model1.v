@@ -20,7 +20,7 @@
 `timescale 1 ns/1 ps
 
 
-module sram_model(Address, DataIO, OE_n, CE_n,WE_n, LB_n, UB_n);
+module sram_model1(Address, DataIO, OE_n, CE_n,WE_n, LB_n, UB_n);
 
 `define tsim  20000
 
@@ -98,7 +98,9 @@ initial
    begin
             // write timings -- 10ns address access time
             
-  
+      $readmemh ( "inst_rom1.data", mem_array0 );
+      $readmemh ( "inst_rom2.data", mem_array1 );
+
    twc = 10 ;
    tcw = 7 ;
    taw = 7 ;

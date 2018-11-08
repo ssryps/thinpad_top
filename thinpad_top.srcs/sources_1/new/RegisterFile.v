@@ -46,6 +46,7 @@ module RegisterFile(
     reg same2;
     
     always @(* ) begin
+
         choice1 = read_addr_1;
         choice2 = read_addr_2;
         same1 = (read_addr_1 == write_addr && read_enable_1 == 1 && write_enable == 1);
