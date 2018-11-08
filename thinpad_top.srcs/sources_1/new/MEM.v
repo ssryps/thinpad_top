@@ -25,7 +25,8 @@
 `define OP_HALF_SIGNED   3'b001
 `define OP_BYTE_UNSIGNED 3'b010
 `define OP_BYTE_SIGNED   3'b011
-`define OP_NOP  		 3'b100
+`define OP_WORD 		 3'b100
+`define OP_NOP  		 3'b101
 
 module MEM(
 	input wire clk_i,
@@ -102,7 +103,10 @@ module MEM(
 			            last_op <= `OP_HALF_UNSIGNED;
 			            last_pos <= mem_addr_i[1:0];
 					end
-			
+					`EXE_LW_OP:		begin
+			            last_op <= `OP_WORD;
+			            last_pos <= mem_addr_i[1:0];
+					end
 				endcase
 			end
 		end
@@ -201,7 +205,9 @@ module MEM(
 						end
 					endcase	
 		
-				end 
+				end else if(last_op == `OP_WORD) begin
+					wdata_o <= mem_data_i;
+				end
             end
 
 

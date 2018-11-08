@@ -236,7 +236,7 @@ module MemControl(
 					if(mem_addr_i[1:0] == 2'b00) begin
 						data_o_reg <= {mmu_result_i[31: 16], mem_data_i[15:0]};
 					end else if(mem_addr_i[1:0] == 2'b10) begin
-						data_o_reg <= {mem_data_i[31: 16], mmu_result_i[15:0]};
+						data_o_reg <= {mem_data_i[15: 0], mmu_result_i[15:0]};
 					end
 				end else if(mem_data_sz_i == `MEMECONTROL_OP_BYTE) begin
 					if(mem_addr_i[1:0] == 2'b00) begin

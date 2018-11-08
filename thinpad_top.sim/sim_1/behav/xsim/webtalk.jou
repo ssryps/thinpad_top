@@ -2,11 +2,11 @@
 # Webtalk v2018.1 (64-bit)
 # SW Build 2188600 on Wed Apr  4 18:39:19 MDT 2018
 # IP Build 2185939 on Wed Apr  4 20:55:05 MDT 2018
-# Start of session at: Wed Nov  7 23:34:36 2018
-# Process ID: 32070
-# Current directory: /home/mason/CS/Code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim
-# Command line: wbtcv -mode batch -source /home/mason/CS/Code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/xsim.dir/closemips_testbench_behav/webtalk/xsim_webtalk.tcl -notrace
-# Log file: /home/mason/CS/Code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/webtalk.log
-# Journal file: /home/mason/CS/Code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/webtalk.jou
+# Start of session at: Fri Nov  9 00:45:38 2018
+# Process ID: 16262
+# Current directory: /home/mason/cs/code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim
+# Command line: wbtcv -mode batch -source /home/mason/cs/code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/xsim.dir/test_MemControl_behav/webtalk/xsim_webtalk.tcl -notrace
+# Log file: /home/mason/cs/code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/webtalk.log
+# Journal file: /home/mason/cs/code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/webtalk.jou
 #-----------------------------------------------------------
-source /home/mason/CS/Code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/xsim.dir/closemips_testbench_behav/webtalk/xsim_webtalk.tcl -notrace
+source /home/mason/cs/code/vivado/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/xsim.dir/test_MemControl_behav/webtalk/xsim_webtalk.tcl -notrace
