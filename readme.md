@@ -1,25 +1,12 @@
-## 修改内存起始地址
-```
---- a/thinpad_top.srcs/sources_1/new/inst_rom.v
-+++ b/thinpad_top.srcs/sources_1/new/inst_rom.v
-@@ -14,7 +14,7 @@ always @ (*) begin
-        if (ce == `Disable) begin
-                inst <= `ZeroWord;
-        end else begin
--               inst <= inst_mem[addr[`InstMemNumLog2:2]];
-+               inst <= inst_mem[addr[`InstMemNumLog2:2]-30'h20000000];
-        end
- end
+Sprint1 finished, we have done following:
+1. basic pipeline without exception
+2. sram store
 
---- a/thinpad_top.srcs/sources_1/new/PC.v
-+++ b/thinpad_top.srcs/sources_1/new/PC.v
-@@ -60,7 +60,7 @@ module PC(
-        end*/
-        always @ (posedge clk_i) begin
-         if (ce_o == 1'b0) begin
--                pc_o <= 32'h00000000;
-+                pc_o <= 32'h80000000;
-         end else if(stall_i[0] == 1'b0) begin
-                   if(branch_flag_i == `Branch) begin
-                         pc_o <= branch_target_address_i;
-```
+So based on PA plan, we have to finish these in sprint2(due on Friday, week 10). If you find out something missing, just contact me or append your suggestion below
+1. pipeline with exception
+2. run on board rather than simulation
+3. mem access with exception
+4. start preparing for our extension applicaton: some device and so on
+
+I will list more concrete tasks below tomorrow, we'd better get to work soon :
+
