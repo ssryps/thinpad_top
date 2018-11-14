@@ -37,12 +37,12 @@ module ex_mem(
 	output reg[`RegBus] mem_mem_addr,
 	output reg[`RegBus] mem_reg2,
 
-	input cp0_reg_we_i,
-	input[5:0] cp0_reg_write_addr_i,
-	input[31:0] cp0_reg_data_i,
-	output cp0_reg_we_o,
-	output[5:0] cp0_reg_write_addr_o,
-	output[31:0] cp0_reg_data_o
+	input wire cp0_reg_we_i,
+	input wire[4:0] cp0_reg_write_addr_i,
+	input wire[31:0] cp0_reg_data_i,
+	output reg cp0_reg_we_o,
+	output reg[4:0] cp0_reg_write_addr_o,
+	output reg[31:0] cp0_reg_data_o
 
 
 );

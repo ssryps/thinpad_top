@@ -996,7 +996,7 @@ module id(
                 end
 
                 `EXE_EXCEPTION_INST: begin
-                    if(fn == 5'b00000 && inst_i[10:3] == 8'b00000000) begin
+                    if(rs == 5'b00000 && inst_i[10:3] == 8'b00000000) begin
                         aluop_o <= `EXE_MFCO_OP;
                         alusel_o <= `EXE_RES_MOVE;
                         wd_o <= inst_i[20:16];
@@ -1005,13 +1005,14 @@ module id(
                         reg1_read_o <= 1'b0;
                         reg2_read_o <= 1'b0;
                     end 
-                    if(fn == 5'b00100 && inst_i[10:3] == 8'b00000000) begin
+                    if(rs == 5'b00100 && inst_i[10:3] == 8'b00000000) begin
                         aluop_o <= `EXE_MTCO_OP;
                         alusel_o <= `EXE_RES_MOVE;
                         wd_o <= inst_i[20:16];
                         wreg_o <= `WriteDisable;
                         instvalid <= `InstValid;
                         reg1_read_o <= 1'b1;
+                        reg1_addr_o <= inst_i[20:16];
                         reg2_read_o <= 1'b0;
                     end
                 end

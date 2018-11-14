@@ -64,12 +64,12 @@ module MEM(
 	output wire stallreq_o, 
 
 
-	input cp0_reg_we_i,
-	input[5:0] cp0_reg_write_addr_i,
-	input[31:0] cp0_reg_data_i,
-	output cp0_reg_we_o,
-	output[5:0] cp0_reg_write_addr_o,
-	output[31:0] cp0_reg_data_o
+	input wire cp0_reg_we_i,
+	input wire[4:0] cp0_reg_write_addr_i,
+	input wire[31:0] cp0_reg_data_i,
+	output wire cp0_reg_we_o,
+	output wire[4:0] cp0_reg_write_addr_o,
+	output wire[31:0] cp0_reg_data_o
 
 
 	);
@@ -81,6 +81,15 @@ module MEM(
 	reg[1:0] last_pos;
 
 	reg cur_state;
+
+	reg[4:0] cp0_reg_write_addr_o_reg;
+	reg cp0_reg_we_o_reg;
+    reg[31:0] cp0_reg_data_o_reg;
+    assign cp0_reg_we_o = cp0_reg_we_o_reg;
+	assign cp0_reg_write_addr_o = cp0_reg_write_addr_o_reg;
+    assign cp0_reg_data_o = cp0_reg_data_o_reg;
+
+
 	assign zero32 = `ZeroWord;
 	assign stallreq_o = mem_pause_pipeline_i;
 
@@ -138,9 +147,9 @@ module MEM(
             mem_data_o <= `ZeroWord;
             mem_op_o <= `MEMCONTROL_OP_NOP;	
             cur_state <= 0;
-			cp0_reg_write_addr_o <= 5'b00000;
-            cp0_reg_we_o <= `WriteDisable;
-            cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+			cp0_reg_write_addr_o_reg <= 5'b00000;
+            cp0_reg_we_o_reg<= `WriteDisable;
+            cp0_reg_data_o_reg <= 32'b00000000_00000000_00000000_00000000;
 
 
         end else begin
@@ -154,9 +163,9 @@ module MEM(
 	        // mem_data_o <= `ZeroWord;
 	        // mem_op_o <= `MEMCONTROL_OP_NOP;	
             //wdata_o <= mem_data_i;
-    		cp0_reg_data_o <= cp0_reg_data_i;
-			cp0_reg_write_addr_o <= cp0_reg_write_addr_i;
-			cp0_reg_we_o <= cp0_reg_we_i;
+    		cp0_reg_data_o_reg <= cp0_reg_data_i;
+			cp0_reg_write_addr_o_reg <= cp0_reg_write_addr_i;
+			cp0_reg_we_o_reg <= cp0_reg_we_i;
 
             		
             if(mem_pause_pipeline_i == 0) begin

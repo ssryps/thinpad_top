@@ -148,6 +148,46 @@ wire[`AluOpBus] mem_aluop_i;
 wire[`RegBus] mem_mem_addr_i;
 wire[`RegBus] mem_reg2_i;	
 
+wire[4:0] cp0_read_addr_i;
+wire cp0_read_enabled;
+wire[`RegBus] cp0_read_result;
+
+wire[4:0] cp0_write_addr_i;
+wire cp0_write_enabled;
+wire[`RegBus] cp0_write_data;
+
+
+wire ex_o_cp0_reg_we_o;
+wire[5:0] ex_o_cp0_reg_write_addr_o;
+wire[`RegBus] ex_o_cp0_reg_data_o;
+
+wire ex_mem_o_cp0_reg_we_o;
+wire[5:0] ex_mem_o_cp0_reg_write_addr_o;
+wire[`RegBus] ex_mem_o_cp0_reg_data_o;
+
+wire mem_o_cp0_reg_we_o;
+wire[5:0] mem_o_cp0_reg_write_addr_o;
+wire[`RegBus] mem_o_cp0_reg_data_o;
+
+wire mem_wb_o_cp0_reg_we_o;
+wire[5:0] mem_wb_o_cp0_reg_write_addr_o;
+wire[`RegBus] mem_wb_o_cp0_reg_data_o;
+
+CP0 cp0(
+    .clk(clk),
+    .rst(rst),
+
+    .read_addr_i(cp0_read_addr_i),
+    .read_enabled(cp0_read_enabled),
+    .read_data_o(cp0_read_result),
+
+    .write_addr_i(mem_wb_o_cp0_reg_write_addr_o),
+    .write_data_i(mem_wb_o_cp0_reg_data_o),
+    .write_enabled(mem_wb_o_cp0_reg_we_o)
+
+);
+
+
 PC Pc(
     .rst_i(rst), 
     .clk_i(clk),
@@ -261,7 +301,21 @@ ex ex_0(
     .div_start_o(start_ex_o),
     .aluop_o(ex_aluop_o),
     .mem_addr_o(ex_mem_addr_o),
-    .reg2_o(ex_reg2_o)
+    .reg2_o(ex_reg2_o), 
+
+    .cp0_reg_data_i(cp0_read_result), 
+    .mem_cp0_reg_we(mem_o_cp0_reg_we_o),
+    .mem_cp0_reg_write_addr(mem_o_cp0_reg_write_addr_o),
+    .mem_cp0_reg_data(mem_o_cp0_reg_data_o),
+    .wb_cp0_reg_we(mem_wb_o_cp0_reg_we_o),
+    .wb_cp0_reg_write_addr(mem_wb_o_cp0_reg_write_addr_o),
+    .wb_cp0_reg_data(mem_wb_o_cp0_reg_data_o),
+
+    .cp0_reg_we_o(ex_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_o(ex_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_o(ex_o_cp0_reg_data_o),
+    .cp0_reg_read_enabled(cp0_read_enabled),
+    .cp0_reg_read_addr_o(cp0_read_addr_i)
 );
 
 ex_mem ex_mem0(
@@ -285,7 +339,15 @@ ex_mem ex_mem0(
     .mem_whilo(mem_whilo),
     .mem_aluop(mem_aluop_i),
 	.mem_mem_addr(mem_mem_addr_i),
-	.mem_reg2(mem_reg2_i)
+	.mem_reg2(mem_reg2_i),
+
+    .cp0_reg_we_i(ex_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_i(ex_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_i(ex_o_cp0_reg_data_o),
+    .cp0_reg_we_o(ex_mem_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_o(ex_mem_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_o(ex_mem_o_cp0_reg_data_o)
+
 );
 // 交接
 MEM mem0(
@@ -312,7 +374,14 @@ MEM mem0(
     .mem_op_o(mem_op_o),
     .mem_data_o(mem_data_o),
     .mem_data_sz_o(mem_data_sz_o),
-    .stallreq_o(stallreq_mem_o)
+    .stallreq_o(stallreq_mem_o),
+
+    .cp0_reg_we_i(ex_mem_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_i(ex_mem_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_i(ex_mem_o_cp0_reg_data_o),
+    .cp0_reg_we_o(mem_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_o(mem_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_o(mem_o_cp0_reg_data_o)
 );
 
 MEM_WB Mem_wb(
@@ -330,7 +399,13 @@ MEM_WB Mem_wb(
     .wb_wdata_o(mem_wb_wdata_o),
     .wb_hi(wb_hi),
     .wb_lo(wb_lo),
-    .wb_whilo(wb_whilo)
+    .wb_whilo(wb_whilo),
+    .cp0_reg_we_i(mem_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_i(mem_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_i(mem_o_cp0_reg_data_o),
+    .cp0_reg_we_o(mem_wb_o_cp0_reg_we_o),
+    .cp0_reg_write_addr_o(mem_wb_o_cp0_reg_write_addr_o),
+    .cp0_reg_data_o(mem_wb_o_cp0_reg_data_o)
 );
 
 hilo hilo0(
@@ -381,5 +456,8 @@ DIV div(
     .result_o(result_div_o),
     .ready_o(ready_div_o)
 );
+
+
+
 
 endmodule

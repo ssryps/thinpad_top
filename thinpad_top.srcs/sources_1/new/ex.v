@@ -36,12 +36,12 @@ module ex(
     input[`RegBus] cp0_reg_data_i,
 
     // data dependency
-    input mem_cp0_reg_we,
-    input[5:0] mem_cp0_reg_write_addr,
-    input[`RegBus] mem_cp0_reg_data,
-    input wb_cp0_reg_we,
-    input[5:0] wb_cp0_reg_write_addr,
-    input[`RegBus] wb_cp0_reg_data,
+    input wire mem_cp0_reg_we,
+    input wire [4:0] mem_cp0_reg_write_addr,
+    input wire [`RegBus] mem_cp0_reg_data,
+    input wire wb_cp0_reg_we,
+    input wire[4:0] wb_cp0_reg_write_addr,
+    input wire[`RegBus] wb_cp0_reg_data,
 
 
     //output to ex_mem
@@ -68,11 +68,12 @@ module ex(
 	output wire[`RegBus] mem_addr_o,
 	output wire[`RegBus] reg2_o,
 
-    output cp0_reg_we_o,
-    output[5:0] cp0_reg_write_addr_o,
-    output[`RegBus] cp0_reg_data_o,
+    output reg cp0_reg_we_o,
+    output reg[4:0] cp0_reg_write_addr_o,
+    output reg[`RegBus] cp0_reg_data_o,
 
-    output[5:0] cp0_reg_read_addr_o
+    output reg[4:0] cp0_reg_read_addr_o,
+    output reg cp0_reg_read_enabled
 );
 
     reg[`RegBus] logicout;
@@ -303,6 +304,8 @@ module ex(
     always @(*) begin
         if(rst == `RstEnable) begin
             moveout <= `ZeroWord;
+            cp0_reg_read_enabled <= 0;
+           
         end else begin
             moveout <= `ZeroWord;
             case(aluop_i)
@@ -320,7 +323,9 @@ module ex(
                 end
 
                 `EXE_MFCO_OP: begin 
+                    cp0_reg_read_enabled <= 1;
                     cp0_reg_read_addr_o <= inst_i[15:11];
+                 //   moveout <= cp0_reg_data_i;
                     if(mem_cp0_reg_we == `WriteEnable && mem_cp0_reg_write_addr == inst_i[15:11]) begin
                         moveout <= mem_cp0_reg_data;
                     end else begin
@@ -330,8 +335,6 @@ module ex(
                             moveout <= cp0_reg_data_i;
                         end
                     end
-
-                    moveout <= cp0_reg_data_i;
                 end
                 default: begin
                     moveout <= `ZeroWord;

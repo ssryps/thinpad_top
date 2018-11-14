@@ -43,14 +43,25 @@ module MEM_WB(
     output reg wb_whilo,
 
 
-    input cp0_reg_we_i,
-    input[5:0] cp0_reg_write_addr_i,
-    input[31:0] cp0_reg_data_i,
-    output cp0_reg_we_o,
-    output[5:0] cp0_reg_write_addr_o,
-    output[31:0] cp0_reg_data_o
+    
+    input wire cp0_reg_we_i,
+    input wire[4:0] cp0_reg_write_addr_i,
+    input wire[31:0] cp0_reg_data_i,
+    output wire cp0_reg_we_o,
+    output wire[4:0] cp0_reg_write_addr_o,
+    output wire[31:0] cp0_reg_data_o
+
 
     );
+
+    reg[4:0] cp0_reg_write_addr_o_reg;
+    reg cp0_reg_we_o_reg;
+    reg[31:0] cp0_reg_data_o_reg;
+    assign cp0_reg_we_o = cp0_reg_we_o_reg;
+    assign cp0_reg_write_addr_o = cp0_reg_write_addr_o_reg;
+    assign cp0_reg_data_o = cp0_reg_data_o_reg;
+
+
 
     always @ (posedge clk) begin
         if (rst==`RstEnable) begin
@@ -61,9 +72,9 @@ module MEM_WB(
             wb_lo <= `ZeroWord;
             wb_whilo <= `WriteDisable;
 
-            cp0_reg_write_addr_o <= 5'b00000;
-            cp0_reg_we_o <= `WriteDisable;
-            cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+            cp0_reg_write_addr_o_reg <= 5'b00000;
+            cp0_reg_we_o_reg <= `WriteDisable;
+            cp0_reg_data_o_reg <= 32'b00000000_00000000_00000000_00000000;
         end else if (stall_i[4]==`Stall&&stall_i[5]==`NotStall) begin
             wb_wd_o<=`NOPRegAddr;
             wb_wreg_o<=`WriteDisable;
@@ -72,9 +83,9 @@ module MEM_WB(
             wb_lo <= `ZeroWord;
             wb_whilo <= `WriteDisable;
             
-            cp0_reg_write_addr_o <= 5'b00000;
-            cp0_reg_we_o <= `WriteDisable;
-            cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+            cp0_reg_write_addr_o_reg <= 5'b00000;
+            cp0_reg_we_o_reg <= `WriteDisable;
+            cp0_reg_data_o_reg <= 32'b00000000_00000000_00000000_00000000;
         end else if (stall_i[4]==`NotStall) begin
             wb_wd_o<=mem_wd_i;
             wb_wreg_o<=mem_wreg_i;
@@ -83,9 +94,9 @@ module MEM_WB(
             wb_lo <= mem_lo;
             wb_whilo <= mem_whilo;
 
-            cp0_reg_data_o <= cp0_reg_data_i;
-            cp0_reg_write_addr_o <= cp0_reg_write_addr_i;
-            cp0_reg_we_o <= cp0_reg_we_i;
+            cp0_reg_data_o_reg <= cp0_reg_data_i;
+            cp0_reg_write_addr_o_reg <= cp0_reg_write_addr_i;
+            cp0_reg_we_o_reg <= cp0_reg_we_i;
         end
     end
 endmodule
