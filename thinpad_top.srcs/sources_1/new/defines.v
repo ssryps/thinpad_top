@@ -13,6 +13,7 @@
 //instructions_top_six_bits
 `define EXE_SPECIAL_INST  6'b000000
 `define EXE_SPECIAL2_INST  6'b011100
+`define EXE_EXCEPTION_INST 6'b010000
 `define EXE_REGIMM_INST 6'b000001
 `define EXE_ORI 6'b001101
 `define EXE_ANDI 6'b001100
@@ -152,6 +153,10 @@
 `define EXE_SWL_OP  6'b110011
 `define EXE_SWR_OP  6'b110100
 
+`define EXE_MFCO_OP 6'b110101
+`define EXE_MTCO_OP 6'b110110
+
+
 //AluSel
 `define EXE_RES_LOGIC 3'b000
 `define EXE_RES_SHIFT 3'b001
@@ -201,3 +206,9 @@
 `define DataMemNum 131071
 `define DataMemNumLog2 17
 `define ByteWidth 7:0
+
+
+//current cp0 registers 
+`define CP0_CAUSE 	5'b01101
+`define CP0_STATUS 	5'b01100
+`define CP0_EPC		5'b01110

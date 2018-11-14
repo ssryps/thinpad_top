@@ -32,6 +32,18 @@ module ex(
     input wire [`DoubleRegBus] div_result_i,
     input wire div_ready_i,
 
+    // input from cp0
+    input[`RegBus] cp0_reg_data_i,
+
+    // data dependency
+    input mem_cp0_reg_we,
+    input[5:0] mem_cp0_reg_write_addr,
+    input[`RegBus] mem_cp0_reg_data,
+    input wb_cp0_reg_we,
+    input[5:0] wb_cp0_reg_write_addr,
+    input[`RegBus] wb_cp0_reg_data,
+
+
     //output to ex_mem
     output reg[`RegAddrBus] wd_o,
     output reg wreg_o,
@@ -54,7 +66,13 @@ module ex(
     //for load and store
     output wire[`AluOpBus] aluop_o,
 	output wire[`RegBus] mem_addr_o,
-	output wire[`RegBus] reg2_o
+	output wire[`RegBus] reg2_o,
+
+    output cp0_reg_we_o,
+    output[5:0] cp0_reg_write_addr_o,
+    output[`RegBus] cp0_reg_data_o,
+
+    output[5:0] cp0_reg_read_addr_o
 );
 
     reg[`RegBus] logicout;
@@ -300,6 +318,21 @@ module ex(
                 `EXE_MFLO_OP: begin
                     moveout <= LO;
                 end
+
+                `EXE_MFCO_OP: begin 
+                    cp0_reg_read_addr_o <= inst_i[15:11];
+                    if(mem_cp0_reg_we == `WriteEnable && mem_cp0_reg_write_addr == inst_i[15:11]) begin
+                        moveout <= mem_cp0_reg_data;
+                    end else begin
+                        if(wb_cp0_reg_we == `WriteEnable && wb_cp0_reg_write_addr == inst_i[15:11]) begin
+                            moveout <= wb_cp0_reg_data;
+                        end else begin
+                            moveout <= cp0_reg_data_i;
+                        end
+                    end
+
+                    moveout <= cp0_reg_data_i;
+                end
                 default: begin
                     moveout <= `ZeroWord;
                 end
@@ -374,4 +407,16 @@ module ex(
         stallreq_o<=stallreq_for_div;
     end
 
+
+    always @(*) begin
+        if(rst == `RstDisable && aluop_i == `EXE_MTCO_OP) begin
+             cp0_reg_write_addr_o <= inst_i[15:11];
+             cp0_reg_we_o <= `WriteEnable;
+             cp0_reg_data_o <= reg1_i;
+        end else begin
+             cp0_reg_write_addr_o <= 5'b00000;
+             cp0_reg_we_o <= `WriteDisable;
+             cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+        end
+    end
 endmodule

@@ -5,7 +5,7 @@
 // 
 // Create Date: 10/26/2018 09:22:09 PM
 // Design Name: 
-// Module Name: Serial
+// Module Name: SerialControl
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include"MemoryUtils.v"
 
-module Serial(
+module SerialControl(
 		input wire clk,
 		input wire rst,
 		input wire enabled,

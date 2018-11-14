@@ -35,7 +35,16 @@ module ex_mem(
 	//for load and store
 	output reg[`AluOpBus] mem_aluop,
 	output reg[`RegBus] mem_mem_addr,
-	output reg[`RegBus] mem_reg2
+	output reg[`RegBus] mem_reg2,
+
+	input cp0_reg_we_i,
+	input[5:0] cp0_reg_write_addr_i,
+	input[31:0] cp0_reg_data_i,
+	output cp0_reg_we_o,
+	output[5:0] cp0_reg_write_addr_o,
+	output[31:0] cp0_reg_data_o
+
+
 );
 
 	always @ (posedge clk) begin
@@ -59,6 +68,11 @@ module ex_mem(
 			mem_aluop <= `EXE_SLL_OP;
 			mem_mem_addr <= `ZeroWord;
 			mem_reg2 <= `ZeroWord;
+
+			cp0_reg_write_addr_o <= 5'b00000;
+            cp0_reg_we_o <= `WriteDisable;
+            cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+
 		end else if (stall_i[3]==`NotStall) begin
 			mem_wd <= ex_wd;
 			mem_wreg <= ex_wreg;
@@ -69,6 +83,9 @@ module ex_mem(
 			mem_aluop <= ex_aluop;
 			mem_mem_addr <= ex_mem_addr;
 			mem_reg2 <= ex_reg2;
+			cp0_reg_data_o <= cp0_reg_data_i;
+			cp0_reg_write_addr_o <= cp0_reg_write_addr_i;
+			cp0_reg_we_o <= cp0_reg_we_i;
 		end    //if
 	end      //always
 			
