@@ -60,6 +60,7 @@ module MEM(
 	output reg[`MEMCONTROL_OP_LEN - 1:0] mem_op_o,
 	output reg[5:0] mem_data_sz_o,
 	output reg[`RegBus] mem_data_o,
+	output reg mem_enabled,
 
 	output wire stallreq_o, 
 
@@ -69,9 +70,18 @@ module MEM(
 	input wire[31:0] cp0_reg_data_i,
 	output wire cp0_reg_we_o,
 	output wire[4:0] cp0_reg_write_addr_o,
-	output wire[31:0] cp0_reg_data_o
+	output wire[31:0] cp0_reg_data_o,
 
-
+	input wire[`RegBus] excp_type_i,
+	input wire[`RegBus] excp_inst_addr_i, 
+	input wire excp_in_delay_slot_i, 
+	output reg[`RegBus] excp_type_o,
+	output wire[`RegBus] excp_inst_addr_o, 
+	output wire excp_in_delay_slot_o,
+	
+	input wire[`RegBus] cp0_status_i,
+	input wire[`RegBus] cp0_cause_i,
+	input wire[`RegBus] cp0_epc_i
 	);
     wire[`RegBus] zero32;
 	reg mem_we;
@@ -304,4 +314,47 @@ module MEM(
         	end
 		end
     end
+
+    //exception handler 
+    assign excp_in_delay_slot_o = excp_in_delay_slot_i;
+    assign excp_inst_addr_o = excp_inst_addr_i;
+
+    always @(*) begin
+    	if (rst_i==`RstEnable || excp_inst_addr_i == `ZeroWord) begin
+    		excp_type_o <= `ZeroWord;
+    	end else begin
+			
+			if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
+	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	   			excp_type_o <= excp_type_i;
+            	end
+			end else if(excp_type_i[`EXCP_BREAK] == 1) begin 
+                if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	  			excp_type_o <= excp_type_i;
+              	end       
+			end else if(excp_type_i[`EXCP_INVALID_INST] == 1) begin 
+                if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	  			excp_type_o <= excp_type_i;
+              	end       
+            end else if(excp_type_i[`EXCP_OVERFLOW] == 1) begin 
+	            if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	  			excp_type_o <= excp_type_i;
+              	end       
+            end else if(excp_type_i[`EXCP_ERET] == 1) begin 
+                if((cp0_status_i[1] == 1) ) begin //&& (cp0_status_i[0] == 1)
+    	  			excp_type_o <= excp_type_i;
+              	end       
+            end
+    	end
+    
+    end
+
+    always @(*) begin 
+    	if(excp_type_o != `ZeroWord) begin 
+    		mem_enabled <= 0;
+    	end else begin 
+    		mem_enabled <= 1;
+    	end
+    end
+
 endmodule

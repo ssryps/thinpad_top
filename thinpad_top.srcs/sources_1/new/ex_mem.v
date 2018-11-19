@@ -42,13 +42,21 @@ module ex_mem(
 	input wire[31:0] cp0_reg_data_i,
 	output reg cp0_reg_we_o,
 	output reg[4:0] cp0_reg_write_addr_o,
-	output reg[31:0] cp0_reg_data_o
+	output reg[31:0] cp0_reg_data_o,
 
+	//exception
+	input wire flush,
+	input wire[`RegBus] excp_type_i,
+	input wire[`RegBus] excp_inst_addr_i, 
+	input wire excp_in_delay_slot_i, 
+	output reg[`RegBus] excp_type_o,
+	output reg[`RegBus] excp_inst_addr_o, 
+	output reg excp_in_delay_slot_o
 
 );
 
 	always @ (posedge clk) begin
-		if(rst == `RstEnable) begin
+		if(rst == `RstEnable || flush == 1) begin
 			mem_wd <= `NOPRegAddr;
 			mem_wreg <= `WriteDisable;
 		    mem_wdata <= `ZeroWord;	
@@ -58,6 +66,13 @@ module ex_mem(
 			mem_aluop <= `EXE_SLL_OP;
 			mem_mem_addr <= `ZeroWord;
 			mem_reg2 <= `ZeroWord;
+
+			cp0_reg_write_addr_o <= 5'b00000;
+            cp0_reg_we_o <= `WriteDisable;
+            cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+			excp_in_delay_slot_o <= 0;
+			excp_inst_addr_o <= `ZeroWord;
+			excp_type_o <= `ZeroWord;
 		end else if(stall_i[3]==`Stall&&stall_i[4]==`NotStall) begin
 			mem_wd <= `NOPRegAddr;
 			mem_wreg <= `WriteDisable;
@@ -72,6 +87,9 @@ module ex_mem(
 			cp0_reg_write_addr_o <= 5'b00000;
             cp0_reg_we_o <= `WriteDisable;
             cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
+			excp_in_delay_slot_o <= 0;
+			excp_inst_addr_o <= `ZeroWord;
+			excp_type_o <= `ZeroWord;
 
 		end else if (stall_i[3]==`NotStall) begin
 			mem_wd <= ex_wd;
@@ -86,6 +104,10 @@ module ex_mem(
 			cp0_reg_data_o <= cp0_reg_data_i;
 			cp0_reg_write_addr_o <= cp0_reg_write_addr_i;
 			cp0_reg_we_o <= cp0_reg_we_i;
+
+			excp_in_delay_slot_o <= excp_in_delay_slot_i;
+			excp_inst_addr_o <= excp_inst_addr_i;
+			excp_type_o <= excp_type_i;
 		end    //if
 	end      //always
 			

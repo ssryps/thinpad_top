@@ -50,8 +50,13 @@ module id(
 	output reg[`RegBus] branch_target_address_o,       
 	output reg[`RegBus] link_addr_o,
 	output reg is_in_delayslot_o,
-    output wire[`RegBus] inst_o
+    output wire[`RegBus] inst_o,
+
+    output reg[`RegBus] excp_type_o,
+    output reg[`RegBus] excp_inst_addr_o
 );
+
+
     wire[5:0] op = inst_i[31:26];
     wire[4:0] rs = inst_i[25:21];
     wire[4:0] rt = inst_i[20:16];
@@ -73,6 +78,8 @@ module id(
     reg stall_for_reg1_loadrelate;
     reg stall_for_reg2_loadrelate;
     wire ex_inst_is_load;
+
+    reg is_syscall_excp, is_eret_excp, is_break_excp;
     assign ex_inst_is_load =((ex_aluop_i==`EXE_LB_OP) ||
                             (ex_aluop_i==`EXE_LBU_OP)  ||
                             (ex_aluop_i==`EXE_LH_OP)  ||
@@ -122,6 +129,10 @@ module id(
 			branch_target_address_o <= `ZeroWord;
 			branch_flag_o <= `NotBranch;	
 			next_inst_in_delayslot_o <= `NotInDelaySlot; 
+            is_eret_excp <= 0;
+            is_syscall_excp <= 0;
+            is_break_excp <= 0; 
+
             case (op)
                 `EXE_SPECIAL_INST: begin
                     case(fn)
@@ -487,6 +498,32 @@ module id(
 
                             instvalid <= `InstValid;
                         end
+
+                        `EXE_SYSCALL: begin
+                            //registers
+                            reg1_read_o <= 1'b0;
+                            reg2_read_o <= 1'b0; 
+                            //ex
+                            aluop_o <= `EXE_SYSCALL_OP;
+                            alusel_o<=`EXE_RES_NOP;
+                            //mem
+                            wreg_o <= `WriteDisable;
+                            is_syscall_excp <= 1;
+                            instvalid <= `InstValid;
+                        end
+
+                        `EXE_BREAK: begin 
+                            reg1_read_o <= 1'b0;
+                            reg2_read_o <= 1'b0; 
+                            //ex
+                            aluop_o <= `EXE_BREAK_OP;
+                            alusel_o<=`EXE_RES_NOP;
+                            //mem
+                            wreg_o <= `WriteDisable;
+                            is_break_excp <= 1; 
+                            instvalid <= `InstValid;
+
+                        end
                     endcase  
                 end
                 `EXE_ORI: begin
@@ -650,9 +687,9 @@ module id(
                     if(reg1_o == reg2_o) begin
                         branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                         branch_flag_o <= `Branch;
-                        next_inst_in_delayslot_o <= `InDelaySlot;
                     end
-
+           next_inst_in_delayslot_o <= `InDelaySlot;
+             
                     instvalid <= `InstValid;
                 end
                 `EXE_BGTZ: begin
@@ -668,9 +705,9 @@ module id(
                     if((reg1_o[31] == 1'b0) && (reg1_o != `ZeroWord)) begin
                         branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                         branch_flag_o <= `Branch;
-                        next_inst_in_delayslot_o <= `InDelaySlot;
                     end
-
+                    next_inst_in_delayslot_o <= `InDelaySlot;
+           
                     instvalid <= `InstValid;
                 end
                 `EXE_BLEZ: begin
@@ -686,9 +723,9 @@ module id(
                     if((reg1_o[31] == 1'b1) || (reg1_o == `ZeroWord)) begin
                         branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                         branch_flag_o <= `Branch;
-                        next_inst_in_delayslot_o <= `InDelaySlot;
                     end
-
+                    next_inst_in_delayslot_o <= `InDelaySlot;
+         
                     instvalid <= `InstValid;
                 end
                 `EXE_BNE: begin
@@ -704,9 +741,9 @@ module id(
                     if(reg1_o != reg2_o) begin
                         branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                         branch_flag_o <= `Branch;
-                        next_inst_in_delayslot_o <= `InDelaySlot;
                     end
-
+                    next_inst_in_delayslot_o <= `InDelaySlot;
+                 
                     instvalid <= `InstValid;
                 end
                 `EXE_LB: begin
@@ -926,9 +963,9 @@ module id(
                             if(reg1_o[31] == 1'b0) begin
                                 branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                                 branch_flag_o <= `Branch;
-                                next_inst_in_delayslot_o <= `InDelaySlot;
                             end
-
+                            next_inst_in_delayslot_o <= `InDelaySlot;
+                        
                             instvalid <= `InstValid;
                         end
                         `EXE_BGEZAL: begin
@@ -946,9 +983,9 @@ module id(
                             if(reg1_o[31] == 1'b0) begin
                                 branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                                 branch_flag_o <= `Branch;
-                                next_inst_in_delayslot_o <= `InDelaySlot;
                             end
-
+                            next_inst_in_delayslot_o <= `InDelaySlot;
+                    
                             instvalid <= `InstValid;
                         end
                         `EXE_BLTZ: begin
@@ -964,9 +1001,9 @@ module id(
                             if(reg1_o[31] == 1'b1) begin
                                 branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                                 branch_flag_o <= `Branch;
-                                next_inst_in_delayslot_o <= `InDelaySlot;
                             end
-
+                            next_inst_in_delayslot_o <= `InDelaySlot;
+                
                             instvalid <= `InstValid;
                         end
                         `EXE_BLTZAL: begin
@@ -984,9 +1021,9 @@ module id(
                             if(reg1_o[31] == 1'b1) begin
                                 branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                                 branch_flag_o <= `Branch;
-                                next_inst_in_delayslot_o <= `InDelaySlot;
                             end
-
+                            next_inst_in_delayslot_o <= `InDelaySlot;
+                        
                             instvalid <= `InstValid;
                         end
 
@@ -1019,6 +1056,23 @@ module id(
                 default: begin 
                 end 
             endcase 
+
+            if(inst_i == `EXE_ERET) begin
+                reg1_read_o <= 1'b0;
+                reg2_read_o <= 1'b0; 
+                //ex
+                aluop_o <= `EXE_ERET_OP;
+                alusel_o<=`EXE_RES_NOP;
+                //mem
+                wreg_o <= `WriteDisable;
+                instvalid <= `InstValid;
+                is_eret_excp <= 1;
+            end
+
+            if(inst_i == `ZeroWord) begin 
+                instvalid <= `InstValid;
+            end
+
         end //if
     end //always
 
@@ -1068,6 +1122,33 @@ module id(
 	  end
 	end
 
+    always @ (*) begin
+        if(rst == `RstEnable) begin 
+            excp_type_o <= `ZeroWord;
+            excp_inst_addr_o <= `ZeroWord;
+
+        end else begin     
+            excp_inst_addr_o <= pc_i;
+            excp_type_o <= 32'h0000_0000;
+            if(is_syscall_excp) begin
+                excp_type_o[`EXCP_SYSCALL] <= 1;
+            end
+            if(is_eret_excp) begin
+                excp_type_o[`EXCP_ERET] <= 1;
+            end
+            if(is_break_excp) begin
+                excp_type_o[`EXCP_BREAK] <= 1;
+            end
+          
+
+            // if(instvalid != `InstValid) begin
+            //     excp_type_o[`EXCP_INVALID_INST] <= 1;
+            // end
+        end
+    end
+    
     assign stallreq_o=stall_for_reg1_loadrelate|stall_for_reg2_loadrelate;
+
+
 
 endmodule

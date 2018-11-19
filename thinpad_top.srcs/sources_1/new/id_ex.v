@@ -27,11 +27,19 @@ module id_ex(
     output reg[`RegBus] ex_link_address,
     output reg ex_is_in_delayslot,
 	output reg is_in_delayslot_o,
-    output reg[`RegBus] ex_inst
+    output reg[`RegBus] ex_inst,
+
+    // exception handle
+    input wire flush,
+    input wire[`RegBus] excp_type_i,
+    input wire[`RegBus] excp_inst_addr_i,
+    output reg[`RegBus] excp_type_o,
+    output reg[`RegBus] excp_inst_addr_o
+      
 );
 
     always @ (posedge clk) begin
-        if (rst == `RstEnable) begin
+        if (rst == `RstEnable || flush == 1) begin
             ex_aluop <= `EXE_SLL_OP;
             ex_alusel <= `EXE_RES_SHIFT;
             ex_reg1 <= `ZeroWord;
@@ -42,6 +50,10 @@ module id_ex(
 			ex_is_in_delayslot <= `NotInDelaySlot;
 	        is_in_delayslot_o <= `NotInDelaySlot;
             ex_inst <= `ZeroWord;
+
+            excp_type_o <= `ZeroWord;
+            excp_inst_addr_o <= `ZeroWord;
+
         end else if (stall_i[2]==`Enable&&stall_i[3]==`Disable) begin
             ex_aluop <= `EXE_SLL_OP;
             ex_alusel <= `EXE_RES_SHIFT;
@@ -52,6 +64,9 @@ module id_ex(
             ex_link_address <= `ZeroWord;
 	        ex_is_in_delayslot <= `NotInDelaySlot;
             ex_inst <= `ZeroWord;
+            excp_type_o <= `ZeroWord;
+            excp_inst_addr_o <= `ZeroWord;
+
         end else if (stall_i[2]==`Disable)begin
             ex_aluop <= id_aluop;
             ex_alusel <= id_alusel;
@@ -63,6 +78,9 @@ module id_ex(
 			ex_is_in_delayslot <= id_is_in_delayslot;
 	        is_in_delayslot_o <= next_inst_in_delayslot_i;
             ex_inst <= id_inst;
+            excp_type_o <= excp_type_i;
+            excp_inst_addr_o <= excp_inst_addr_i;
+
         end
     end
 

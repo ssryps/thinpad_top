@@ -60,6 +60,10 @@ module SRAMControl(
     reg[2:0] cur_state;
     reg[31:0] result_o_reg;
 
+    wire flag;
+
+    assign flag = (addr_i == 21'h000048 && op_i == `SRAMCONTROL_OP_WRITE);
+
     assign ram1_ce_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_ce);
     assign ram1_we_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_we);
     assign ram1_oe_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram1_oe);

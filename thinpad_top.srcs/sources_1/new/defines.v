@@ -87,10 +87,17 @@
 `define EXE_JR  6'b001000
 `define EXE_JALR  6'b001001
 
+`define EXE_SYSCALL 6'b001100
+
+`define EXE_BREAK 	6'b001101
+
 // following are special2 instruction
 `define EXE_MUL 6'b000010 
 `define EXE_CLZ 6'b100000
 `define EXE_CLO 6'b100001
+
+// eret instrcution
+`define EXE_ERET 32'b01000010000000000000000000011000
 
 //AluOp
 `define EXE_OR_OP 6'b000010
@@ -156,7 +163,9 @@
 `define EXE_MFCO_OP 6'b110101
 `define EXE_MTCO_OP 6'b110110
 
-
+`define EXE_SYSCALL_OP 6'b110111
+`define EXE_ERET_OP   6'b111000
+`define EXE_BREAK_OP  6'b111001
 //AluSel
 `define EXE_RES_LOGIC 3'b000
 `define EXE_RES_SHIFT 3'b001
@@ -165,6 +174,7 @@
 `define EXE_RES_MUL 3'b100
 `define EXE_RES_JUMP_BRANCH 3'b101
 `define EXE_RES_LOAD_STORE 3'b110	
+`define EXE_RES_NOP			3'b111
 
 //instruction and address of instruction
 `define InstAddrBus 31:0
@@ -212,3 +222,12 @@
 `define CP0_CAUSE 	5'b01101
 `define CP0_STATUS 	5'b01100
 `define CP0_EPC		5'b01110
+`define CP0_EBASE	5'b01111
+`define CP0_EBASE_ADDR 32'h80001000
+
+// define exception pos in type
+`define EXCP_BREAK 7
+`define EXCP_SYSCALL 8
+`define EXCP_ERET 12
+`define EXCP_INVALID_INST 9
+`define EXCP_OVERFLOW 11

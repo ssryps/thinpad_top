@@ -44,7 +44,7 @@ module MemControl(
 		input wire[31:0] mem_data_i,
 		input wire[5:0]	 mem_data_sz_i,	
 		input wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i,
-
+		input wire mem_enabled,
 
 		input wire[31:0] mmu_result_i,
 		input wire pause_pipeline_i,
@@ -89,7 +89,7 @@ module MemControl(
 	 || (cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) );
 
 	always @(posedge clk) begin 
-		if(rst) begin
+		if(rst || mem_enabled == 0) begin
 			cur_state <= `MEMCONTROL_STATE_RST;
 		end else begin
 			if (cur_state == `MEMCONTROL_STATE_RST) begin

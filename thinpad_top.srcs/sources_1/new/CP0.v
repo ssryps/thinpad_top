@@ -15,7 +15,18 @@ module CP0 (
 
 	output reg[`RegBus] cp0_status_o,
 	output reg[`RegBus] cp0_cause_o,
-	output reg[`RegBus] cp0_epc_o
+	output reg[`RegBus] cp0_epc_o,
+	output reg[`RegBus] cp0_ebase_o,
+
+    input wire[`RegBus] excp_type_i,
+    input wire[`RegBus] excp_inst_addr_i, 
+    input wire excp_in_delay_slot_i,
+
+    input wire flush,
+
+    input wire recovery
+
+    
 
 );
 
@@ -55,6 +66,8 @@ module CP0 (
                 cp0_registers[29] <= 0;
                 cp0_registers[30] <= 0;
                 cp0_registers[31] <= 0;
+
+                cp0_registers[`CP0_EBASE] <= `CP0_EBASE_ADDR;
                                 
         end else begin
             if(write_enabled == 1) begin 
@@ -73,9 +86,66 @@ module CP0 (
             	endcase
                 cp0_registers[write_addr_i] = write_data_i; 
             end           
+
+            if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
+              //  if(cp0_registers[`CP0_STATUS][1] == 1) begin 
+                    if(excp_in_delay_slot_i == 1) begin 
+                        cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                        cp0_registers[`CP0_CAUSE][31] <= 1;
+                    end else begin 
+                        cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                        cp0_registers[`CP0_CAUSE][31] <= 0;    
+                    end
+                //end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b01000;                
+            end
+
+            if(excp_type_i[`EXCP_BREAK] == 1) begin 
+              //  if(cp0_registers[`CP0_STATUS][1] == 1) begin 
+                    if(excp_in_delay_slot_i == 1) begin 
+                        cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                        cp0_registers[`CP0_CAUSE][31] <= 1;
+                    end else begin 
+                        cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                        cp0_registers[`CP0_CAUSE][31] <= 0;    
+                    end
+                //end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b01001;                
+            end
+
+
+            if(excp_type_i[`EXCP_INVALID_INST] == 1) begin 
+                if(excp_in_delay_slot_i == 1) begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                    cp0_registers[`CP0_CAUSE][31] <= 1;
+                end else begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                    cp0_registers[`CP0_CAUSE][31] <= 0;    
+                end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b01010;                
+            end
+
+            if(excp_type_i[`EXCP_OVERFLOW] == 1) begin 
+                if(excp_in_delay_slot_i == 1) begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                    cp0_registers[`CP0_CAUSE][31] <= 1;
+                end else begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                    cp0_registers[`CP0_CAUSE][31] <= 0;    
+                end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b01100;                
+            end
+
+            if(excp_type_i[`EXCP_ERET] == 1) begin 
+                cp0_registers[`CP0_STATUS][1] <= 0;    
+            end
+                        
         end
     end
-
 
 
 
@@ -86,6 +156,7 @@ module CP0 (
             cp0_epc_o <= `ZeroWord;
             cp0_cause_o <= `ZeroWord;
             cp0_status_o = `ZeroWord;
+            cp0_ebase_o <= cp0_registers[`CP0_EBASE];
 
         end else begin
             read_data_o <= `ZeroWord;
@@ -94,9 +165,24 @@ module CP0 (
             end else if (read_enabled == 1) begin
                 read_data_o <= cp0_registers[read_addr_i];
             end 
-            cp0_epc_o <= cp0_registers[`CP0_EPC];
-            cp0_cause_o <= cp0_registers[`CP0_CAUSE];
-            cp0_status_o = cp0_registers[`CP0_STATUS];
+
+            if(write_enabled == 1 && write_addr_i == `CP0_EPC) begin 
+                cp0_epc_o <= write_data_i;
+            end else begin
+                cp0_epc_o <= cp0_registers[`CP0_EPC];
+            end
+            if(write_enabled == 1 && write_addr_i == `CP0_CAUSE) begin 
+                cp0_epc_o <= write_data_i;
+            end else begin
+                cp0_cause_o <= cp0_registers[`CP0_CAUSE];
+            end
+            if(write_enabled == 1 && write_addr_i == `CP0_STATUS) begin 
+                cp0_epc_o <= write_data_i;
+            end else begin
+                cp0_status_o <= cp0_registers[`CP0_STATUS];
+            end
+            cp0_ebase_o <= cp0_registers[`CP0_EBASE];
+
         end
     end
 endmodule

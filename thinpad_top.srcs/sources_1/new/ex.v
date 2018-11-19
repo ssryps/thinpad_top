@@ -73,7 +73,15 @@ module ex(
     output reg[`RegBus] cp0_reg_data_o,
 
     output reg[4:0] cp0_reg_read_addr_o,
-    output reg cp0_reg_read_enabled
+    output reg cp0_reg_read_enabled, 
+
+    // exception 
+    input wire[`RegBus]  excp_type_i,
+    input wire[`RegBus] excp_inst_addr_i,
+
+    output wire[`RegBus] excp_type_o,
+    output wire[`RegBus] excp_inst_addr_o,
+    output wire excp_in_delay_slot_o
 );
 
     reg[`RegBus] logicout;
@@ -94,7 +102,7 @@ module ex(
     wire[`RegBus] operand2_mult;
     wire[`DoubleRegBus] hilo_temp;
     reg[`DoubleRegBus] mulres; // result of  multiplication
-
+    reg overflow;
     //DIV
     reg stallreq_for_div;
 
@@ -348,8 +356,10 @@ module ex(
         wd_o <= wd_i;
         if (((aluop_i==`EXE_ADD_OP)||(aluop_i==`EXE_SUB_OP))&&(ov_sum==1'b1)) begin
             wreg_o<=`WriteDisable;
+            overflow <= 1;
         end else begin
             wreg_o <= wreg_i;
+            overflow <= 0;
         end
     
         case ( alusel_i )
@@ -422,4 +432,8 @@ module ex(
              cp0_reg_data_o <= 32'b00000000_00000000_00000000_00000000;
         end
     end
+
+    assign excp_in_delay_slot_o = is_in_delayslot_i;
+    assign excp_inst_addr_o = excp_inst_addr_i;
+    assign excp_type_o = {excp_type_i[31:`EXCP_OVERFLOW + 1], overflow, excp_type_i[`EXCP_OVERFLOW - 1: 0]};
 endmodule

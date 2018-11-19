@@ -49,7 +49,9 @@ module MEM_WB(
     input wire[31:0] cp0_reg_data_i,
     output wire cp0_reg_we_o,
     output wire[4:0] cp0_reg_write_addr_o,
-    output wire[31:0] cp0_reg_data_o
+    output wire[31:0] cp0_reg_data_o,
+
+    input flush
 
 
     );
@@ -64,7 +66,7 @@ module MEM_WB(
 
 
     always @ (posedge clk) begin
-        if (rst==`RstEnable) begin
+        if (rst==`RstEnable || flush == 1) begin
             wb_wd_o<=`NOPRegAddr;
             wb_wreg_o<=`WriteDisable;
             wb_wdata_o<=`ZeroWord;

@@ -26,12 +26,26 @@ module IF_ID(
     input wire [31:0] if_pc_i,
     input wire [31:0] if_inst_i,
     input wire [`StallBus] stall_i,
+
+    // exception handler
+    input wire flush,
+
     output reg [31:0] id_pc_o,
     output reg [31:0] id_inst_o
     );
 
+    reg valid_inst;
+
     always @(posedge clk_i) begin
         if (rst_i==`Enable) begin
+            id_pc_o<=`ZeroWord;
+            id_inst_o<=`ZeroWord;
+            valid_inst <= 0;
+        end else if(valid_inst == 0) begin 
+            id_pc_o<=`ZeroWord;
+            id_inst_o<=`ZeroWord;
+            valid_inst <= 1;
+        end else if(flush == 1) begin 
             id_pc_o<=`ZeroWord;
             id_inst_o<=`ZeroWord;
         end else if (stall_i[1]==`Stall&&stall_i[2]==`NotStall) begin

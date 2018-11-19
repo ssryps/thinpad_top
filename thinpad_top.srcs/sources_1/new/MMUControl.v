@@ -100,7 +100,7 @@ module MMUControl (
 
 		end else begin
 			device  <= `DEVICE_NOP;
-		end
+		endlocate
 	end
 
 	always @(posedge clk) begin 
@@ -109,6 +109,7 @@ module MMUControl (
 			sram_data_reg <= `SRAMCONTROL_DEFAULT_DATA;
 			sram_enabled_reg <= 0;
 		end else begin	
+			sram_enabled_reg <= 0;
 			if(cur_state == `MMUCONTROL_STATE_INIT) begin
 				//if(op_i == `MEMCONTROL_OP_READ || op_i == `MEMCONTROL_OP_WRITE) begin
 					cur_state <= `MMUCONTROL_STATE_PAUSE;

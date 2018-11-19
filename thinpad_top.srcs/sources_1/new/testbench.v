@@ -24,6 +24,7 @@ wire[31:0] mem_addr_i;
 wire[31:0] mem_data_i;
 wire[5:0]	 mem_data_sz_i;	
 wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i;
+wire mem_enabled;
 
 wire[31:0] pc_data_o;
 wire[31:0] mem_data_o;
@@ -76,6 +77,7 @@ closemips closemips0(
 	.mem_data_o(mem_data_i),
 	.mem_data_sz_o(mem_data_sz_i),
 	.mem_op_o(mem_op_i),
+    .mem_enabled(mem_enabled),
 	.mem_data_i(mem_data_o),
 	.mem_pause_pipeline_i(pause_pipeline_final_o)
 );

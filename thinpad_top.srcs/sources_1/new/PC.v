@@ -30,6 +30,11 @@ module PC(
     input wire branch_flag_i,
     input wire[`RegBus] branch_target_address_i,
 
+    //exception handler
+
+    input wire flush,
+    input wire[`RegBus] ex_pc,
+
     output reg [31:0] pc_o,
     output reg ce_o
     );
@@ -62,6 +67,9 @@ module PC(
         if (ce_o == 1'b0) begin
                 //pc_o <= 32'h00000000;
                 pc_o <= 32'h80000000;
+        end else if(flush == 1) begin
+            pc_o <= ex_pc;
+
         end else if(stall_i[0] == 1'b0) begin
                   if(branch_flag_i == `Branch) begin
                         pc_o <= branch_target_address_i;
