@@ -732,7 +732,17 @@ module id(
                     next_inst_in_delayslot_o <= `InDelaySlot;
          
                     instvalid <= `InstValid;
+                    if (rt != 5'h0) begin
+                        is_reserve_inst <= 1;
+                    end
                 end
+                `EXE_BLEZL: begin 
+                    if (rt != 5'h0) begin
+                        is_reserve_inst <= 1;
+                    end
+                    
+                end
+
                 `EXE_BNE: begin
                     //registers
                     reg1_read_o <= 1'b1;
@@ -1127,6 +1137,49 @@ module id(
 	  end
 	end
 
+    reg is_reserve_inst;
+
+    always @(*) begin
+        if(rst == `RstEnable) begin 
+            is_reserve_inst <= 0;
+        end else begin 
+            is_reserve_inst <= 0;
+            if(op == 6'b011000 || op == 6'b011001 || op == 6'b011010 || op == 6'b011011 || op == 6'b011110 || op == 6'b011111
+              || op == 6'b100111
+              || op == 6'b101100 || op == 6'b101101 
+              || op == 6'b110100 || op == 6'b110111 
+              || op == 6'b111011 || op == 6'b111100 || op == 6'b111111    
+              ) begin 
+                is_reserve_inst <= 1;
+            end
+
+            if((op == 6'b000000) && (fn ==  6'b000101
+            || fn == 6'b001110 
+            || fn == 6'b010100 || fn == 6'b010101 || fn == 6'b010110 || fn == 6'b010111  
+            || fn == 6'b101000 || fn == 6'b101001 || fn == 6'b101100 || fn == 6'b101101 || fn == 6'b101110 || fn == 6'b101111
+            || fn == 6'b110101 || fn == 6'b110111
+            || fn[5:3] == 3'b111  
+            )) begin 
+                is_reserve_inst <= 1;
+            end
+
+            if((op == 6'b000001) && (rt[4:2] ==  3'b001
+            || rt == 5'b01101 || rt == 5'b01111 
+            || rt[4:2] ==  3'b101
+            || rt[4:3] ==  2'b11
+            )) begin 
+                is_reserve_inst <= 1;
+            end
+
+            if((op[5:2] == 4'b0100) && (rs == 5'b00001 || rs == 5'b00101 
+                || rs == 5'b01001  || rs == 5'b01010 || rs == 5'b01011 || rs == 5'b01100 || rs == 5'b01101 || rs == 5'b01110 || rs == 5'b01111
+            )) begin 
+                is_reserve_inst <= 1;
+            end
+        end
+    
+    end
+
     always @ (*) begin
         if(rst == `RstEnable) begin 
             excp_type_o <= `ZeroWord;
@@ -1149,7 +1202,7 @@ module id(
                 excp_type_o[`EXCP_BAD_PC_ADDR] <= 1;
             end
 
-            if(instvalid != `InstValid) begin
+            if(is_reserve_inst == 1) begin
                 excp_type_o[`EXCP_INVALID_INST] <= 1;
             end
         end

@@ -28,6 +28,8 @@
 `define EXE_BEQ  6'b000100
 `define EXE_BGTZ  6'b000111
 `define EXE_BLEZ  6'b000110
+`define EXE_BLEZL 6'b010110
+
 `define EXE_BNE  6'b000101
 
 `define EXE_LB  6'b100000
