@@ -72,6 +72,10 @@ module CTRL(
                 new_pc <= cp0_ebase_i + 32'h0000_0180;
             end
 
+            if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 
+                new_pc <= cp0_ebase_i + 32'h0000_0180;
+            end
+
             if(excp_type_i[`EXCP_ERET] == 1) begin 
                 new_pc <= cp0_epc_i;      
           //      recovery <= 1;

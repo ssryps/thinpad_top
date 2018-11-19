@@ -54,12 +54,11 @@ module id(
 
 
     // exception
-    // input reg[`RegBus] excp_type_i,
-    // input reg[`RegBus] excp_inst_addr_i,
 
 
     output reg[`RegBus] excp_type_o,
     output reg[`RegBus] excp_inst_addr_o
+
 );
 
 
@@ -1145,11 +1144,14 @@ module id(
             if(is_break_excp) begin
                 excp_type_o[`EXCP_BREAK] <= 1;
             end
-          
+            
+            if(pc_i[1:0] != 2'b00) begin 
+                excp_type_o[`EXCP_BAD_PC_ADDR] <= 1;
+            end
 
-            // if(instvalid != `InstValid) begin
-            //     excp_type_o[`EXCP_INVALID_INST] <= 1;
-            // end
+            if(instvalid != `InstValid) begin
+                excp_type_o[`EXCP_INVALID_INST] <= 1;
+            end
         end
     end
     

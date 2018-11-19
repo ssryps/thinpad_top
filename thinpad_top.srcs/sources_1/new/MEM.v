@@ -383,7 +383,11 @@ module MEM(
     		excp_type_o <= `ZeroWord;
     	end else begin
 			
-			if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
+    		if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 
+	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	   			excp_type_o <= excp_type_i;
+            	end
+			end else if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
     	   			excp_type_o <= excp_type_i;
             	end
@@ -400,9 +404,9 @@ module MEM(
     	  			excp_type_o <= excp_type_i;
               	end       
             end else if(excp_type_i[`EXCP_ERET] == 1) begin 
-                if((cp0_status_i[1] == 1) ) begin //&& (cp0_status_i[0] == 1)
+                //if((cp0_status_i[1] == 1) ) begin //&& (cp0_status_i[0] == 1)
     	  			excp_type_o <= excp_type_i;
-              	end       
+              	//end       
             end else if(is_load_bad_addr == 1 || is_store_bad_addr == 1) begin 
             	if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
     	  			excp_type_o <= {excp_type_i[31:`EXCP_BAD_STORE_ADDR + 1], is_store_bad_addr, is_load_bad_addr, excp_type_i[`EXCP_BAD_LOAD_ADDR - 1: 0]};

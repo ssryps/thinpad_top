@@ -76,6 +76,8 @@ module MMUControl (
 	
 	always @(*) begin 
 		if(~rst) begin
+			mmu_addr <= addr_i;
+				
 			if(mmu_addr >= `MMU_ADDR_ROM_START && mmu_addr <= `MMU_ADDR_ROM_END) begin
 				device <= `DEVICE_ROM;
 			end else if (mmu_addr >= `MMU_ADDR_FLASH_START && mmu_addr <= `MMU_ADDR_FLASH_END) begin
@@ -90,7 +92,6 @@ module MMUControl (
 				device <= `DEVICE_RAM;
 
 				// currently map to physical address directly 
-				mmu_addr <= addr_i;
 				if(cur_state == `MMUCONTROL_STATE_RESULT) begin
 					result_o_reg <= sram_data_i;
 				end

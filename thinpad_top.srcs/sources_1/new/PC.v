@@ -36,7 +36,10 @@ module PC(
     input wire[`RegBus] ex_pc,
 
     output reg [31:0] pc_o,
-    output reg ce_o
+    output reg ce_o,
+
+    output reg[`RegBus] excp_type_o,
+    output reg[`RegBus] excp_bad_addr
     );
     /*reg rsted;
     always @(posedge clk_i) begin
