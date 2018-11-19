@@ -90,6 +90,8 @@ reg   [15:0] data_read;
 reg   [19:0] Address_read1,Address_read2 ;
 reg   initiate_read1,initiate_read2;
 
+wire[31:0] flag;
+assign flag = { mem_array1[20'h1d4f4], mem_array0[20'h1d4f4]}; 
 
 
 //Intializing values 
