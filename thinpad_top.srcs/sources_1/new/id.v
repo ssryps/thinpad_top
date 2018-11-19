@@ -52,6 +52,12 @@ module id(
 	output reg is_in_delayslot_o,
     output wire[`RegBus] inst_o,
 
+
+    // exception
+    // input reg[`RegBus] excp_type_i,
+    // input reg[`RegBus] excp_inst_addr_i,
+
+
     output reg[`RegBus] excp_type_o,
     output reg[`RegBus] excp_inst_addr_o
 );

@@ -100,7 +100,7 @@ module MMUControl (
 
 		end else begin
 			device  <= `DEVICE_NOP;
-		endlocate
+		end
 	end
 
 	always @(posedge clk) begin 

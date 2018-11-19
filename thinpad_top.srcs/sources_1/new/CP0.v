@@ -21,6 +21,7 @@ module CP0 (
     input wire[`RegBus] excp_type_i,
     input wire[`RegBus] excp_inst_addr_i, 
     input wire excp_in_delay_slot_i,
+    input wire[`RegBus] excp_bad_addr,
 
     input wire flush,
 
@@ -143,7 +144,35 @@ module CP0 (
             if(excp_type_i[`EXCP_ERET] == 1) begin 
                 cp0_registers[`CP0_STATUS][1] <= 0;    
             end
-                        
+                 
+            if(excp_type_i[`EXCP_BAD_LOAD_ADDR] == 1) begin 
+                if(excp_in_delay_slot_i == 1) begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                    cp0_registers[`CP0_CAUSE][31] <= 1;
+                end else begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                    cp0_registers[`CP0_CAUSE][31] <= 0;    
+                end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b00100;         
+
+                cp0_registers[`CP0_BAD_ADDR] <= excp_bad_addr;       
+            end
+
+            if(excp_type_i[`EXCP_BAD_STORE_ADDR] == 1) begin 
+                if(excp_in_delay_slot_i == 1) begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                    cp0_registers[`CP0_CAUSE][31] <= 1;
+                end else begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                    cp0_registers[`CP0_CAUSE][31] <= 0;    
+                end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b00101;                
+                cp0_registers[`CP0_BAD_ADDR] <= excp_bad_addr;       
+
+            end
+
         end
     end
 

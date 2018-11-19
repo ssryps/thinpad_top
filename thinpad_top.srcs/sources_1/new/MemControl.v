@@ -59,6 +59,9 @@ module MemControl(
 		output wire[31:0] pc_data_o,
 		output wire[31:0] mem_data_o,
 		output wire pause_pipeline_o
+
+		// exception 
+//		output wire is_pc_valid
     );
 
 	
@@ -78,7 +81,7 @@ module MemControl(
 	reg [31:0]read_and_write_temp_pc;
 	reg [31:0]read_and_write_temp_mem;
 	//reg [31:0]read_and_write_temp_
-
+	//reg input_valid;
 
 	assign op_o = op_o_reg;
 	assign addr_o = addr_o_reg;
@@ -87,6 +90,9 @@ module MemControl(
 	assign mem_data_o = mem_data_o_reg;
 	assign pause_pipeline_o = !((cur_state == `MEMCONTROL_STATE_RST) || (cur_state == `MEMCONTROL_STATE_ONLY_PC) || (cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_1)
 	 || (cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) );
+
+	// assign input_valid = ((cur_state == `MEMCONTROL_STATE_INIT) || (cur_state == `MEMCONTROL_STATE_ONLY_PC_RESULT) 
+	//  	|| (cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE) || (cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE));
 
 	always @(posedge clk) begin 
 		if(rst || mem_enabled == 0) begin

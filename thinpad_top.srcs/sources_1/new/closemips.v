@@ -197,6 +197,7 @@ wire ex_mem_excp_in_delay_slot_o;
 wire[`RegBus] mem_excp_type_o;
 wire[`RegBus] mem_excp_inst_addr_o;
 wire mem_excp_in_delay_slot_o;
+wire[`RegBus] mem_excp_bad_addr;
 
 wire[`RegBus] cp0_status_i;
 wire[`RegBus] cp0_cause_i;
@@ -223,7 +224,8 @@ CP0 cp0(
 
     .excp_type_i(mem_excp_type_o),
     .excp_inst_addr_i(mem_excp_inst_addr_o), 
-    .excp_in_delay_slot_i(mem_excp_in_delay_slot_o)
+    .excp_in_delay_slot_i(mem_excp_in_delay_slot_o),
+    .excp_bad_addr(mem_excp_bad_addr)
 );
 
 
@@ -457,6 +459,7 @@ MEM mem0(
     .excp_type_o(mem_excp_type_o),
     .excp_inst_addr_o(mem_excp_inst_addr_o),
     .excp_in_delay_slot_o(mem_excp_in_delay_slot_o),
+    .excp_bad_addr(mem_excp_bad_addr),
 
     .cp0_status_i(cp0_status_i),
     .cp0_cause_i(cp0_cause_i),

@@ -223,7 +223,11 @@
 `define CP0_STATUS 	5'b01100
 `define CP0_EPC		5'b01110
 `define CP0_EBASE	5'b01111
+`define CP0_BAD_ADDR  5'b01000
+
 `define CP0_EBASE_ADDR 32'h80001000
+
+
 
 // define exception pos in type
 `define EXCP_BREAK 7
@@ -231,3 +235,5 @@
 `define EXCP_ERET 12
 `define EXCP_INVALID_INST 9
 `define EXCP_OVERFLOW 11
+`define EXCP_BAD_LOAD_ADDR 13
+`define EXCP_BAD_STORE_ADDR 14

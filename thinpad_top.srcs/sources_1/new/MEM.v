@@ -75,10 +75,12 @@ module MEM(
 	input wire[`RegBus] excp_type_i,
 	input wire[`RegBus] excp_inst_addr_i, 
 	input wire excp_in_delay_slot_i, 
+
 	output reg[`RegBus] excp_type_o,
 	output wire[`RegBus] excp_inst_addr_o, 
 	output wire excp_in_delay_slot_o,
-	
+	output reg[`RegBus] excp_bad_addr,
+
 	input wire[`RegBus] cp0_status_i,
 	input wire[`RegBus] cp0_cause_i,
 	input wire[`RegBus] cp0_epc_i
@@ -95,6 +97,10 @@ module MEM(
 	reg[4:0] cp0_reg_write_addr_o_reg;
 	reg cp0_reg_we_o_reg;
     reg[31:0] cp0_reg_data_o_reg;
+
+	reg is_load_bad_addr, is_store_bad_addr;
+	reg[`RegBus] bad_addr;
+
     assign cp0_reg_we_o = cp0_reg_we_o_reg;
 	assign cp0_reg_write_addr_o = cp0_reg_write_addr_o_reg;
     assign cp0_reg_data_o = cp0_reg_data_o_reg;
@@ -160,7 +166,8 @@ module MEM(
 			cp0_reg_write_addr_o_reg <= 5'b00000;
             cp0_reg_we_o_reg<= `WriteDisable;
             cp0_reg_data_o_reg <= 32'b00000000_00000000_00000000_00000000;
-
+			is_load_bad_addr <= 0;
+			is_store_bad_addr <= 0;
 
         end else begin
             wd_o<=wd_i;
@@ -176,8 +183,9 @@ module MEM(
     		cp0_reg_data_o_reg <= cp0_reg_data_i;
 			cp0_reg_write_addr_o_reg <= cp0_reg_write_addr_i;
 			cp0_reg_we_o_reg <= cp0_reg_we_i;
-
-            		
+			is_load_bad_addr <= 0;
+            is_store_bad_addr <= 0;
+           
             if(mem_pause_pipeline_i == 0) begin
 
 				if(last_op == `OP_BYTE_UNSIGNED) begin
@@ -264,22 +272,53 @@ module MEM(
 			            mem_op_o <= `MEMCONTROL_OP_READ;	
 					end
 					`EXE_LH_OP:		begin
-			            mem_addr_o <= mem_addr_i;
-			            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
-			            mem_data_o <= reg2_i;
-			            mem_op_o <= `MEMCONTROL_OP_READ;	
+						if(mem_addr_i[0] == 0) begin 							
+				            mem_addr_o <= mem_addr_i;
+				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
+				            mem_data_o <= reg2_i;
+				            mem_op_o <= `MEMCONTROL_OP_READ;	
+						end else begin 
+							mem_addr_o <= `ZeroWord;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= `ZeroWord;
+				            mem_op_o <= `MEMCONTROL_OP_NOP;	
+				            is_load_bad_addr <= 1;
+				            bad_addr <= mem_addr_i;
+						end
 					end
+
 					`EXE_LHU_OP:		begin
-			            mem_addr_o <= mem_addr_i;
-			            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
-			            mem_data_o <= reg2_i;
-			            mem_op_o <= `MEMCONTROL_OP_READ;	
+			            if(mem_addr_i[0] == 0) begin 							
+					        mem_addr_o <= mem_addr_i;
+				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
+				            mem_data_o <= reg2_i;
+				            mem_op_o <= `MEMCONTROL_OP_READ;	
+						end else begin 
+							mem_addr_o <= `ZeroWord;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= `ZeroWord;
+				            mem_op_o <= `MEMCONTROL_OP_NOP;	
+				            is_load_bad_addr <= 1;
+					        bad_addr <= mem_addr_i;
+					
+						end
+
 					end
 					`EXE_LW_OP:		begin
-			            mem_addr_o <= mem_addr_i;
-			            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
-			            mem_data_o <= reg2_i;
-			            mem_op_o <= `MEMCONTROL_OP_READ;	
+			            if(mem_addr_i[1:0] == 2'b00) begin 							
+				            mem_addr_o <= mem_addr_i;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= reg2_i;
+				            mem_op_o <= `MEMCONTROL_OP_READ;	
+						end else begin 
+							mem_addr_o <= `ZeroWord;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= `ZeroWord;
+				            mem_op_o <= `MEMCONTROL_OP_NOP;	
+				            is_load_bad_addr <= 1;
+					        bad_addr <= mem_addr_i;
+
+						end
 
 					end
 	
@@ -291,16 +330,36 @@ module MEM(
 			
 					end
 					`EXE_SH_OP:		begin
-			            mem_addr_o <= mem_addr_i;
-			            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
-			            mem_data_o <= reg2_i;
-			            mem_op_o <= `MEMCONTROL_OP_WRITE;	
+			            if(mem_addr_i[0] == 0) begin 							
+						    mem_addr_o <= mem_addr_i;
+				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
+				            mem_data_o <= reg2_i;
+				            mem_op_o <= `MEMCONTROL_OP_WRITE;	
+			            end else begin 
+							mem_addr_o <= `ZeroWord;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= `ZeroWord;
+				            mem_op_o <= `MEMCONTROL_OP_NOP;	
+				            is_store_bad_addr <= 1;
+					        bad_addr <= mem_addr_i;
+
+						end
 					end
 					`EXE_SW_OP:		begin
-			            mem_addr_o <= mem_addr_i;
-			            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
-			            mem_data_o <= reg2_i;
-			            mem_op_o <= `MEMCONTROL_OP_WRITE;	
+			            if(mem_addr_i[1:0] == 2'b00) begin 							
+					        mem_addr_o <= mem_addr_i;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= reg2_i;
+				            mem_op_o <= `MEMCONTROL_OP_WRITE;	
+						end else begin 
+							mem_addr_o <= `ZeroWord;
+				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+				            mem_data_o <= `ZeroWord;
+				            mem_op_o <= `MEMCONTROL_OP_NOP;	
+				            is_store_bad_addr <= 1;
+
+					        bad_addr <= mem_addr_i;
+						end
 					end
 					
 	
@@ -344,6 +403,11 @@ module MEM(
                 if((cp0_status_i[1] == 1) ) begin //&& (cp0_status_i[0] == 1)
     	  			excp_type_o <= excp_type_i;
               	end       
+            end else if(is_load_bad_addr == 1 || is_store_bad_addr == 1) begin 
+            	if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	  			excp_type_o <= {excp_type_i[31:`EXCP_BAD_STORE_ADDR + 1], is_store_bad_addr, is_load_bad_addr, excp_type_i[`EXCP_BAD_LOAD_ADDR - 1: 0]};
+    	  			excp_bad_addr <= bad_addr;
+              	end
             end
     	end
     

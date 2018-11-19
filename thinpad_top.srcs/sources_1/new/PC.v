@@ -86,4 +86,11 @@ module PC(
             ce_o <= 1'b1;
         end
     end
+
+    // always @(*) begin
+    //     if(pc_o[1:0] != 2'b00) begin 
+
+    //     end
+    
+    // end
 endmodule
