@@ -118,6 +118,8 @@ module id(
 			branch_target_address_o <= `ZeroWord;
 			branch_flag_o <= `NotBranch;
 			next_inst_in_delayslot_o <= `NotInDelaySlot;
+            is_reserve_inst <= 0;
+            
             end 
         else begin
             aluop_o <= `EXE_SLL_OP;
@@ -137,6 +139,8 @@ module id(
             is_eret_excp <= 0;
             is_syscall_excp <= 0;
             is_break_excp <= 0; 
+            is_reserve_inst <= 0;
+            
 
             case (op)
                 `EXE_SPECIAL_INST: begin
@@ -696,7 +700,7 @@ module id(
                         branch_target_address_o <= pc_plus_4 + imm_sll2_signedext;
                         branch_flag_o <= `Branch;
                     end
-           next_inst_in_delayslot_o <= `InDelaySlot;
+                    next_inst_in_delayslot_o <= `InDelaySlot;
              
                     instvalid <= `InstValid;
                 end
@@ -1094,63 +1098,7 @@ module id(
                 instvalid <= `InstValid;
             end
 
-        end //if
-    end //always
 
-    always @ (*) begin
-        stall_for_reg1_loadrelate<=`Disable;
-        if(rst == `RstEnable) begin
-            reg1_o <= `ZeroWord;
-        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg1_addr_o&& reg1_read_o==1'b1) begin
-            stall_for_reg1_loadrelate<=`Enable;
-        end else if (reg1_read_o==`Enable && ex_wreg_i==`Enable && reg1_addr_o==ex_wd_i) begin
-            reg1_o <= ex_wdata_i;
-        end else if (reg1_read_o==`Enable && mem_wreg_i==`Enable && reg1_addr_o==mem_wd_i) begin
-            reg1_o <= mem_wdata_i;
-        end else if(reg1_read_o == 1'b1) begin
-            reg1_o <= reg1_data_i;
-        end else if(reg1_read_o == 1'b0) begin
-            reg1_o <= eimm;
-        end else begin
-            reg1_o <= `ZeroWord;
-        end
-    end
-
-    always @ (*) begin
-        stall_for_reg2_loadrelate<=`Disable;
-        if(rst == `RstEnable) begin
-            reg2_o <= `ZeroWord;
-        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg2_addr_o&& reg1_read_o==1'b1) begin
-            stall_for_reg2_loadrelate<=`Enable;
-        end else if (reg2_read_o==`Enable && ex_wreg_i==`Enable && reg2_addr_o==ex_wd_i) begin
-            reg2_o <= ex_wdata_i;
-        end else if (reg2_read_o==`Enable && mem_wreg_i==`Enable && reg2_addr_o==mem_wd_i) begin
-            reg2_o <= mem_wdata_i;
-        end else if(reg2_read_o == 1'b1) begin
-            reg2_o <= reg2_data_i;
-        end else if(reg2_read_o == 1'b0) begin
-            reg2_o <= eimm;
-        end else begin
-            reg2_o <= `ZeroWord;
-        end
-    end
-
-    always @ (*) begin
-		if(rst == `RstEnable) begin
-			is_in_delayslot_o <= `NotInDelaySlot;
-		end else begin
-		  is_in_delayslot_o <= is_in_delayslot_i;
-	  end
-	end
-
-    reg is_reserve_inst;
-
-    always @(*) begin
-        if(rst == `RstEnable) begin 
-            is_reserve_inst <= 0;
-        end else begin 
-            is_reserve_inst <= 0;
-            // op is invalid
             if( op == 6'b010111 ||
                 op == 6'b011000 || op == 6'b011001 || op == 6'b011010 || op == 6'b011011 || op == 6'b011110 || op == 6'b011111 || op == 6'b011101
               || op == 6'b100111
@@ -1232,6 +1180,64 @@ module id(
                 end
 
             end
+
+        end //if
+    end //always
+
+    always @ (*) begin
+        stall_for_reg1_loadrelate<=`Disable;
+        if(rst == `RstEnable) begin
+            reg1_o <= `ZeroWord;
+        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg1_addr_o&& reg1_read_o==1'b1) begin
+            stall_for_reg1_loadrelate<=`Enable;
+        end else if (reg1_read_o==`Enable && ex_wreg_i==`Enable && reg1_addr_o==ex_wd_i) begin
+            reg1_o <= ex_wdata_i;
+        end else if (reg1_read_o==`Enable && mem_wreg_i==`Enable && reg1_addr_o==mem_wd_i) begin
+            reg1_o <= mem_wdata_i;
+        end else if(reg1_read_o == 1'b1) begin
+            reg1_o <= reg1_data_i;
+        end else if(reg1_read_o == 1'b0) begin
+            reg1_o <= eimm;
+        end else begin
+            reg1_o <= `ZeroWord;
+        end
+    end
+
+    always @ (*) begin
+        stall_for_reg2_loadrelate<=`Disable;
+        if(rst == `RstEnable) begin
+            reg2_o <= `ZeroWord;
+        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg2_addr_o&& reg1_read_o==1'b1) begin
+            stall_for_reg2_loadrelate<=`Enable;
+        end else if (reg2_read_o==`Enable && ex_wreg_i==`Enable && reg2_addr_o==ex_wd_i) begin
+            reg2_o <= ex_wdata_i;
+        end else if (reg2_read_o==`Enable && mem_wreg_i==`Enable && reg2_addr_o==mem_wd_i) begin
+            reg2_o <= mem_wdata_i;
+        end else if(reg2_read_o == 1'b1) begin
+            reg2_o <= reg2_data_i;
+        end else if(reg2_read_o == 1'b0) begin
+            reg2_o <= eimm;
+        end else begin
+            reg2_o <= `ZeroWord;
+        end
+    end
+
+    always @ (*) begin
+		if(rst == `RstEnable) begin
+			is_in_delayslot_o <= `NotInDelaySlot;
+		end else begin
+		  is_in_delayslot_o <= is_in_delayslot_i;
+	  end
+	end
+
+    reg is_reserve_inst;
+
+    always @(*) begin
+        if(rst == `RstEnable) begin 
+            //is_reserve_inst <= 0;
+        end else begin 
+            // op is invalid
+            
         end
     
     end

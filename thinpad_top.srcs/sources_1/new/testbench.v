@@ -12,6 +12,8 @@ wire[`InstAddrBus] inst_addr;
 wire[`InstBus] inst;
 wire rom_ce;
 
+wire[31:0] cnt_correct_instruction;
+
 // wire mem_we_i;
 // wire[`RegBus] mem_addr_i;
 // wire[`RegBus] mem_data_i;
@@ -79,7 +81,9 @@ closemips closemips0(
 	.mem_op_o(mem_op_i),
     .mem_enabled(mem_enabled),
 	.mem_data_i(mem_data_o),
-	.mem_pause_pipeline_i(pause_pipeline_final_o)
+	.mem_pause_pipeline_i(pause_pipeline_final_o),
+        
+    .cnt_correct_instruction(cnt_correct_instruction)
 );
 
 //inst_rom inst_rom0(

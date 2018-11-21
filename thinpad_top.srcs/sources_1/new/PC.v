@@ -77,7 +77,7 @@ module PC(
                   if(branch_flag_i == `Branch) begin
                         pc_o <= branch_target_address_i;
                     end else begin
-                      pc_o <= pc_o + 4'h4;
+                        pc_o <= pc_o + 4'h4;
                   end
             end
         end
