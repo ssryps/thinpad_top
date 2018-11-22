@@ -493,7 +493,8 @@ MEM_WB Mem_wb(
     .cp0_reg_data_i(mem_o_cp0_reg_data_o),
     .cp0_reg_we_o(mem_wb_o_cp0_reg_we_o),
     .cp0_reg_write_addr_o(mem_wb_o_cp0_reg_write_addr_o),
-    .cp0_reg_data_o(mem_wb_o_cp0_reg_data_o)
+    .cp0_reg_data_o(mem_wb_o_cp0_reg_data_o),
+    .flush(flush)
 );
 
 hilo hilo0(

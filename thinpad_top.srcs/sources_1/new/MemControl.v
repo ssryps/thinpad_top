@@ -148,7 +148,7 @@ module MemControl(
 				end else if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
 					if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
 						cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE;
-					end else begin
+					end else if(mem_data_sz_i == `MEMECONTROL_OP_HALF_WORD ||mem_data_sz_i == `MEMECONTROL_OP_BYTE)  begin
 						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE;	
 					end
 				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
@@ -269,6 +269,6 @@ module MemControl(
 				data_o_reg <=  mem_data_i;
 				// save temp pc result 			
 			end
-		//end
+//		end
 	end
 endmodule
