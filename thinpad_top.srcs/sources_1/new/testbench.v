@@ -65,22 +65,22 @@ clock osc0 (
     .clk_50M    (my_clk_50M)
 );
 
-closemips closemips0(
-	.clk(my_clk_50M),
-	.rst(rst),
+// closemips closemips0(
+// 	.clk(my_clk_50M),
+// 	.rst(rst),
 
-	.rom_addr_o(inst_addr),
-	.rom_data_i(inst),
-	.rom_ce_o(rom_ce),
+// 	.rom_addr_o(inst_addr),
+// 	.rom_data_i(inst),
+// 	.rom_ce_o(rom_ce),
 
-	.mem_addr_o(mem_addr_i),
-	.mem_data_o(mem_data_i),
-	.mem_data_sz_o(mem_data_sz_i),
-	.mem_op_o(mem_op_i),
-    .mem_enabled(mem_enabled),
-	.mem_data_i(mem_data_o),
-	.mem_pause_pipeline_i(pause_pipeline_final_o)
-);
+// 	.mem_addr_o(mem_addr_i),
+// 	.mem_data_o(mem_data_i),
+// 	.mem_data_sz_o(mem_data_sz_i),
+// 	.mem_op_o(mem_op_i),
+//     .mem_enabled(mem_enabled),
+// 	.mem_data_i(mem_data_o),
+// 	.mem_pause_pipeline_i(pause_pipeline_final_o)
+// );
 
 //inst_rom inst_rom0(
 //	.ce(rom_ce),
@@ -97,35 +97,54 @@ closemips closemips0(
 // 	.data_o(mem_data_o),
 // 	.ce(mem_ce_i)	
 // );
-closemem closemem0(
-	.clk_50M(my_clk_50M),
-	.rst(rst),
-	.pc_addr_i(inst_addr),
-	.mem_addr_i(mem_addr_i),
-	.mem_data_i(mem_data_i),
-	.mem_data_sz_i(mem_data_sz_i),
-	.mem_op_i(mem_op_i),
+// closemem closemem0(
+// 	.clk_50M(my_clk_50M),
+// 	.rst(rst),
+// 	.pc_addr_i(inst_addr),
+// 	.mem_addr_i(mem_addr_i),
+// 	.mem_data_i(mem_data_i),
+// 	.mem_data_sz_i(mem_data_sz_i),
+// 	.mem_op_i(mem_op_i),
 
-	.pc_data_o(inst),
-	.mem_data_o(mem_data_o),
-	.pause_pipeline_final_o(pause_pipeline_final_o),
+// 	.pc_data_o(inst),
+// 	.mem_data_o(mem_data_o),
+// 	.pause_pipeline_final_o(pause_pipeline_final_o),
 
-	.ram1_data(ram1_data),
-	.ram1_addr(ram1_addr),
-	.ram1_be_n(ram1_be_n),
-	.ram1_ce_n(ram1_ce_n),
-	.ram1_oe_n(ram1_oe_n),
-	.ram1_we_n(ram1_we_n),
+// 	.ram1_data(ram1_data),
+// 	.ram1_addr(ram1_addr),
+// 	.ram1_be_n(ram1_be_n),
+// 	.ram1_ce_n(ram1_ce_n),
+// 	.ram1_oe_n(ram1_oe_n),
+// 	.ram1_we_n(ram1_we_n),
 
-	.ram2_data(ram2_data),
-	.ram2_addr(ram2_addr),
-	.ram2_be_n(ram2_be_n),
-	.ram2_ce_n(ram2_ce_n),
-	.ram2_oe_n(ram2_oe_n),
-	.ram2_we_n(ram2_we_n)
+// 	.ram2_data(ram2_data),
+// 	.ram2_addr(ram2_addr),
+// 	.ram2_be_n(ram2_be_n),
+// 	.ram2_ce_n(ram2_ce_n),
+// 	.ram2_oe_n(ram2_oe_n),
+// 	.ram2_we_n(ram2_we_n)
 
-	);
+// 	);
 
+thinpad_top thinpad_top__ (
+    .clk_50M(my_clk_50M),
+    .clk_11M0592(my_clk_11M0592),
+    .reset_btn(rst),
+    .base_ram_data(ram1_data),
+    .base_ram_addr(ram1_addr),
+    .base_ram_be_n(ram1_be_n),
+    .base_ram_ce_n(ram1_ce_n),
+    .base_ram_oe_n(ram1_oe_n),
+    .base_ram_we_n(ram1_we_n),
+
+    .ext_ram_data(ram2_data),
+    .ext_ram_addr(ram2_addr),
+    .ext_ram_be_n(ram2_be_n),
+    .ext_ram_ce_n(ram2_ce_n),
+    .ext_ram_oe_n(ram2_oe_n),
+    .ext_ram_we_n(ram2_we_n)
+    )
+ 
 
 sram_model2 base1(/*autoinst*/
             .DataIO(ram1_data[15:0]),

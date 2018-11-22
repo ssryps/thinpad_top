@@ -137,8 +137,8 @@ module MemControl(
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_1) begin
 				cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE_MEM_RESULT;
 				// output pc and mem result
-				pc_data_o_reg <= read_or_write_temp_pc;
-				mem_data_o_reg <= mmu_result_i;
+	//			pc_data_o_reg <= read_or_write_temp_pc;
+	//			mem_data_o_reg <= mmu_result_i;
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_MEM_RESULT) begin
 		
 				if(mem_op_i == `MEMCONTROL_OP_NOP) begin

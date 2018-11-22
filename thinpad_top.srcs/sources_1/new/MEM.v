@@ -114,7 +114,6 @@ module MEM(
 			cur_state <= 1;
 			last_op <= `OP_NOP;
 		end else begin 
-		    wdata_o<=wdata_i;
 			if(mem_pause_pipeline_i == 0)begin
 				cur_state <= 1;
 				
@@ -162,7 +161,7 @@ module MEM(
             mem_data_sz_o <= `MEMECONTROL_OP_WORD;
             mem_data_o <= `ZeroWord;
             mem_op_o <= `MEMCONTROL_OP_NOP;	
-            cur_state <= 0;
+//            cur_state <= 0;
 			cp0_reg_write_addr_o_reg <= 5'b00000;
             cp0_reg_we_o_reg<= `WriteDisable;
             cp0_reg_data_o_reg <= 32'b00000000_00000000_00000000_00000000;
@@ -175,6 +174,8 @@ module MEM(
             hi_o <= hi_i;
             lo_o <= lo_i;
             whilo_o <= whilo_i;
+		    wdata_o<=wdata_i;
+
 	        // mem_addr_o <= `ZeroWord;
 	        // mem_data_sz_o <= `MEMECONTROL_OP_WORD;
 	        // mem_data_o <= `ZeroWord;
