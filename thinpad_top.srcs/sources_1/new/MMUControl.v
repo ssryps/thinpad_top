@@ -51,19 +51,27 @@ module MMUControl (
 	// output to Memcontrol
 
 	output wire[31:0] result_o,
-	output wire pause_pipeline_o
+	output wire pause_pipeline_o,
+	
+	output wire[2:0] mmu_state,
+	output wire[2:0] mmu_op_i,
+	output wire[3:0] mmu_addr_i
 
 	);
-
+    assign mmu_addr_i = addr_i[3:0];
 	reg[`MEMCONTROL_ADDR_LEN - 1:0] mmu_addr;
 	reg[`DEVICE_CHOICE_LEN - 1:0] device;
-	reg [2:0]cur_state;
+	reg [2:0] cur_state;
     reg sram_enabled_reg;
     reg serial_enabled_reg;
     reg [31:0]result_o_reg;
     reg [`SRAMCONTROL_OP_LEN - 1:0]sram_op_reg;
     reg [`SRAMCONTROL_ADDR_LEN - 1:0]sram_addr_reg;
     reg [31:0] sram_data_reg;
+
+    assign mmu_state = cur_state;
+    assign mmu_op_i = op_i;
+    
     assign sram_enabled = sram_enabled_reg;
     assign serial_enabled = serial_enabled_reg;
     

@@ -29,7 +29,8 @@ module closemem(
 	input wire[31:0] mem_data_i,
 	input wire[5:0]	 mem_data_sz_i,	
 	input wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i,
-
+    input wire mem_enabled,
+    
 	output wire[31:0] pc_data_o,
 	output wire[31:0] mem_data_o,
 	output wire pause_pipeline_final_o,
@@ -48,7 +49,15 @@ module closemem(
     output wire[3:0] ram2_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
     output wire ram2_ce_n,       //ExtRAM片选，低有效
     output wire ram2_oe_n,       //ExtRAM读使能，低有效
-    output wire ram2_we_n      //ExtRAM写使能，低有效
+    output wire ram2_we_n,      //ExtRAM写使能，低有效
+
+    // debug
+    output wire[2:0] mmu_state,
+    output wire[2:0] sram_state,
+    output wire[2:0] mmu_op_i,
+    output wire[3:0] sram_addr_i,
+    output wire[3:0] mmu_addr_i,
+   output wire[3:0] mem_state
 
 	);
 
@@ -138,6 +147,7 @@ MemControl mem_control(
     .mem_data_i(mem_data_i),
     .mem_data_sz_i(mem_data_sz_i),
     .mem_op_i(mem_op_i),
+    .mem_enabled(mem_enabled),
     .mmu_result_i(result_o),
     .pause_pipeline_i(pause_pipeline_o),
     .op_o(op_i),
@@ -145,7 +155,8 @@ MemControl mem_control(
     .data_o(data_i),
     .pc_data_o(pc_data_o),
     .mem_data_o(mem_data_o),
-    .pause_pipeline_o(pause_pipeline_final_o)
+    .pause_pipeline_o(pause_pipeline_final_o),
+    .mem_state(mem_state)
     );
 
 MMUControl mmu_control(
@@ -165,7 +176,10 @@ MMUControl mmu_control(
 	.serial_data(serial_data),
 	.serial_addr(serial_addr),
 	.result_o(result_o),
-	.pause_pipeline_o(pause_pipeline_o)
+	.pause_pipeline_o(pause_pipeline_o),
+    .mmu_state(mmu_state),
+    .mmu_op_i(mmu_op_i),
+    .mmu_addr_i(mmu_addr_i)
 	);
 
 SRAMControl sram_control(
@@ -188,7 +202,9 @@ SRAMControl sram_control(
             .ram2_ce_o(ram2_ce_n),
             .ram2_oe_o(ram2_oe_n),
             .ram2_we_o(ram2_we_n),
-            .ram2_be(ram2_be_n)
+            .ram2_be(ram2_be_n),
+            .sram_state(sram_state),
+            .sram_addr_i(sram_addr_i)
     );
 
 

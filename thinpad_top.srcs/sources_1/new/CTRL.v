@@ -43,6 +43,7 @@ module CTRL(
             new_pc <= `ZeroWord;
         end else if(excp_type_i != `ZeroWord) begin 
             flush <= 1;
+         //   stall_o<=6'b000000;
             recovery <= 0;
             if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
 //                new_pc <= 32'h0000_0040;

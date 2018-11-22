@@ -129,11 +129,11 @@ end
 // g=dpy0[7] // |     |
 //           // ---d---  p
 
-wire[31:0] cnt_correct_instruction;
+wire[31:0] cnt_correct_instruction1;
+wire[31:0] cnt_correct_instruction2;
+wire pc_branch_flag;
 // 7段数码管译码器演示，将number用16进制显示在数码管上面
 reg[7:0] number;
-SEG7_LUT segL(.oSEG1(dpy0), .iDIG(cnt_correct_instruction[3:0])); //dpy0是低位数码管
-SEG7_LUT segH(.oSEG1(dpy1), .iDIG(cnt_correct_instruction[7:4])); //dpy1是高位数码管
 
 reg[15:0] led_bits;
 //assign leds = led_bits;
@@ -211,8 +211,6 @@ wire[`InstAddrBus] inst_addr;
 wire[`InstBus] inst;
 wire rom_ce;
 
-//assign leds = inst[15:0];
-
 // wire mem_we_i;
 // wire[`RegBus] mem_addr_i;
 // wire[`RegBus] mem_data_i;
@@ -231,25 +229,6 @@ wire[31:0] pc_data_o;
 wire[31:0] mem_data_o;
 wire pause_pipeline_final_o;
 
-// signal to outer devices
-wire[31:0] ram1_data;  //BaseRAM数据，低8位与CPLD串口控制器共享
-wire[19:0] ram1_addr; //BaseRAM地址
-wire[3:0] ram1_be_n;  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-wire ram1_ce_n;       //BaseRAM片选，低有效
-wire ram1_oe_n;       //BaseRAM读使能，低有效
-wire ram1_we_n;       //BaseRAM写使能，低有效
-
-//ExtRAM信号
-wire[31:0] ram2_data;  //ExtRAM数据
-wire[19:0] ram2_addr; //ExtRAM地址
-wire[3:0] ram2_be_n;  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
-wire ram2_ce_n;       //ExtRAM片选，低有效
-wire ram2_oe_n;       //ExtRAM读使能，低有效
-wire ram2_we_n;       //ExtRAM写使能，低有效
-
-
-
-
 wire my_clk_50M, my_clk_11M0592;
 //reg rst;
 //
@@ -265,7 +244,31 @@ wire my_clk_50M, my_clk_11M0592;
 //    .clk_11M0592(my_clk_11M0592),
 //    .clk_50M    (my_clk_50M)
 //);
-assign my_clk_50M=clk_50M;
+
+wire [2:0 ] mmu_state;
+wire [2:0 ] sram_state;
+wire [2:0] mmu_op_i;
+wire[3:0] mmu_addr_i;
+wire[3:0] sram_addr_i;
+wire [3:0] mem_state;
+wire[31:0] excp_type;
+wire pc_flush;
+assign my_clk_50M = clk_50M;
+//assign my_clk_50M = clock_btn;
+
+//assign leds[3:0] = inst_addr[5:2]; //debug
+//assign leds[4] = base_ram_ce_n; //debug
+//assign leds[5] = base_ram_oe_n; //debug
+//assign leds[6] = base_ram_we_n; //debug
+    
+//assign leds[9:7] = mmu_state[2:0]; //debug
+//assign leds[12:10] = sram_state[2:0]; //debug
+
+//assign leds[15:0] = inst_addr[15:0] ;
+////assign leds[13:10] = inst[3:0];
+
+//SEG7_LUT segL(.oSEG1(dpy0), .iDIG(inst_addr[19:16] )); //dpy0是低位数码管
+//SEG7_LUT segH(.oSEG1(dpy1), .iDIG(inst_addr[23:20] )); //dpy1是高位数码管
 
 closemips closemips0(
 	.clk(my_clk_50M),
@@ -283,7 +286,9 @@ closemips closemips0(
 	.mem_data_i(mem_data_o),
 	.mem_pause_pipeline_i(pause_pipeline_final_o),
 	
-	.cnt_correct_instruction(cnt_correct_instruction)
+	.cnt_correct_instruction1(cnt_correct_instruction1),
+	.cnt_correct_instruction2(cnt_correct_instruction2),
+	.excp_type(excp_type)
 );
 
 closemem closemem0(
@@ -294,7 +299,7 @@ closemem closemem0(
 	.mem_data_i(mem_data_i),
 	.mem_data_sz_i(mem_data_sz_i),
 	.mem_op_i(mem_op_i),
-
+    .mem_enabled(mem_enabled),
 	.pc_data_o(inst),
 	.mem_data_o(mem_data_o),
 	.pause_pipeline_final_o(pause_pipeline_final_o),
@@ -311,7 +316,13 @@ closemem closemem0(
 	.ram2_be_n(ext_ram_be_n),
 	.ram2_ce_n(ext_ram_ce_n),
 	.ram2_oe_n(ext_ram_oe_n),
-	.ram2_we_n(ext_ram_we_n)
+	.ram2_we_n(ext_ram_we_n),
+    .mmu_state(mmu_state),
+    .sram_state(sram_state),
+    .mmu_op_i(mmu_op_i),
+    .sram_addr_i(sram_addr_i),
+    .mmu_addr_i(mmu_addr_i),
+    .mem_state(mem_state)
 
 	);
 	

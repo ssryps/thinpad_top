@@ -58,15 +58,17 @@ module MemControl(
 		// result to pc and mem
 		output wire[31:0] pc_data_o,
 		output wire[31:0] mem_data_o,
-		output wire pause_pipeline_o
+		output wire pause_pipeline_o,
+		
+		output wire [3:0] mem_state
 
 		// exception 
 //		output wire is_pc_valid
     );
 
-	
 	// mem access will halt the pipeline, so inside we need a state to record current state
 	reg[3:0] cur_state; 
+	assign mem_state = cur_state;
 	//  currently it remains unknown if a write or read can be finished in a period, so 
 	// add a reg to record current phase of a primitive operation(read or write)
 	
@@ -95,7 +97,7 @@ module MemControl(
 	//  	|| (cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE) || (cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE));
 
 	always @(posedge clk) begin 
-		if(rst || mem_enabled == 0) begin
+		if(rst ) begin
 			cur_state <= `MEMCONTROL_STATE_RST;
 		end else begin
 			if (cur_state == `MEMCONTROL_STATE_RST) begin

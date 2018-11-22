@@ -42,7 +42,9 @@ module RegisterFile(
     input wire flush,
     input wire recovery,
         
-    output reg[`RegBus] cnt_correct_instruction
+    output reg[`RegBus] cnt_correct_instruction1,
+    output reg[`RegBus] cnt_correct_instruction2
+        
     );
     reg [31:0] registers[31:0];
 
@@ -169,7 +171,8 @@ module RegisterFile(
                     registers[31] <= backup_registers[31];
                 end
             end
-            cnt_correct_instruction<=registers[19];
+            cnt_correct_instruction1<=registers[4];
+            cnt_correct_instruction2<=registers[19];
         end
 
         

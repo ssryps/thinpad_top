@@ -51,9 +51,15 @@ module SRAMControl(
     output wire ram2_we_o,    
     output wire[3:0]  ram2_be,
     inout wire[31:0] ram2_data,
-    output wire[`SRAM_ADDR_LEN - 1:0] ram2_addr
+    output wire[`SRAM_ADDR_LEN - 1:0] ram2_addr,
+
+    //for debug
+    output wire[2:0] sram_state,
+    output wire[3:0] sram_addr_i
 
     );
+    
+    
     
     wire ram1_ce, ram1_we, ram1_oe;
     wire ram2_ce, ram2_we, ram2_oe;
@@ -61,7 +67,8 @@ module SRAMControl(
     reg[2:0] _cur_state;
     reg[2:0] cur_state;
 
-
+    assign sram_state = cur_state;
+    assign sram_addr_i = addr_i[3:0];
     reg[31:0] result_o_reg;
 
     wire flag;
