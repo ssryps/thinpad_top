@@ -253,7 +253,7 @@ wire[3:0] sram_addr_i;
 wire [3:0] mem_state;
 wire[31:0] excp_type;
 wire pc_flush;
-assign my_clk_50M = clk_50M;
+assign my_clk_50M = clk_10M;
 //assign my_clk_50M = clock_btn;
 
 //assign leds[3:0] = inst_addr[5:2]; //debug

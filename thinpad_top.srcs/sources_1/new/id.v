@@ -1207,7 +1207,7 @@ module id(
         stall_for_reg2_loadrelate<=`Disable;
         if(rst == `RstEnable) begin
             reg2_o <= `ZeroWord;
-        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg2_addr_o&& reg1_read_o==1'b1) begin
+        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg2_addr_o&& reg2_read_o==1'b1) begin
             stall_for_reg2_loadrelate<=`Enable;
         end else if (reg2_read_o==`Enable && ex_wreg_i==`Enable && reg2_addr_o==ex_wd_i) begin
             reg2_o <= ex_wdata_i;
