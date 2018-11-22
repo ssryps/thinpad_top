@@ -126,6 +126,10 @@ module ex(
         if (rst==`RstEnable) begin
             arithmetic_result<=`ZeroWord;
         end else begin
+            stallreq_for_div<=`Disable;
+            arithmetic_result<=`ZeroWord;
+            div_start_o<=`Disable;
+            
             case (aluop_i)
                 `EXE_SLT_OP,`EXE_SLTU_OP: begin
                     arithmetic_result<=reg1_lt_reg2;

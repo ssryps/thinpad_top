@@ -21,12 +21,7 @@ module CP0 (
     input wire[`RegBus] excp_type_i,
     input wire[`RegBus] excp_inst_addr_i, 
     input wire excp_in_delay_slot_i,
-    input wire[`RegBus] excp_bad_addr,
-
-    input wire flush,
-
-    input wire recovery
-
+    input wire[`RegBus] excp_bad_addr
     
 
 );
@@ -217,11 +212,13 @@ module CP0 (
             end else begin
                 cp0_epc_o <= cp0_registers[`CP0_EPC];
             end
+
             if(write_enabled == 1 && write_addr_i == `CP0_CAUSE) begin 
                 cp0_epc_o <= write_data_i;
             end else begin
                 cp0_cause_o <= cp0_registers[`CP0_CAUSE];
             end
+
             if(write_enabled == 1 && write_addr_i == `CP0_STATUS) begin 
                 cp0_epc_o <= write_data_i;
             end else begin

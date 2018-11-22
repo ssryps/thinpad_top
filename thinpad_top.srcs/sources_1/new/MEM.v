@@ -381,7 +381,10 @@ module MEM(
     always @(*) begin
     	if (rst_i==`RstEnable || excp_inst_addr_i == `ZeroWord) begin
     		excp_type_o <= `ZeroWord;
+  			excp_bad_addr <= `ZeroWord;
     	end else begin
+    		excp_type_o <= `ZeroWord;
+  			excp_bad_addr <= `ZeroWord;
 			
     		if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)

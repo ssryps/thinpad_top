@@ -265,10 +265,10 @@ assign my_clk_50M = clk_50M;
 //assign leds[12:10] = sram_state[2:0]; //debug
 
 //assign leds[15:0] = inst_addr[15:0] ;
-////assign leds[13:10] = inst[3:0];
+assign leds[15:0] =cnt_correct_instruction1[15:0];
 
-//SEG7_LUT segL(.oSEG1(dpy0), .iDIG(inst_addr[19:16] )); //dpy0是低位数码管
-//SEG7_LUT segH(.oSEG1(dpy1), .iDIG(inst_addr[23:20] )); //dpy1是高位数码管
+SEG7_LUT segL(.oSEG1(dpy0), .iDIG(cnt_correct_instruction2[3:0] )); //dpy0是低位数码管
+SEG7_LUT segH(.oSEG1(dpy1), .iDIG(cnt_correct_instruction2[7:4 ])); //dpy1是高位数码管
 
 closemips closemips0(
 	.clk(my_clk_50M),

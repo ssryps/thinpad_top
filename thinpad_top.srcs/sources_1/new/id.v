@@ -1232,15 +1232,7 @@ module id(
 
     reg is_reserve_inst;
 
-    always @(*) begin
-        if(rst == `RstEnable) begin 
-            //is_reserve_inst <= 0;
-        end else begin 
-            // op is invalid
-            
-        end
-    
-    end
+
 
     always @ (*) begin
         if(rst == `RstEnable) begin 
