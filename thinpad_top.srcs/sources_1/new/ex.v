@@ -91,17 +91,17 @@ module ex(
     reg[`RegBus] LO;
 
     //basic arithmetic opeartion
-    wire reg1_eq_reg2;
-    wire reg1_lt_reg2;
-    wire ov_sum;
+    wire reg12_eq;
+    wire reg1_less;
+    wire sum_overflow;
     reg[`RegBus] arithmetic_result;
     wire[`RegBus] reg2_i_mux;// reg2 2's complement
     wire[`RegBus] reg1_i_not;// reg1 1's complement
     wire[`RegBus] result_sum;
-    wire[`RegBus] operand1_mult;
-    wire[`RegBus] operand2_mult;
+    wire[`RegBus] multiply_op1;
+    wire[`RegBus] multiply_op2;
     wire[`DoubleRegBus] hilo_temp;
-    reg[`DoubleRegBus] mulres; // result of  multiplication
+    reg[`DoubleRegBus] multiply_result; // result of  multiplication
     reg overflow;
     //DIV
     reg stallreq_for_div;
@@ -109,9 +109,9 @@ module ex(
     assign reg2_i_mux=((aluop_i==`EXE_SUB_OP)||(aluop_i==`EXE_SUBU_OP)||
         (aluop_i==`EXE_SLT_OP))?(~reg2_i)+1:reg2_i;
     assign result_sum=reg1_i+reg2_i_mux;
-    assign ov_sum=((!reg1_i[31] && !reg2_i_mux[31])&&result_sum[31])||
+    assign sum_overflow=((!reg1_i[31] && !reg2_i_mux[31])&&result_sum[31])||
         ((reg1_i[31]&&reg2_i_mux[31])&&(!result_sum[31]));
-    assign reg1_lt_reg2=(aluop_i==`EXE_SLT_OP)?(reg1_i[31]&&!reg2_i[31])||
+    assign reg1_less=(aluop_i==`EXE_SLT_OP)?(reg1_i[31]&&!reg2_i[31])||
         (!reg1_i[31]&&!reg2_i[31]&&result_sum[31])||
         (reg1_i[31]&&reg2_i[31]&&result_sum[31]):
         reg1_i<reg2_i;
@@ -132,7 +132,7 @@ module ex(
             
             case (aluop_i)
                 `EXE_SLT_OP,`EXE_SLTU_OP: begin
-                    arithmetic_result<=reg1_lt_reg2;
+                    arithmetic_result<=reg1_less;
                 end
                 `EXE_ADD_OP,`EXE_ADDU_OP,//`EXE_ADDI_OP,`EXE_ADDIU_OP,
                     `EXE_SUB_OP,`EXE_SUBU_OP: begin
@@ -230,23 +230,23 @@ module ex(
     end
 
 	// multiplication
-	assign operand1_mult=((aluop_i==`EXE_MUL_OP||aluop_i==`EXE_MULT_OP)&&reg1_i[31]==1'b1)?
+	assign multiply_op1=((aluop_i==`EXE_MUL_OP||aluop_i==`EXE_MULT_OP)&&reg1_i[31]==1'b1)?
 		(~reg1_i+1):reg1_i;
-	assign operand2_mult=((aluop_i==`EXE_MUL_OP||aluop_i==`EXE_MULT_OP)&&reg2_i[31]==1'b1)?
+	assign multiply_op2=((aluop_i==`EXE_MUL_OP||aluop_i==`EXE_MULT_OP)&&reg2_i[31]==1'b1)?
 		(~reg2_i+1):reg2_i;
-	assign hilo_temp=operand1_mult*operand2_mult;
+	assign hilo_temp=multiply_op1*multiply_op2;
 
 	always @(*) begin
 		if (rst==`RstEnable) begin
-            mulres<=64'b0;
+            multiply_result<=64'b0;
         end else if ((aluop_i==`EXE_MULT_OP||(aluop_i==`EXE_MUL_OP))) begin
             if (reg1_i[31]^reg2_i[31]==1'b1) begin
-                mulres<=~hilo_temp+1;
+                multiply_result<=~hilo_temp+1;
             end else begin
-                mulres<=hilo_temp;
+                multiply_result<=hilo_temp;
             end
         end else begin
-            mulres<=hilo_temp;
+            multiply_result<=hilo_temp;
         end
 	end
 
@@ -358,7 +358,7 @@ module ex(
     //overall result
     always @ (*) begin
         wd_o <= wd_i;
-        if (((aluop_i==`EXE_ADD_OP)||(aluop_i==`EXE_SUB_OP))&&(ov_sum==1'b1)) begin
+        if (((aluop_i==`EXE_ADD_OP)||(aluop_i==`EXE_SUB_OP))&&(sum_overflow==1'b1)) begin
             wreg_o<=`WriteDisable;
             overflow <= 1;
         end else begin
@@ -380,7 +380,7 @@ module ex(
                 wdata_o <= arithmetic_result;
             end
             `EXE_RES_MUL: begin
-                wdata_o <= mulres[31:0];
+                wdata_o <= multiply_result[31:0];
             end
             `EXE_RES_JUMP_BRANCH: begin
                 wdata_o <= link_address_i;
@@ -399,8 +399,8 @@ module ex(
 			lo_o <= `ZeroWord;								
         end else if ((aluop_i==`EXE_MULT_OP)|| (aluop_i==`EXE_MULTU_OP)) begin
             whilo_o<=`WriteEnable;
-            hi_o<=mulres[63:32];
-            lo_o<=mulres[31:0];
+            hi_o<=multiply_result[63:32];
+            lo_o<=multiply_result[31:0];
 		end else if(aluop_i == `EXE_MTHI_OP) begin
 			whilo_o <= `WriteEnable;
 			hi_o <= reg1_i;
