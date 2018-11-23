@@ -58,7 +58,7 @@ module MEM(
     //for load and store
     output reg[`RegBus] mem_addr_o,
 	output reg[`MEMCONTROL_OP_LEN - 1:0] mem_op_o,
-	output reg[4:0] mem_data_sz_o,
+	output reg[5:0] mem_data_sz_o,
 	output reg[`RegBus] mem_data_o,
 	output reg mem_enabled,
 

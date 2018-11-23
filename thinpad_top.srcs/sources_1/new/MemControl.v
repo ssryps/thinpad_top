@@ -163,6 +163,8 @@ module MemControl(
 				read_and_write_temp_pc <= mmu_result_i;
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE1) begin
 				cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT;
+				read_and_write_temp_mem <= mmu_result_i;
+
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_READ_RESULT) begin
 				cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE2;
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) begin
@@ -242,25 +244,43 @@ module MemControl(
 				addr_o_reg <= mem_addr_i;
 				if(mem_data_sz_i == `MEMECONTROL_OP_HALF_WORD) begin
 					if(mem_addr_i[1:0] == 2'b00) begin
-						data_o_reg <= {mmu_result_i[31: 16], mem_data_i[15:0]};
+						data_o_reg <= {read_and_write_temp_mem[31: 16], mem_data_i[15:0]};
 					end else if(mem_addr_i[1:0] == 2'b10) begin
-						data_o_reg <= {mem_data_i[15: 0], mmu_result_i[15:0]};
+						data_o_reg <= {mem_data_i[15: 0], read_and_write_temp_mem[15:0]};
 					end
 				end else if(mem_data_sz_i == `MEMECONTROL_OP_BYTE) begin
 					if(mem_addr_i[1:0] == 2'b00) begin
-						data_o_reg <= {mmu_result_i[31: 8], mem_data_i[7:0]};
+						data_o_reg <= {read_and_write_temp_mem[31: 8], mem_data_i[7:0]};
 					end else if(mem_addr_i[1:0] == 2'b01) begin
-						data_o_reg <= {mmu_result_i[31: 16], mem_data_i[7:0], mmu_result_i[7:0]};
+						data_o_reg <= {read_and_write_temp_mem[31: 16], mem_data_i[7:0], read_and_write_temp_mem[7:0]};
 					end else if(mem_addr_i[1:0] == 2'b10) begin
-						data_o_reg <= {mmu_result_i[31: 24], mem_data_i[7:0], mmu_result_i[15:0]};
+						data_o_reg <= {read_and_write_temp_mem[31: 24], mem_data_i[7:0], read_and_write_temp_mem[15:0]};
 					end else  begin
-						data_o_reg <= {mem_data_i[7:0], mmu_result_i[23:0]};
+						data_o_reg <= {mem_data_i[7:0], read_and_write_temp_mem[23:0]};
 					end
 
 				end
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE2) begin
-				//op_o_reg   <= `MEMCONTROL_OP_WRITE;
-				//addr_o_reg <= pc_addr_i;
+				op_o_reg   <= `MEMCONTROL_OP_WRITE;
+				addr_o_reg <= mem_addr_i;
+				if(mem_data_sz_i == `MEMECONTROL_OP_HALF_WORD) begin
+					if(mem_addr_i[1:0] == 2'b00) begin
+						data_o_reg <= {read_and_write_temp_mem[31: 16], mem_data_i[15:0]};
+					end else if(mem_addr_i[1:0] == 2'b10) begin
+						data_o_reg <= {mem_data_i[15: 0], read_and_write_temp_mem[15:0]};
+					end
+				end else if(mem_data_sz_i == `MEMECONTROL_OP_BYTE) begin
+					if(mem_addr_i[1:0] == 2'b00) begin
+						data_o_reg <= {read_and_write_temp_mem[31: 8], mem_data_i[7:0]};
+					end else if(mem_addr_i[1:0] == 2'b01) begin
+						data_o_reg <= {read_and_write_temp_mem[31: 16], mem_data_i[7:0], read_and_write_temp_mem[7:0]};
+					end else if(mem_addr_i[1:0] == 2'b10) begin
+						data_o_reg <= {read_and_write_temp_mem[31: 24], mem_data_i[7:0], read_and_write_temp_mem[15:0]};
+					end else  begin
+						data_o_reg <= {mem_data_i[7:0], read_and_write_temp_mem[23:0]};
+					end
+
+				end
 				pc_data_o_reg <= read_and_write_temp_pc;
 				mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_WRITE_RESULT) begin
