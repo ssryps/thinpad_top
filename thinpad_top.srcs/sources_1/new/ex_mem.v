@@ -101,10 +101,10 @@ module ex_mem(
 			mem_aluop <= ex_aluop;
 			mem_mem_addr <= ex_mem_addr;
 			mem_reg2 <= ex_reg2;
+
 			cp0_reg_data_o <= cp0_reg_data_i;
 			cp0_reg_write_addr_o <= cp0_reg_write_addr_i;
 			cp0_reg_we_o <= cp0_reg_we_i;
-
 			excp_in_delay_slot_o <= excp_in_delay_slot_i;
 			excp_inst_addr_o <= excp_inst_addr_i;
 			excp_type_o <= excp_type_i;
