@@ -85,7 +85,6 @@ module MEM(
 	input wire[`RegBus] cp0_cause_i,
 	input wire[`RegBus] cp0_epc_i
 	);
-    wire[`RegBus] zero32;
 	reg mem_we;
 
 	reg[3:0] last_op;
@@ -106,19 +105,18 @@ module MEM(
     assign cp0_reg_data_o = cp0_reg_data_o_reg;
 
 
-	assign zero32 = `ZeroWord;
 	assign stallreq_o = mem_pause_pipeline_i;
 
 	always @(posedge clk_i) begin
 		if(rst_i==`RstEnable) begin
-			cur_state <= 1;
+			cur_state <= 1'b1;
 			last_op <= `OP_NOP;
 		end else begin 
-			if(mem_pause_pipeline_i == 0)begin
-				cur_state <= 1;
+			if(mem_pause_pipeline_i == 1'b0)begin
+				cur_state <= 1'b1;
 				
-		    end else if(cur_state == 1) begin
-				cur_state <= 0;
+		    end else if(cur_state == 1'b1) begin
+				cur_state <= 1'b0;
 				last_op <= `OP_NOP;
 				case (aluop_i)
 					`EXE_LB_OP:		begin
@@ -183,8 +181,8 @@ module MEM(
     		cp0_reg_data_o_reg <= cp0_reg_data_i;
 			cp0_reg_write_addr_o_reg <= cp0_reg_write_addr_i;
 			cp0_reg_we_o_reg <= cp0_reg_we_i;
-			is_load_bad_addr <= 0;
-            is_store_bad_addr <= 0;
+			is_load_bad_addr <= 1'b0;
+            is_store_bad_addr <= 1'b0;
            
             if(mem_pause_pipeline_i == 0) begin
 
@@ -379,13 +377,11 @@ module MEM(
     assign excp_inst_addr_o = excp_inst_addr_i;
 
     always @(*) begin
+        excp_type_o <= `ZeroWord;
+        excp_bad_addr <= `ZeroWord;
     	if (rst_i==`RstEnable || excp_inst_addr_i == `ZeroWord) begin
-    		excp_type_o <= `ZeroWord;
-  			excp_bad_addr <= `ZeroWord;
+            // No necessary reset
     	end else begin
-    		excp_type_o <= `ZeroWord;
-  			excp_bad_addr <= `ZeroWord;
-			
     		if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
     	   			excp_type_o <= excp_type_i;
@@ -422,9 +418,9 @@ module MEM(
 
     always @(*) begin 
     	if(excp_type_o != `ZeroWord) begin 
-    		mem_enabled <= 0;
+    		mem_enabled <= 1'b0;
     	end else begin 
-    		mem_enabled <= 1;
+    		mem_enabled <= 1'b1;
     	end
     end
 

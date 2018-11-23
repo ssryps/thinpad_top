@@ -48,7 +48,7 @@ module IF_ID(
         end else if(flush == 1) begin 
             id_pc_o<=`ZeroWord;
             id_inst_o<=`ZeroWord;
-        end else if (stall_i[1]==`Stall&&stall_i[2]==`NotStall) begin
+        end else if (stall_i[2:1]=={`NotStall,`Stall}) begin
             id_pc_o<=`ZeroWord;
             id_inst_o<=`ZeroWord;
         end else if (stall_i[1]==`NotStall) begin
