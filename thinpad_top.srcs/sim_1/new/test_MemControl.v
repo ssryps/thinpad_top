@@ -74,18 +74,20 @@ wire ram2_oe_n;       //BaseRAM读使能，低有效
 wire ram2_we_n;       //BaseRAM写使能，低有效
 wire[3:0] ram2_be_n;  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
 
-
+reg mem_enabled;
 
 initial begin
     rst = 1;
     #20;
     rst  = 0;
+    mem_enabled = 1;
+    #20;
     pc_addr_i = 32'h0000_0000;
     mem_addr_i = 32'h0000_0000;
     mem_data_i = 32'h1111_1111;
     mem_data_sz_i = `MEMECONTROL_OP_WORD;
     mem_op_i = `MEMCONTROL_OP_WRITE;
-    #90;
+    #80;
     pc_addr_i = 32'h0000_0000;
     mem_addr_i = 32'h2222_2222;
     mem_data_i = 32'h3333_3333;
@@ -97,7 +99,7 @@ initial begin
     mem_data_i = 32'h2222_2222;
     mem_data_sz_i = `MEMECONTROL_OP_WORD;
     mem_op_i = `MEMCONTROL_OP_READ;
-    #80;
+    #40;
     pc_addr_i = 32'h0000_0000;
     mem_addr_i = 32'h2222_2222;
     mem_data_i = 32'h2222_2222;
@@ -144,11 +146,13 @@ MemControl mem_control(
     .mem_data_i(mem_data_i),
     .mem_data_sz_i(mem_data_sz_i),
     .mem_op_i(mem_op_i),
+    .mem_enabled(mem_enabled),
     .mmu_result_i(result_o),
-    .pause_pipeline_i(pause_pipeline_o),
+    .mmu_pause_i(pause_pipeline_o),
     .op_o(op_i),
     .addr_o(addr_i),
     .data_o(data_i),
+    .enable_o(enable_i),
     .pc_data_o(pc_data_o),
     .mem_data_o(mem_data_o),
     .pause_pipeline_o(pause_pipeline_final_o)
@@ -159,17 +163,19 @@ MMUControl mmu_control(
 	.rst(rst),
     .op_i(op_i),
 	.addr_i(addr_i),
+    .enable_i(enable_i),
+
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),
-	.serial_data_i(serial_data_i),
+	//.serial_data_i(serial_data_i),
 	.sram_enabled(sram_enabled),
 	.sram_op(sram_op),
 	.sram_data(sram_data),
 	.sram_addr(sram_addr),
-	.serial_enabled(serial_enabled),
-	.serial_op(serial_op),
-	.serial_data(serial_data),
-	.serial_addr(serial_addr),
+	// .serial_enabled(serial_enabled),
+	// .serial_op(serial_op),
+	// .serial_data(serial_data),
+	// .serial_addr(serial_addr),
 	.result_o(result_o),
 	.pause_pipeline_o(pause_pipeline_o)
 	);
@@ -196,6 +202,7 @@ SRAMControl sram_control(
             .ram2_we_o(ram2_we_n),
             .ram2_be(ram2_be_n)
     );
+
 
 sram_model base1(/*autoinst*/
             .DataIO(ram1_data[15:0]),

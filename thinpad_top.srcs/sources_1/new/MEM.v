@@ -81,9 +81,7 @@ module MEM(
 	output wire excp_in_delay_slot_o,
 	output reg[`RegBus] excp_bad_addr,
 
-	input wire[`RegBus] cp0_status_i,
-	input wire[`RegBus] cp0_cause_i,
-	input wire[`RegBus] cp0_epc_i
+	input wire[`RegBus] cp0_status_i
 	);
     wire[`RegBus] zero32;
 	reg mem_we;
@@ -153,7 +151,7 @@ module MEM(
         if (rst_i==`RstEnable) begin
             wd_o<=`NOPRegAddr;
             wreg_o<=`WriteDisable;
-           // wdata_o<=`ZeroWord;
+            wdata_o<=`ZeroWord;
             hi_o <= `ZeroWord;
             lo_o <= `ZeroWord;
             whilo_o <= `WriteDisable;
@@ -161,31 +159,33 @@ module MEM(
             mem_data_sz_o <= `MEMECONTROL_OP_WORD;
             mem_data_o <= `ZeroWord;
             mem_op_o <= `MEMCONTROL_OP_NOP;	
-//            cur_state <= 0;
+            //cur_state <= 0; 
 			cp0_reg_write_addr_o_reg <= 5'b00000;
             cp0_reg_we_o_reg<= `WriteDisable;
             cp0_reg_data_o_reg <= 32'b00000000_00000000_00000000_00000000;
 			is_load_bad_addr <= 0;
 			is_store_bad_addr <= 0;
+            bad_addr <= `ZeroWord;
 
         end else begin
+		    wdata_o<=wdata_i;
             wd_o<=wd_i;
             wreg_o<=wreg_i;
             hi_o <= hi_i;
             lo_o <= lo_i;
             whilo_o <= whilo_i;
-		    wdata_o<=wdata_i;
-
-	        // mem_addr_o <= `ZeroWord;
-	        // mem_data_sz_o <= `MEMECONTROL_OP_WORD;
-	        // mem_data_o <= `ZeroWord;
-	        // mem_op_o <= `MEMCONTROL_OP_NOP;	
+	        mem_addr_o <= `ZeroWord;
+	        mem_data_sz_o <= `MEMECONTROL_OP_WORD;
+	        mem_data_o <= `ZeroWord;
+	        mem_op_o <= `MEMCONTROL_OP_NOP;	
             //wdata_o <= mem_data_i;
     		cp0_reg_data_o_reg <= cp0_reg_data_i;
 			cp0_reg_write_addr_o_reg <= cp0_reg_write_addr_i;
 			cp0_reg_we_o_reg <= cp0_reg_we_i;
 			is_load_bad_addr <= 0;
             is_store_bad_addr <= 0;
+            bad_addr <= `ZeroWord;
+
            
             if(mem_pause_pipeline_i == 0) begin
 
@@ -258,7 +258,7 @@ module MEM(
             end
 
 
-            if(cur_state == 1) begin
+//            if(cur_state == 1) begin
                 case (aluop_i)
 					`EXE_LB_OP:		begin
 			            mem_addr_o <= mem_addr_i;
@@ -371,7 +371,7 @@ module MEM(
 			            mem_op_o <= `MEMCONTROL_OP_NOP;	
 					end
 				endcase	
-        	end
+       // 	end
 		end
     end
 
@@ -382,7 +382,10 @@ module MEM(
     always @(*) begin
     	if (rst_i==`RstEnable || excp_inst_addr_i == `ZeroWord) begin
     		excp_type_o <= `ZeroWord;
+  			excp_bad_addr <= `ZeroWord;
     	end else begin
+    		excp_type_o <= `ZeroWord;
+  			excp_bad_addr <= `ZeroWord;
 			
     		if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)

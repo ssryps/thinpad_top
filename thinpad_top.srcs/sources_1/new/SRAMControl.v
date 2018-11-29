@@ -75,9 +75,9 @@ module SRAMControl(
     assign ram2_we_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram2_we);
     assign ram2_oe_o =  ((enabled_i == 0) && 1 ) || ((enabled_i == 1) && ram2_oe);
 
-    assign ram1_be =  4'b0000;
-    assign ram1_ce =  (cur_state == `SRAMCONTROL_INIT && 1)  
-                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 1)  
+    assign ram1_be =  {4{(addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1) || cur_state == `SRAMCONTROL_INIT }};
+    assign ram1_ce =  (cur_state == `SRAMCONTROL_INIT && 0)  
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 0)  
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 &&
                         (
                       (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
@@ -105,9 +105,9 @@ module SRAMControl(
                         ));
 
 
-    assign ram2_be =  4'b0000;
-    assign ram2_ce =  (cur_state == `SRAMCONTROL_INIT && 1) 
-                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 1)  
+    assign ram2_be =  {4{addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 || cur_state == `SRAMCONTROL_INIT }};
+    assign ram2_ce =  (cur_state == `SRAMCONTROL_INIT && 0) 
+                   || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 && 0)  
                    || (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 1 && 
                         (
                       (cur_state == `SRAMCONTROL_WRITE_PHASE1 && 0)
@@ -146,22 +146,18 @@ module SRAMControl(
     //result_o_reg;//(cur_state == `SRAMCONTROL_READ_PHASE2? (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data): `SRAMCONTROL_DEFAULT_DATA); 
 
       //currently just use baseram, seems that extram will be used later
-    always @(posedge clk or negedge enabled_i) begin
-        if(rst == 1 || enabled_i == 0) begin
+    always @(posedge clk) begin
+        if(rst == 1) begin
             _cur_state <= `SRAMCONTROL_INIT;
         end else begin
             // cur_state is init or write2 or read2
-            if(cur_state == `SRAMCONTROL_INIT || cur_state == `SRAMCONTROL_WRITE_PHASE2 || cur_state == `SRAMCONTROL_READ_PHASE2) begin        
-                if(op_i == `SRAMCONTROL_OP_WRITE) begin
-                    _cur_state <= `SRAMCONTROL_WRITE_PHASE1;
-                end 
-                if(op_i == `SRAMCONTROL_OP_READ) begin
-                    _cur_state <=  `SRAMCONTROL_READ_PHASE1;
-                end
-            end else if(cur_state == `SRAMCONTROL_WRITE_PHASE1) begin        
-            // cur_state is write1
-               _cur_state <= `SRAMCONTROL_WRITE_PHASE2;
-            end else if(cur_state == `SRAMCONTROL_READ_PHASE1) begin        
+            if(enabled_i == 0 || _cur_state == `SRAMCONTROL_INIT || _cur_state == `SRAMCONTROL_WRITE_PHASE2 || _cur_state == `SRAMCONTROL_READ_PHASE2) begin        
+               // if(op_i == `SRAMCONTROL_OP_READ || op_i == `SRAMCONTROL_OP_WRITE) begin
+                    _cur_state <= `SRAMCONTROL_READ_PHASE1;
+                // end else begin 
+                // 	_cur_state <= _cur_state;
+                // end
+            end else if(_cur_state == `SRAMCONTROL_READ_PHASE1) begin        
             // cur_state is read1
                _cur_state <= `SRAMCONTROL_READ_PHASE2;
                //result_o_reg = (addr_i[`SRAMCONTROL_ADDR_LEN - 1] == 0 ? ram1_data: ram2_data);
@@ -169,31 +165,71 @@ module SRAMControl(
         end        
     end
 
-    always @(op_i) begin
-      __cur_state <= 3'b000; 
-      if(~rst) begin
-          if(_cur_state == `SRAMCONTROL_READ_PHASE1 || _cur_state == `SRAMCONTROL_WRITE_PHASE1) begin
-              if(op_i == `SRAMCONTROL_OP_WRITE) begin
-                    __cur_state <= `SRAMCONTROL_WRITE_PHASE1;
-                end 
-                if(op_i == `SRAMCONTROL_OP_READ) begin
-                    __cur_state <=  `SRAMCONTROL_READ_PHASE1;
-                end
-          end
-      end 
-    end
+    always @(*) begin 
 
-    always @(_cur_state or __cur_state) begin 
-      if(_cur_state == `SRAMCONTROL_READ_PHASE1 || _cur_state == `SRAMCONTROL_WRITE_PHASE1) begin 
-        if(__cur_state != 3'b000) begin 
-          cur_state <= __cur_state;
-        end else begin 
-          cur_state <= _cur_state;
-        end
-      end else begin 
-          cur_state <= _cur_state;
-      end
+    	if(enabled_i == 1) begin 
+	    	if(_cur_state == `SRAMCONTROL_READ_PHASE1) begin 
+	    		if(op_i == `SRAMCONTROL_OP_READ) begin 
+	    			cur_state <= `SRAMCONTROL_READ_PHASE1;
+	    		end else begin 
+	    			cur_state <= `SRAMCONTROL_WRITE_PHASE1;
+	    		end
+	    	end else if(_cur_state == `SRAMCONTROL_READ_PHASE2) begin 
+	    		if(op_i == `SRAMCONTROL_OP_READ) begin 
+	    			cur_state <= `SRAMCONTROL_READ_PHASE2;
+	    		end else begin 
+	    			cur_state <= `SRAMCONTROL_WRITE_PHASE2;
+	    		end
+	    	end else begin 
+	    		cur_state <= `SRAMCONTROL_INIT;
+	    	end
+	    end else begin 
+    		cur_state <= `SRAMCONTROL_INIT;	
+	    end
 
 
     end
+
+    // always @(op_i) begin
+    //   __cur_state <= 3'b000; 
+    //   if(~rst) begin
+    //       if(_cur_state == `SRAMCONTROL_READ_PHASE1 || _cur_state == `SRAMCONTROL_WRITE_PHASE1) begin
+    //           if(op_i == `SRAMCONTROL_OP_WRITE) begin
+    //                 __cur_state <= `SRAMCONTROL_WRITE_PHASE1;
+    //             end 
+    //             if(op_i == `SRAMCONTROL_OP_READ) begin
+    //                 __cur_state <=  `SRAMCONTROL_READ_PHASE1;
+    //             end
+    //       end
+    //   end 
+    // end
+
+    // always @(_cur_state or __cur_state) begin 
+    //   if(_cur_state == `SRAMCONTROL_READ_PHASE1 || _cur_state == `SRAMCONTROL_WRITE_PHASE1) begin 
+    //     if(__cur_state != 3'b000) begin 
+    //       cur_state <= __cur_state;
+    //     end else begin 
+    //       cur_state <= _cur_state;
+    //     end
+    //   end else begin 
+    //       cur_state <= _cur_state;
+    //   end
+
+
+    // end
+
+    // always @(*) begin
+    //     if(rst == 1 || enabled_i == 0) begin
+    //         cur_state <= `SRAMCONTROL_INIT;
+    //     end else begin
+    //         if(op_i == `SRAMCONTROL_OP_WRITE)begin
+    //             cur_state <= `SRAMCONTROL_WRITE_PHASE1;
+    //         end else begin 
+    //             cur_state <= `SRAMCONTROL_READ_PHASE1;
+
+    //         end
+
+    //     end
+    // end
+    
 endmodule

@@ -36,10 +36,7 @@ module PC(
     input wire[`RegBus] ex_pc,
 
     output reg [31:0] pc_o,
-    output reg ce_o,
-
-    output reg[`RegBus] excp_type_o,
-    output reg[`RegBus] excp_bad_addr
+    output reg ce_o    
     );
     /*reg rsted;
     always @(posedge clk_i) begin
@@ -77,7 +74,7 @@ module PC(
                   if(branch_flag_i == `Branch) begin
                         pc_o <= branch_target_address_i;
                     end else begin
-                      pc_o <= pc_o + 4'h4;
+                        pc_o <= pc_o + 4'h4;
                   end
             end
         end

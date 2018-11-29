@@ -29,7 +29,8 @@ module closemem(
 	input wire[31:0] mem_data_i,
 	input wire[5:0]	 mem_data_sz_i,	
 	input wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i,
-
+    input wire mem_enabled,
+    
 	output wire[31:0] pc_data_o,
 	output wire[31:0] mem_data_o,
 	output wire pause_pipeline_final_o,
@@ -50,6 +51,8 @@ module closemem(
     output wire ram2_oe_n,       //ExtRAM读使能，低有效
     output wire ram2_we_n      //ExtRAM写使能，低有效
 
+    // debug
+
 	);
 
 
@@ -57,6 +60,8 @@ module closemem(
 wire[`MEMCONTROL_OP_LEN - 1  : 0]	op_i;
 wire[`MEMCONTROL_ADDR_LEN - 1 : 0] 	addr_i;
 wire[31:0]						data_i;
+wire enable_i;
+
 
 wire [31:0] sram_data_i;
 wire [31:0] serial_data_i;
@@ -138,11 +143,13 @@ MemControl mem_control(
     .mem_data_i(mem_data_i),
     .mem_data_sz_i(mem_data_sz_i),
     .mem_op_i(mem_op_i),
+    .mem_enabled(mem_enabled),
     .mmu_result_i(result_o),
-    .pause_pipeline_i(pause_pipeline_o),
+    .mmu_pause_i(pause_pipeline_o),
     .op_o(op_i),
     .addr_o(addr_i),
     .data_o(data_i),
+    .enable_o(enable_i),
     .pc_data_o(pc_data_o),
     .mem_data_o(mem_data_o),
     .pause_pipeline_o(pause_pipeline_final_o)
@@ -153,17 +160,19 @@ MMUControl mmu_control(
 	.rst(rst),
     .op_i(op_i),
 	.addr_i(addr_i),
+    .enable_i(enable_i),
+
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),
-	.serial_data_i(serial_data_i),
+	//.serial_data_i(serial_data_i),
 	.sram_enabled(sram_enabled),
 	.sram_op(sram_op),
 	.sram_data(sram_data),
 	.sram_addr(sram_addr),
-	.serial_enabled(serial_enabled),
-	.serial_op(serial_op),
-	.serial_data(serial_data),
-	.serial_addr(serial_addr),
+	// .serial_enabled(serial_enabled),
+	// .serial_op(serial_op),
+	// .serial_data(serial_data),
+	// .serial_addr(serial_addr),
 	.result_o(result_o),
 	.pause_pipeline_o(pause_pipeline_o)
 	);

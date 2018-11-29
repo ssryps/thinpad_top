@@ -125,7 +125,19 @@ module ex(
     always @(*) begin
         if (rst==`RstEnable) begin
             arithmetic_result<=`ZeroWord;
+            div_start_o <= `Disable;
+            div_op1_o <= `ZeroWord;
+            div_op2_o <= `ZeroWord;
+            stallreq_for_div<=`Disable;
+            signed_div_o <= 0;
         end else begin
+            stallreq_for_div<=`Disable;
+            arithmetic_result<=`ZeroWord;
+            div_start_o <= `Disable;
+            div_op1_o <= `ZeroWord;
+            div_op2_o <= `ZeroWord;
+            signed_div_o <= 0;
+            
             case (aluop_i)
                 `EXE_SLT_OP,`EXE_SLTU_OP: begin
                     arithmetic_result<=reg1_lt_reg2;
@@ -313,9 +325,12 @@ module ex(
         if(rst == `RstEnable) begin
             moveout <= `ZeroWord;
             cp0_reg_read_enabled <= 0;
+            cp0_reg_read_addr_o <= 5'b00000;
            
         end else begin
             moveout <= `ZeroWord;
+            cp0_reg_read_enabled <= 0;
+            cp0_reg_read_addr_o <= inst_i[15:11];
             case(aluop_i)
                 `EXE_MOVN_OP: begin
                     moveout <= reg1_i;

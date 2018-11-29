@@ -83,6 +83,9 @@ module id(
     reg stall_for_reg1_loadrelate;
     reg stall_for_reg2_loadrelate;
     wire ex_inst_is_load;
+    
+    reg is_reserve_inst;
+
 
     reg is_syscall_excp, is_eret_excp, is_break_excp;
     assign ex_inst_is_load =((ex_aluop_i==`EXE_LB_OP) ||
@@ -118,6 +121,10 @@ module id(
 			branch_target_address_o <= `ZeroWord;
 			branch_flag_o <= `NotBranch;
 			next_inst_in_delayslot_o <= `NotInDelaySlot;
+             is_eret_excp <= 0;
+            is_syscall_excp <= 0;
+            is_break_excp <= 0; 
+
             is_reserve_inst <= 0;
             
             end 
@@ -1189,6 +1196,7 @@ module id(
         if(rst == `RstEnable) begin
             reg1_o <= `ZeroWord;
         end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg1_addr_o&& reg1_read_o==1'b1) begin
+            reg1_o <= `ZeroWord;
             stall_for_reg1_loadrelate<=`Enable;
         end else if (reg1_read_o==`Enable && ex_wreg_i==`Enable && reg1_addr_o==ex_wd_i) begin
             reg1_o <= ex_wdata_i;
@@ -1207,7 +1215,8 @@ module id(
         stall_for_reg2_loadrelate<=`Disable;
         if(rst == `RstEnable) begin
             reg2_o <= `ZeroWord;
-        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg2_addr_o&& reg1_read_o==1'b1) begin
+        end else if (ex_inst_is_load==1'b1 && ex_wd_i==reg2_addr_o&& reg2_read_o==1'b1) begin
+            reg2_o <= `ZeroWord;
             stall_for_reg2_loadrelate<=`Enable;
         end else if (reg2_read_o==`Enable && ex_wreg_i==`Enable && reg2_addr_o==ex_wd_i) begin
             reg2_o <= ex_wdata_i;
@@ -1230,17 +1239,6 @@ module id(
 	  end
 	end
 
-    reg is_reserve_inst;
-
-    always @(*) begin
-        if(rst == `RstEnable) begin 
-            is_reserve_inst <= 0;
-        end else begin 
-            // op is invalid
-            
-        end
-    
-    end
 
     always @ (*) begin
         if(rst == `RstEnable) begin 

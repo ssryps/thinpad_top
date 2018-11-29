@@ -1,4 +1,6 @@
 // `default_nettype none
+`include "defines.v"
+`include "MemoryUtils.v"
 
 module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
@@ -84,6 +86,9 @@ module thinpad_top(
 /* =========== Demo code begin =========== */
 
 // PLL分频示例
+wire[31:0] cur_inst;
+
+
 wire locked, clk_10M, clk_20M;
 pll_example clock_gen
  (
@@ -124,13 +129,15 @@ end
 // g=dpy0[7] // |     |
 //           // ---d---  p
 
+wire[31:0] cnt_correct_instruction1;
+wire[31:0] cnt_correct_instruction2;
+wire pc_branch_flag;
 // 7段数码管译码器演示，将number用16进制显示在数码管上面
 reg[7:0] number;
-SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
-SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
 
 reg[15:0] led_bits;
-assign leds = led_bits;
+//assign leds = led_bits;
+
 
 always@(posedge clock_btn or posedge reset_btn) begin
     if(reset_btn)begin //复位按下，设置LED和数码管为初始值
@@ -146,7 +153,7 @@ end
 //直连串口接收发送演示，从直连串口收到的数据再发送出去
 wire [7:0] ext_uart_rx;
 reg  [7:0] ext_uart_buffer, ext_uart_tx;
-wire ext_uart_ready, ext_uart_busy;
+wire ext_uart_reay, ext_uart_busy;
 reg ext_uart_start, ext_uart_avai;
 
 async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无检验位
@@ -186,7 +193,7 @@ async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发送模块，9600�
     );
 
 //图像输出演示，分辨率800x600@75Hz，像素时钟为50MHz
-wire [11:0] hdata; 
+wire [11:0] hdata;
 assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
 assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
 assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
@@ -200,5 +207,132 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .data_enable(video_de)
 );
 /* =========== Demo code end =========== */
+wire[`InstAddrBus] inst_addr;
+wire[`InstBus] inst;
+wire rom_ce;
+
+// wire mem_we_i;
+// wire[`RegBus] mem_addr_i;
+// wire[`RegBus] mem_data_i;
+// wire[`RegBus] mem_data_o;
+// wire[3:0] mem_sel_i;
+// wire mem_ce_i;
+
+wire[`MEMCONTROL_ADDR_LEN - 1:0] pc_addr_i;
+wire[31:0] mem_addr_i;
+wire[31:0] mem_data_i;
+wire[5:0]	 mem_data_sz_i;
+wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i;
+wire mem_enabled;
+
+wire[31:0] pc_data_o;
+wire[31:0] mem_data_o;
+wire pause_pipeline_final_o;
+
+wire my_clk_50M, my_clk_11M0592;
+//reg rst;
+//
+//initial begin
+//  rst = 1;
+//  #20;
+//  rst = 0;
+//  #1000;
+//  rst = 0;
+//end
+
+//clock osc0 (
+//    .clk_11M0592(my_clk_11M0592),
+//    .clk_50M    (my_clk_50M)
+//);
+
+wire [2:0 ] mmu_state;
+wire [2:0 ] sram_state;
+wire [2:0] mmu_op_i;
+wire[3:0] mmu_addr_i;
+wire[3:0] sram_addr_i;
+wire [3:0] mem_state;
+wire[31:0] excp_type;
+wire pc_flush;
+assign my_clk_50M = clk_10M;
+//assign my_clk_50M = clock_btn;
+
+//assign leds[3:0] = inst_addr[5:2]; //debug
+//assign leds[4] = base_ram_ce_n; //debug
+//assign leds[5] = base_ram_oe_n; //debug
+//assign leds[6] = base_ram_we_n; //debug
+    
+//assign leds[9:7] = mmu_state[2:0]; //debug
+//assign leds[12:10] = sram_state[2:0]; //debug
+
+//assign leds[15:0] = inst_addr[15:0] ;
+assign leds[15:0] =cnt_correct_instruction1[15:0];
+
+SEG7_LUT segL(.oSEG1(dpy0), .iDIG(cnt_correct_instruction2[3:0] )); //dpy0是低位数码管
+SEG7_LUT segH(.oSEG1(dpy1), .iDIG(cnt_correct_instruction2[7:4 ])); //dpy1是高位数码管
+
+closemips closemips0(
+	.clk(my_clk_50M),
+	.rst(reset_of_clk10M),
+
+	.rom_addr_o(inst_addr),
+	.rom_data_i(inst),
+	.rom_ce_o(rom_ce),
+
+	.mem_addr_o(mem_addr_i),
+	.mem_data_o(mem_data_i),
+	.mem_data_sz_o(mem_data_sz_i),
+	.mem_op_o(mem_op_i),
+    .mem_enabled(mem_enabled),// no source or dest
+	.mem_data_i(mem_data_o),
+	.mem_pause_pipeline_i(pause_pipeline_final_o),
+	
+	.cnt_correct_instruction1(cnt_correct_instruction1),
+	.cnt_correct_instruction2(cnt_correct_instruction2),
+	.excp_type(excp_type)
+);
+
+closemem closemem0(
+	.clk_50M(my_clk_50M),
+	.rst(reset_of_clk10M),
+	.pc_addr_i(inst_addr),
+	.mem_addr_i(mem_addr_i),
+	.mem_data_i(mem_data_i),
+	.mem_data_sz_i(mem_data_sz_i),
+	.mem_op_i(mem_op_i),
+    .mem_enabled(mem_enabled),
+	.pc_data_o(inst),
+	.mem_data_o(mem_data_o),
+	.pause_pipeline_final_o(pause_pipeline_final_o),
+
+	.ram1_data(base_ram_data),
+	.ram1_addr(base_ram_addr),
+	.ram1_be_n(base_ram_be_n),
+	.ram1_ce_n(base_ram_ce_n),
+	.ram1_oe_n(base_ram_oe_n),
+	.ram1_we_n(base_ram_we_n),
+
+	.ram2_data(ext_ram_data),
+	.ram2_addr(ext_ram_addr),
+	.ram2_be_n(ext_ram_be_n),
+	.ram2_ce_n(ext_ram_ce_n),
+	.ram2_oe_n(ext_ram_oe_n),
+	.ram2_we_n(ext_ram_we_n)
+
+	);
+	
+//	ila_0 debug__ (
+//	   .clk(my_clk_50M),
+//       .probe0(inst),
+//       .probe1(my_clk_50M),
+//       .probe2(inst_addr),
+//       .probe3(mem_data_o),
+//       .probe4(mem_addr_i)
+//	);
+//vio_0 vio 
+//    (
+//        .clk(clk_50M), 
+//        .probe_in0(inst)
+        
+//        );
 
 endmodule

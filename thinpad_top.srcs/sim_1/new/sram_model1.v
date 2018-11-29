@@ -91,6 +91,8 @@ reg   [19:0] Address_read1,Address_read2 ;
 reg   initiate_read1,initiate_read2;
 
 
+wire[15:0] test_flag2 ;
+assign test_flag2 = {mem_array1[20'h001d9], mem_array0[20'h001d9]};
 
 //Intializing values 
 
@@ -98,8 +100,8 @@ initial
    begin
             // write timings -- 10ns address access time
             
-      $readmemh ( "inst_rom1.data", mem_array0 );
-      $readmemh ( "inst_rom2.data", mem_array1 );
+      $readmemh ( "/home/mason/cs/code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/inst_rom1.data", mem_array0 );
+      $readmemh ( "/home/mason/cs/code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/inst_rom2.data", mem_array1 );
 
    twc = 10 ;
    tcw = 7 ;

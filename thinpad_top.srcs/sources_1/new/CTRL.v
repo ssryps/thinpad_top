@@ -33,7 +33,7 @@ module CTRL(
     input wire[`RegBus] cp0_ebase_i,
     input wire[`RegBus] cp0_epc_i,
     output reg flush,
-    output reg recovery,
+  //  output reg recovery,
     output reg[`RegBus] new_pc
     );
     always @(*) begin
@@ -42,8 +42,10 @@ module CTRL(
             flush <= 0;
             new_pc <= `ZeroWord;
         end else if(excp_type_i != `ZeroWord) begin 
+            new_pc <= `ZeroWord;
             flush <= 1;
-            recovery <= 0;
+           stall_o<=6'b111111;
+     //       recovery <= 0;
             if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
 //                new_pc <= 32'h0000_0040;
                new_pc <= cp0_ebase_i + 32'h0000_0180;
@@ -85,14 +87,21 @@ module CTRL(
         end else if (stall_from_mem_i==`Stall) begin
             stall_o<=6'b011111;    
             flush <= 0;
+            new_pc <= `ZeroWord;
+                        
         end else if (stall_from_ex_i==`Stall) begin
             stall_o<=6'b001111;
             flush <= 0;
+            new_pc <= `ZeroWord;
+                        
         end else if (stall_from_id_i==`Stall) begin
             stall_o<=6'b000111;
             flush <= 0;
+            new_pc <= `ZeroWord;
+                        
         end else begin
             flush <= 0;
+            new_pc <= `ZeroWord;
             stall_o<=6'b000000;
         end
     end

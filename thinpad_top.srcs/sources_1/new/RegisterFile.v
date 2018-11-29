@@ -40,7 +40,10 @@ module RegisterFile(
     output wire[31:0] result2,
 
     input wire flush,
-    input wire recovery
+        
+    output reg[`RegBus] cnt_correct_instruction1,
+    output reg[`RegBus] cnt_correct_instruction2
+        
     );
     reg [31:0] registers[31:0];
 
@@ -101,72 +104,10 @@ module RegisterFile(
                 registers[write_addr] = write_data; 
             end   
             if(flush == 1) begin 
-                if(recovery == 0) begin 
-                    backup_registers[1] <= registers[1];
-                    backup_registers[2] <= registers[2];
-                    backup_registers[3] <= registers[3];
-                    backup_registers[4] <= registers[4];
-                    backup_registers[5] <= registers[5];
-                    backup_registers[6] <= registers[6];
-                    backup_registers[7] <= registers[7];
-                    backup_registers[8] <= registers[8];
-                    backup_registers[9] <= registers[9];
-                    backup_registers[10] <= registers[10];
-                    backup_registers[11] <= registers[11];
-                    backup_registers[12] <= registers[12];
-                    backup_registers[13] <= registers[13];
-                    backup_registers[14] <= registers[14];
-                    backup_registers[15] <= registers[15];
-                    backup_registers[16] <= registers[16];
-                    backup_registers[17] <= registers[17];
-                    backup_registers[18] <= registers[18];
-                    backup_registers[19] <= registers[19];
-                    backup_registers[20] <= registers[20];
-                    backup_registers[21] <= registers[21];
-                    backup_registers[22] <= registers[22];
-                    backup_registers[23] <= registers[23];
-                    backup_registers[24] <= registers[24];
-                    backup_registers[25] <= registers[25];
-                   // backup_registers[26] <= registers[0];
-                   // backup_registers[27] <= registers[0];
-                    backup_registers[28] <= registers[28];
-                    backup_registers[29] <= registers[29];
-                    backup_registers[30] <= registers[30];
-                    backup_registers[31] <= registers[31];
-                end else begin 
-                    registers[1] <= backup_registers[1];
-                    registers[2] <= backup_registers[2];
-                    registers[3] <= backup_registers[3];
-                    registers[4] <= backup_registers[4];
-                    registers[5] <= backup_registers[5];
-                    registers[6] <= backup_registers[6];
-                    registers[7] <= backup_registers[7];
-                    registers[8] <= backup_registers[8];
-                    registers[9] <= backup_registers[9];
-                    registers[10] <= backup_registers[10];
-                    registers[11] <= backup_registers[11];
-                    registers[12] <= backup_registers[12];
-                    registers[13] <= backup_registers[13];
-                    registers[14] <= backup_registers[14];
-                    registers[15] <= backup_registers[15];
-                    registers[16] <= backup_registers[16];
-                    registers[17] <= backup_registers[17];
-                    registers[18] <= backup_registers[18];
-                    registers[19] <= backup_registers[19];
-                    registers[20] <= backup_registers[20];
-                    registers[21] <= backup_registers[21];
-                    registers[22] <= backup_registers[22];
-                    registers[23] <= backup_registers[23];
-                    registers[24] <= backup_registers[24];
-                    registers[25] <= backup_registers[25];
-                   // registers[26] <= registers[0];
-                   // registers[27] <= registers[0];
-                    registers[28] <= backup_registers[28];
-                    registers[29] <= backup_registers[29];
-                    registers[30] <= backup_registers[30];
-                    registers[31] <= backup_registers[31];
-                end
+                // 
             end
+            cnt_correct_instruction1<=registers[4];
+            cnt_correct_instruction2<=registers[19];
         end
 
         
