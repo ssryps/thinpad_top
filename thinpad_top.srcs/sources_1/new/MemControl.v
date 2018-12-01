@@ -58,6 +58,8 @@ module MemControl(
 		// result to pc and mem
 		output wire[31:0] pc_data_o,
 		output wire[31:0] mem_data_o,
+		output reg mem_data_valid_o,
+		
 		output wire pause_pipeline_o
 		// exception 
 //		output wire is_pc_valid
@@ -123,7 +125,7 @@ module MemControl(
 					end else begin
 						cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT;	
 					end
-				end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+				end else if(mem_op_i == `MEMCONTROL_OP_READ || mem_op_i == `MEMCONTROL_OP_READ_UN) begin
 					cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT;
 				end else begin
 					cur_state  <= `MEMCONTROL_STATE_ONLY_PC_RESULT;				
@@ -141,7 +143,7 @@ module MemControl(
                         end else begin
                             cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT;    
                         end
-                    end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+                    end else if(mem_op_i == `MEMCONTROL_OP_READ  || mem_op_i == `MEMCONTROL_OP_READ_UN) begin
                             cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT;
                     end else begin
                             cur_state  <= `MEMCONTROL_STATE_ONLY_PC_RESULT;                
@@ -172,7 +174,7 @@ module MemControl(
                         end else begin
                             cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT;    
                         end
-                    end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+                    end else if(mem_op_i == `MEMCONTROL_OP_READ  || mem_op_i == `MEMCONTROL_OP_READ_UN) begin
                             cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT;
                     end else begin
                             cur_state  <= `MEMCONTROL_STATE_ONLY_PC_RESULT;                
@@ -204,7 +206,7 @@ module MemControl(
                 end
 
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_WRITE_RESULT) begin
-				
+				 
                 if(mmu_pause_i == 0)  begin
                     if(mem_op_i == `MEMCONTROL_OP_WRITE) begin
                         if(mem_data_sz_i == `MEMECONTROL_OP_WORD) begin
@@ -212,7 +214,7 @@ module MemControl(
                         end else begin
                             cur_state <= `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT;    
                         end
-                    end else if(mem_op_i == `MEMCONTROL_OP_READ) begin
+                    end else if(mem_op_i == `MEMCONTROL_OP_READ || mem_op_i == `MEMCONTROL_OP_READ_UN) begin
                             cur_state <= `MEMCONTROL_STATE_PC_READ_OR_WRITE_PC_RESULT;
                     end else begin
                             cur_state  <= `MEMCONTROL_STATE_ONLY_PC_RESULT;                
@@ -245,6 +247,7 @@ module MemControl(
 				data_o_reg <=  mem_data_i;
 				pc_data_o_reg <= `ZeroWord;	
 				mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
+				mem_data_valid_o <= 0;
 
 
 			end if (cur_state == `MEMCONTROL_STATE_INIT ) begin
@@ -253,7 +256,8 @@ module MemControl(
 				data_o_reg <=  mem_data_i;
 				pc_data_o_reg <= `ZeroWord;	
 				mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
-				
+								mem_data_valid_o <= 0;
+
 			end else if(cur_state == `MEMCONTROL_STATE_ONLY_PC_RESULT) begin
 				if(mmu_pause_i == 0)  begin                
 
@@ -263,7 +267,8 @@ module MemControl(
 
 					pc_data_o_reg <= mmu_result_i;	
 					mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
-		
+						mem_data_valid_o <= 0;
+
         		end else begin 
         			op_o_reg   <= `MEMCONTROL_OP_READ;
 					addr_o_reg <= pc_addr_i;
@@ -271,6 +276,7 @@ module MemControl(
 
 	            	mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
 	                pc_data_o_reg <= mmu_result_i;
+					mem_data_valid_o <= 0;
 
         		end
 
@@ -282,6 +288,7 @@ module MemControl(
 
 	                pc_data_o_reg <= mmu_result_i;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
+					mem_data_valid_o <= 0;
 
                 end else begin
 					op_o_reg   <=  `MEMCONTROL_OP_READ;
@@ -290,25 +297,107 @@ module MemControl(
 
 	                pc_data_o_reg <= mmu_result_i;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
-    
+    				mem_data_valid_o <= 0;
+
 	            end
 			
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_OR_WRITE_MEM_RESULT) begin
-                 if(mmu_pause_i == 0)  begin                			
-					op_o_reg   <=  mem_op_i_host;
+                 if(mmu_pause_i == 0)  begin       
+
+                 	if(mem_op_i_host == `MEMCONTROL_OP_READ || mem_op_i_host == `MEMCONTROL_OP_READ_UN) begin 
+						op_o_reg   <=  `MEMCONTROL_OP_READ;
+                 	end else begin 
+                		op_o_reg   <=  `MEMCONTROL_OP_WRITE;
+                 		
+                 	end
 					addr_o_reg <=  mem_addr_i_host;
 					data_o_reg <=  mem_data_i_host;
 
 	                pc_data_o_reg <= read_or_write_temp_pc;    
 	                mem_data_o_reg <= mmu_result_i;
+	                mem_data_valid_o <= 0;
 
+	                if(mem_op_i_host == `MEMCONTROL_OP_READ_UN) begin 
+	                	case (mem_data_sz_i_host) 
+	                		`MEMECONTROL_OP_BYTE: begin 
+	                			case (mem_addr_i_host[1:0])
+		                			2'b11:	begin
+										mem_data_o_reg <= {{24{1'b0}},mmu_result_i[31:24]};
+									end
+									2'b10:	begin
+										mem_data_o_reg <= {{24{1'b0}},mmu_result_i[23:16]};
+									end
+									2'b01:	begin
+										mem_data_o_reg <= {{24{1'b0}},mmu_result_i[15:8]};
+									end
+									2'b00:	begin
+										mem_data_o_reg <= {{24{1'b0}},mmu_result_i[7:0]};
+									end
+								endcase
+	                		end
+							`MEMECONTROL_OP_HALF_WORD: begin 
+	                			case (mem_addr_i_host[1])
+	                				1'b1:	begin
+										mem_data_o_reg <= {{16{1'b0}},mmu_result_i[31:16]};
+									end
+									1'b0:	begin
+										mem_data_o_reg <= {{16{1'b0}},mmu_result_i[15:0]};
+									end
+	                			endcase
+                			end
+	                		default : /* default */;
+	                	endcase
+	                	mem_data_valid_o <= 1;
+
+	                end
+
+	                if(mem_op_i_host == `MEMCONTROL_OP_READ) begin 
+	                	case (mem_data_sz_i_host) 
+	                		`MEMECONTROL_OP_BYTE: begin 
+	                			case (mem_addr_i_host[1:0])
+									2'b11:	begin
+										mem_data_o_reg <= {{24{mmu_result_i[31]}},mmu_result_i[31:24]};
+									end
+									2'b10:	begin
+										mem_data_o_reg <= {{24{mmu_result_i[23]}},mmu_result_i[23:16]};
+									end
+									2'b01:	begin
+										mem_data_o_reg <= {{24{mmu_result_i[15]}},mmu_result_i[15:8]};
+									end
+									2'b00:	begin
+										mem_data_o_reg <= {{24{mmu_result_i[7]}},mmu_result_i[7:0]};
+									end
+								endcase
+	                		end
+							`MEMECONTROL_OP_HALF_WORD: begin 
+	                			case (mem_addr_i_host[1])
+	                				1'b1:	begin
+										mem_data_o_reg <= {{16{mmu_result_i[31]}},mmu_result_i[31:16]};
+									end
+									1'b0:	begin
+										mem_data_o_reg <= {{16{mmu_result_i[15]}},mmu_result_i[15:0]};
+									end
+	                			endcase
+                			end
+	                		default : /* default */;
+	                	endcase
+	                	mem_data_valid_o <= 1;
+
+	                end
+					
 				end else begin
-					op_o_reg   <=  mem_op_i_host;
+                 	if(mem_op_i_host == `MEMCONTROL_OP_READ || mem_op_i_host == `MEMCONTROL_OP_READ_UN) begin 
+						op_o_reg   <=  `MEMCONTROL_OP_READ;
+                 	end else begin 
+                		op_o_reg   <=  `MEMCONTROL_OP_WRITE;
+                 		
+                 	end
 					addr_o_reg <=  mem_addr_i_host;
 					data_o_reg <=  mem_data_i_host; 
 
 	                pc_data_o_reg <= read_or_write_temp_pc;    
 	                mem_data_o_reg <= mmu_result_i;
+					mem_data_valid_o <= 0;
 
 				end
 			end else if(cur_state == `MEMCONTROL_STATE_PC_READ_AND_WRITE_PC_RESULT) begin
@@ -320,7 +409,8 @@ module MemControl(
 
 	                pc_data_o_reg <= mmu_result_i;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
-    	
+    					mem_data_valid_o <= 0;
+
                 end else begin
 					op_o_reg   <=  `MEMCONTROL_OP_READ;
 					addr_o_reg <= pc_addr_i;
@@ -328,7 +418,8 @@ module MemControl(
 
 	                pc_data_o_reg <= mmu_result_i;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
-    				
+    								mem_data_valid_o <= 0;
+
 	            end
 			
 		
@@ -340,6 +431,7 @@ module MemControl(
 					
 	                pc_data_o_reg <= read_and_write_temp_pc;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
+				mem_data_valid_o <= 0;
 
 				end else begin
 					op_o_reg   <=  `MEMCONTROL_OP_READ;
@@ -348,6 +440,7 @@ module MemControl(
 
 	                pc_data_o_reg <= read_and_write_temp_pc;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
+				mem_data_valid_o <= 0;
 
 				end
 
@@ -374,6 +467,7 @@ module MemControl(
 						end
 
 					end
+					mem_data_valid_o <= 0;
 
 	                pc_data_o_reg <= read_and_write_temp_pc;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
@@ -401,7 +495,8 @@ module MemControl(
 						end
 
 					end
-		
+					mem_data_valid_o <= 0;
+
 	                pc_data_o_reg <= read_and_write_temp_pc;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
 
@@ -413,6 +508,8 @@ module MemControl(
                     data_o_reg <=  `ZeroWord;
                     pc_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;    
 	                mem_data_o_reg <= `MEMCONTROL_DEFAULT_DATA;
+    				mem_data_valid_o <= 0;
+
 			end
 //		end
 	end

@@ -71,13 +71,13 @@ module PC(
             pc_o <= ex_pc;
 
         end else if(stall_i[0] == 1'b0) begin
-                  if(branch_flag_i == `Branch) begin
-                        pc_o <= branch_target_address_i;
-                    end else begin
-                        pc_o <= pc_o + 4'h4;
-                  end
-            end
-        end
+              if(branch_flag_i == `Branch) begin
+                    pc_o <= branch_target_address_i;
+                end else begin
+                    pc_o <= pc_o + 4'h4;
+              end
+        end 
+    end
         
     always @ (posedge clk_i) begin
         if (rst_i == `RstEnable) begin

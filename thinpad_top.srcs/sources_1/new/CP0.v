@@ -88,7 +88,7 @@ module CP0 (
                     cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
                     cp0_registers[`CP0_CAUSE][31] <= 1;
                 end else begin 
-                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i ;
                     cp0_registers[`CP0_CAUSE][31] <= 0;    
                 end
                 cp0_registers[`CP0_STATUS][1] <= 1;    

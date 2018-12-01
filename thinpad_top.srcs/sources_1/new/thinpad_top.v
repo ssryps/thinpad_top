@@ -197,7 +197,7 @@ wire [11:0] hdata;
 assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
 assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
 assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
-assign video_clk = clk_50M;
+assign video_clk = clk_10M;
 vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .clk(clk_50M),
     .hdata(hdata), //横坐标
@@ -227,6 +227,7 @@ wire mem_enabled;
 
 wire[31:0] pc_data_o;
 wire[31:0] mem_data_o;
+wire mem_data_valid_o;
 wire pause_pipeline_final_o;
 
 wire my_clk_50M, my_clk_11M0592;
@@ -253,7 +254,7 @@ wire[3:0] sram_addr_i;
 wire [3:0] mem_state;
 wire[31:0] excp_type;
 wire pc_flush;
-assign my_clk_50M = clk_10M;
+assign my_clk_50M = clk_50M;
 //assign my_clk_50M = clock_btn;
 
 //assign leds[3:0] = inst_addr[5:2]; //debug
@@ -284,6 +285,7 @@ closemips closemips0(
 	.mem_op_o(mem_op_i),
     .mem_enabled(mem_enabled),// no source or dest
 	.mem_data_i(mem_data_o),
+    .mem_data_valid_i(mem_data_valid_o),
 	.mem_pause_pipeline_i(pause_pipeline_final_o),
 	
 	.cnt_correct_instruction1(cnt_correct_instruction1),
@@ -302,6 +304,7 @@ closemem closemem0(
     .mem_enabled(mem_enabled),
 	.pc_data_o(inst),
 	.mem_data_o(mem_data_o),
+    .mem_data_valid_o(mem_data_valid_o),
 	.pause_pipeline_final_o(pause_pipeline_final_o),
 
 	.ram1_data(base_ram_data),

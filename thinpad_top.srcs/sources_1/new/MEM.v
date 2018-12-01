@@ -45,7 +45,9 @@ module MEM(
 	input wire[`RegBus] reg2_i,
 
     input wire[`RegBus] mem_data_i,
+    input wire mem_data_valid_i,
     input wire mem_pause_pipeline_i,
+    input wire flush,
 
     output reg [`RegAddrBus] wd_o,
     output reg wreg_o,
@@ -107,45 +109,37 @@ module MEM(
 	assign zero32 = `ZeroWord;
 	assign stallreq_o = mem_pause_pipeline_i;
 
+	reg[`RegAddrBus] temp_wd_i;
+    reg temp_wreg_i;
+    reg[`RegBus] temp_wdata_i;
+    reg[`AluOpBus] temp_aluop_i;
+    reg[`RegBus] temp_mem_addr_i;
+    reg[`RegBus] temp_reg2_i ;
+    
 	always @(posedge clk_i) begin
-		if(rst_i==`RstEnable) begin
-			cur_state <= 1;
-			last_op <= `OP_NOP;
-		end else begin 
-			if(mem_pause_pipeline_i == 0)begin
-				cur_state <= 1;
-				
-		    end else if(cur_state == 1) begin
-				cur_state <= 0;
-				last_op <= `OP_NOP;
-				case (aluop_i)
-					`EXE_LB_OP:		begin
-			            last_op <= `OP_BYTE_SIGNED;
-			            last_pos <= mem_addr_i[1:0];
-					end
-					`EXE_LBU_OP:		begin
-			            last_op <= `OP_BYTE_UNSIGNED;
-			            last_pos <= mem_addr_i[1:0];
-					end
-					`EXE_LH_OP:		begin
-			            last_op <= `OP_HALF_SIGNED;
-			            last_pos <= mem_addr_i[1:0];
-					end
-					`EXE_LHU_OP:		begin
-			            last_op <= `OP_HALF_UNSIGNED;
-			            last_pos <= mem_addr_i[1:0];
-					end
-					`EXE_LW_OP:		begin
-			            last_op <= `OP_WORD;
-			            last_pos <= mem_addr_i[1:0];
-					end
-				endcase
+		if(rst_i || flush == 1) begin
+			temp_wd_i <= `NOPRegAddr;
+			temp_wreg_i <= `WriteDisable;
+		    temp_wdata_i <= `ZeroWord;	
+		end else begin
+			if(mem_pause_pipeline_i == 0) begin 
+			 	temp_wd_i <= wd_i;
+			 	temp_wdata_i <= wdata_i;
+			 	temp_wreg_i <= wreg_i;
+			 	temp_aluop_i <= aluop_i;
+				temp_mem_addr_i <= mem_addr_i;
+                temp_reg2_i <= reg2_i ;
+
+			end else begin 
+				temp_wd_i <= temp_wd_i;
+			 	temp_wdata_i <= temp_wdata_i;
+			 	temp_wreg_i <= temp_wreg_i;
+			 	temp_aluop_i <= temp_aluop_i;
+				temp_mem_addr_i <= temp_mem_addr_i;
+                temp_reg2_i <= temp_reg2_i ;
 			end
 		end
-	    
 	end
-
-
 
     always @(*) begin
         if (rst_i==`RstEnable) begin
@@ -168,9 +162,9 @@ module MEM(
             bad_addr <= `ZeroWord;
 
         end else begin
-		    wdata_o<=wdata_i;
-            wd_o<=wd_i;
-            wreg_o<=wreg_i;
+		    wdata_o<=temp_wdata_i;
+            wd_o<=temp_wd_i;
+            wreg_o<=temp_wreg_i;
             hi_o <= hi_i;
             lo_o <= lo_i;
             whilo_o <= whilo_i;
@@ -186,78 +180,13 @@ module MEM(
             is_store_bad_addr <= 0;
             bad_addr <= `ZeroWord;
 
-           
             if(mem_pause_pipeline_i == 0) begin
-
-				if(last_op == `OP_BYTE_UNSIGNED) begin
-		        	case (last_pos)
-						2'b11:	begin
-							wdata_o <= {{24{1'b0}},mem_data_i[31:24]};
-						end
-						2'b10:	begin
-							wdata_o <= {{24{1'b0}},mem_data_i[23:16]};
-						end
-						2'b01:	begin
-							wdata_o <= {{24{1'b0}},mem_data_i[15:8]};
-						end
-						2'b00:	begin
-							wdata_o <= {{24{1'b0}},mem_data_i[7:0]};
-						end
-						default:  begin
-							wdata_o <= `ZeroWord;
-						end
-					endcase	
-		        end else if(last_op == `OP_BYTE_SIGNED) begin
-		     		case (last_pos)
-						2'b11:	begin
-							wdata_o <= {{24{mem_data_i[31]}},mem_data_i[31:24]};
-						end
-						2'b10:	begin
-							wdata_o <= {{24{mem_data_i[23]}},mem_data_i[23:16]};
-						end
-						2'b01:	begin
-							wdata_o <= {{24{mem_data_i[15]}},mem_data_i[15:8]};
-						end
-						2'b00:	begin
-							wdata_o <= {{24{mem_data_i[7]}},mem_data_i[7:0]};
-						end
-						default:	begin
-							wdata_o <= `ZeroWord;
-						end
-					endcase	
-
-				end else if(last_op == `OP_HALF_UNSIGNED) begin
-			    	case (last_pos)
-						2'b10:	begin
-							wdata_o <= {{24{1'b0}},mem_data_i[31:16]};
-						end
-						2'b00:	begin
-							wdata_o <= {{24{1'b0}},mem_data_i[15:0]};
-						end
-						default:	begin
-							wdata_o <= `ZeroWord;
-						end
-					endcase	
-
-				end else if(last_op == `OP_HALF_SIGNED) begin
-		    		case (last_pos)
-						2'b10:	begin
-							wdata_o <= {{24{mem_data_i[31]}},mem_data_i[31:16]};
-						end
-						2'b00:	begin
-							wdata_o <= {{24{mem_data_i[15]}},mem_data_i[15:0]};
-						end
-						default:	begin
-							wdata_o <= `ZeroWord;
-						end
-					endcase	
-		
-				end else if(last_op == `OP_WORD) begin
-					wdata_o <= mem_data_i;
-				end
-            end
-
-
+	            if(mem_data_valid_i == 1) begin 
+	            	wdata_o <= mem_data_i;
+	            	wreg_o <= `WriteEnable;
+//	            	wd_o <= temp_wd_i;
+	            end
+	        end
 //            if(cur_state == 1) begin
                 case (aluop_i)
 					`EXE_LB_OP:		begin
@@ -270,7 +199,7 @@ module MEM(
 			            mem_addr_o <= mem_addr_i;
 			            mem_data_sz_o <= `MEMECONTROL_OP_BYTE;
 			            mem_data_o <= reg2_i;
-			            mem_op_o <= `MEMCONTROL_OP_READ;	
+			            mem_op_o <= `MEMCONTROL_OP_READ_UN;	
 					end
 					`EXE_LH_OP:		begin
 						if(mem_addr_i[0] == 0) begin 							
@@ -293,7 +222,7 @@ module MEM(
 					        mem_addr_o <= mem_addr_i;
 				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
 				            mem_data_o <= reg2_i;
-				            mem_op_o <= `MEMCONTROL_OP_READ;	
+				            mem_op_o <= `MEMCONTROL_OP_READ_UN;	
 						end else begin 
 							mem_addr_o <= `ZeroWord;
 				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
@@ -375,6 +304,21 @@ module MEM(
 		end
     end
 
+
+    reg __is_load_bad_addr, __is_store_bad_addr;
+    reg[`RegBus] __bad_addr;
+    always @(posedge clk_i) begin 
+    	if(mem_pause_pipeline_i == 0) begin 
+	    	__is_store_bad_addr <= is_store_bad_addr;
+    		__is_load_bad_addr <= is_load_bad_addr;
+    		__bad_addr <= bad_addr;
+    	end else begin 
+	    	__is_store_bad_addr <= __is_store_bad_addr;
+    		__is_load_bad_addr <= __is_load_bad_addr;
+    		__bad_addr <= __bad_addr;
+    	end
+    end
+
     //exception handler 
     assign excp_in_delay_slot_o = excp_in_delay_slot_i;
     assign excp_inst_addr_o = excp_inst_addr_i;
@@ -411,10 +355,10 @@ module MEM(
                 //if((cp0_status_i[1] == 1) ) begin //&& (cp0_status_i[0] == 1)
     	  			excp_type_o <= excp_type_i;
               	//end       
-            end else if(is_load_bad_addr == 1 || is_store_bad_addr == 1) begin 
+            end else if(__is_load_bad_addr == 1 || __is_store_bad_addr == 1) begin 
             	if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
-    	  			excp_type_o <= {excp_type_i[31:`EXCP_BAD_STORE_ADDR + 1], is_store_bad_addr, is_load_bad_addr, excp_type_i[`EXCP_BAD_LOAD_ADDR - 1: 0]};
-    	  			excp_bad_addr <= bad_addr;
+    	  			excp_type_o <= {excp_type_i[31:`EXCP_BAD_STORE_ADDR + 1], __is_store_bad_addr, __is_load_bad_addr, excp_type_i[`EXCP_BAD_LOAD_ADDR - 1: 0]};
+    	  			excp_bad_addr <= __bad_addr;
               	end
             end
     	end

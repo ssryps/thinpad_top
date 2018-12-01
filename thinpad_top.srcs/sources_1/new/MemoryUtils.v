@@ -14,9 +14,11 @@
 `define MEMCONTROL_OP_LEN		3
 `define MEMCONTROL_OP_NOP   	3'b000
 `define MEMCONTROL_OP_READ  	3'b001
+
 `define MEMCONTROL_OP_WRITE 	3'b010
 `define MEMCONTROL_OP_WRITE_HALF 3'b011
 `define MEMCONTROL_OP_WRITE_BYTE 3'b100
+`define MEMCONTROL_OP_READ_UN  	3'b101
 
 
 // operation data length

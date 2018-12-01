@@ -101,8 +101,8 @@ initial
    begin
             // write timings -- 10ns address access time
             
-      $readmemh ( "/home/mason/cs/code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/inst_rom3.data", mem_array0 );
-      $readmemh ( "/home/mason/cs/code/vivado/thinpad_top/thinpad_top.srcs/sim_1/new/inst_rom4.data", mem_array1 );
+      $readmemh ( "inst_rom3.data", mem_array0 );
+      $readmemh ( "inst_rom4.data", mem_array1 );
 
    twc = 10 ;
    tcw = 7 ;
