@@ -49,9 +49,19 @@ module closemem(
     output wire[3:0] ram2_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
     output wire ram2_ce_n,       //ExtRAM片选，低有效
     output wire ram2_oe_n,       //ExtRAM读使能，低有效
-    output wire ram2_we_n      //ExtRAM写使能，低有效
+    output wire ram2_we_n,      //ExtRAM写使能，低有效
 
     // debug
+    
+    //flash信号
+    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效，16bit模式无意义
+    inout  wire [15:0]flash_d,      //Flash数据
+    output wire flash_rp_n,         //Flash复位信号，低有效
+    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧写
+    output wire flash_ce_n,         //Flash片选信号，低有效
+    output wire flash_oe_n,         //Flash读使能信号，低有效
+    output wire flash_we_n,         //Flash写使能信号，低有效
+    output wire flash_byte_n       //Flash 8bit模式选择，低有效。在使用flash的16位模式时请设为1
 
 	);
 
