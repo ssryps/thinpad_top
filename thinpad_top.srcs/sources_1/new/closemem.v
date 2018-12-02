@@ -33,6 +33,7 @@ module closemem(
     
 	output wire[31:0] pc_data_o,
 	output wire[31:0] mem_data_o,
+    output wire mem_data_valid_o,
 	output wire pause_pipeline_final_o,
 
     // signal to outer devices
@@ -162,6 +163,7 @@ MemControl mem_control(
     .enable_o(enable_i),
     .pc_data_o(pc_data_o),
     .mem_data_o(mem_data_o),
+    .mem_data_valid_o(mem_data_valid_o),
     .pause_pipeline_o(pause_pipeline_final_o)
     );
 

@@ -74,6 +74,7 @@ module ex_mem(
 			excp_inst_addr_o <= `ZeroWord;
 			excp_type_o <= `ZeroWord;
 		end else if(stall_i[3]==`Stall&&stall_i[4]==`NotStall) begin
+			//mem_wd <= ;
 			mem_wd <= `NOPRegAddr;
 			mem_wreg <= `WriteDisable;
 		    mem_wdata <= `ZeroWord;	
@@ -110,5 +111,9 @@ module ex_mem(
 			excp_type_o <= excp_type_i;
 		end    //if
 	end      //always
-			
+	
+	// always @(*) begin
+	// 	mem_aluop <= ex_aluop;
+	// end
+
 endmodule
