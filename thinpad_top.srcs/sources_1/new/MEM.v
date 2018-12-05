@@ -83,7 +83,13 @@ module MEM(
 	output wire excp_in_delay_slot_o,
 	output reg[`RegBus] excp_bad_addr,
 
-	input wire[`RegBus] cp0_status_i
+	input wire[`RegBus] cp0_status_i,
+
+    // TLB
+    input wire[`TLB_EXCEPTION_RANGE] tlb_exc_i,
+	output reg[`TLB_OP_RANGE] tlb_op_o,
+	reg is_load_o,
+    reg is_store_o
 	);
     wire[`RegBus] zero32;
 	reg mem_we;
@@ -160,6 +166,8 @@ module MEM(
 			is_load_bad_addr <= 0;
 			is_store_bad_addr <= 0;
             bad_addr <= `ZeroWord;
+            is_load_o<=0;
+            is_store_o<=0;
 
         end else begin
 		    wdata_o<=temp_wdata_i;
@@ -179,6 +187,8 @@ module MEM(
 			is_load_bad_addr <= 0;
             is_store_bad_addr <= 0;
             bad_addr <= `ZeroWord;
+            is_load_o<=0;
+            is_store_o<=0;
 
             if(mem_pause_pipeline_i == 0) begin
 	            if(mem_data_valid_i == 1) begin 
@@ -194,14 +204,17 @@ module MEM(
 			            mem_data_sz_o <= `MEMECONTROL_OP_BYTE;
 			            mem_data_o <= reg2_i;
 			            mem_op_o <= `MEMCONTROL_OP_READ;	
+                        is_load_o<=1'b1;
 					end
 					`EXE_LBU_OP:		begin
 			            mem_addr_o <= mem_addr_i;
 			            mem_data_sz_o <= `MEMECONTROL_OP_BYTE;
 			            mem_data_o <= reg2_i;
 			            mem_op_o <= `MEMCONTROL_OP_READ_UN;	
+                        is_load_o<=1'b1;
 					end
 					`EXE_LH_OP:		begin
+                        is_load_o<=1'b1;
 						if(mem_addr_i[0] == 0) begin 							
 				            mem_addr_o <= mem_addr_i;
 				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
@@ -218,6 +231,7 @@ module MEM(
 					end
 
 					`EXE_LHU_OP:		begin
+                        is_load_o<=1'b1;
 			            if(mem_addr_i[0] == 0) begin 							
 					        mem_addr_o <= mem_addr_i;
 				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
@@ -235,6 +249,7 @@ module MEM(
 
 					end
 					`EXE_LW_OP:		begin
+                        is_load_o<=1'b1;
 			            if(mem_addr_i[1:0] == 2'b00) begin 							
 				            mem_addr_o <= mem_addr_i;
 				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
@@ -253,6 +268,7 @@ module MEM(
 					end
 	
 					`EXE_SB_OP:		begin
+                        is_store_o<=1'b1;
 			            mem_addr_o <= mem_addr_i;
 			            mem_data_sz_o <= `MEMECONTROL_OP_BYTE;
 			            mem_data_o <= reg2_i;
@@ -260,6 +276,7 @@ module MEM(
 			
 					end
 					`EXE_SH_OP:		begin
+                        is_store_o<=1'b1;
 			            if(mem_addr_i[0] == 0) begin 							
 						    mem_addr_o <= mem_addr_i;
 				            mem_data_sz_o <= `MEMECONTROL_OP_HALF_WORD;
@@ -276,6 +293,7 @@ module MEM(
 						end
 					end
 					`EXE_SW_OP:		begin
+                        is_store_o<=1'b1;
 			            if(mem_addr_i[1:0] == 2'b00) begin 							
 					        mem_addr_o <= mem_addr_i;
 				            mem_data_sz_o <= `MEMECONTROL_OP_WORD;
@@ -291,7 +309,6 @@ module MEM(
 					        bad_addr <= mem_addr_i;
 						end
 					end
-					
 	
 					default:		begin
 				     	mem_addr_o <= `ZeroWord;
@@ -300,6 +317,12 @@ module MEM(
 			            mem_op_o <= `MEMCONTROL_OP_NOP;	
 					end
 				endcase	
+					
+                if (aluop_i==`EXE_TLBWI_OP)	begin
+                    tlb_op_o <= `TLB_OP_TLBWI;	
+                end else begin
+                    tlb_op_o <= `TLB_OP_NOP;	
+                end
        // 	end
 		end
     end
@@ -334,6 +357,13 @@ module MEM(
     		if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
     	   			excp_type_o <= excp_type_i;
+            	end
+			end else if(tlb_exc_i==`TLB_EXC_REFILL) begin //TLB refill
+	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	   			//excp_type_o <= 32'b0;
+    	   			//excp_type_o <= excp_type_i;
+                    excp_type_o <={excp_type_i[31:`EXCP_TLB_REFILL+1],1'b1,excp_type_i[`EXCP_TLB_REFILL-1:0]} ;
+                    excp_bad_addr <= mem_addr_i;
             	end
 			end else if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)

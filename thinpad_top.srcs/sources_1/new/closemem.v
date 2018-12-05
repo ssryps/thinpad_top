@@ -30,6 +30,14 @@ module closemem(
 	input wire[5:0]	 mem_data_sz_i,	
 	input wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i,
     input wire mem_enabled,
+
+    // TLB
+    input wire[31:0] cp0_index_i,
+    input wire[31:0] cp0_entryhi_i,
+    input wire[31:0] cp0_entrylo0_i,
+    input wire[31:0] cp0_entrylo1_i,
+	input wire[`TLB_OP_RANGE] tlb_op_i,
+    output wire[`TLB_EXCEPTION_RANGE] tlb_exc_o,// to MEM
     
 	output wire[31:0] pc_data_o,
 	output wire[31:0] mem_data_o,
@@ -167,6 +175,13 @@ MMUControl mmu_control(
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),
 	//.serial_data_i(serial_data_i),
+    // TLB
+    
+    .cp0_index_i(cp0_index_i),
+    .cp0_entryhi_i(cp0_entryhi_i),
+    .cp0_entrylo0_i(cp0_entrylo0_i),
+    .cp0_entrylo1_i(cp0_entrylo1_i),
+
 	.sram_enabled(sram_enabled),
 	.sram_op(sram_op),
 	.sram_data(sram_data),
@@ -176,7 +191,9 @@ MMUControl mmu_control(
 	// .serial_data(serial_data),
 	// .serial_addr(serial_addr),
 	.result_o(result_o),
-	.pause_pipeline_o(pause_pipeline_o)
+	.pause_pipeline_o(pause_pipeline_o),
+    .tlb_exception_o(tlb_exc_o),
+    .tlb_op_i(tlb_op_i)
 	);
 
 SRAMControl sram_control(

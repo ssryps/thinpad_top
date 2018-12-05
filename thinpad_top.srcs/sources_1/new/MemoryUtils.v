@@ -20,6 +20,9 @@
 `define MEMCONTROL_OP_WRITE_BYTE 3'b100
 `define MEMCONTROL_OP_READ_UN  	3'b101
 
+`define MEMCONTROL_OP_TLBWI 	3'b110
+`define MEMCONTROL_OP_TLBWR 	3'b111
+
 
 // operation data length
 `define MEMECONTROL_OP_WORD				6'b111110
@@ -49,3 +52,13 @@
 `define SERIALCONTROL_OP_NOP   	2'b00
 `define SERIALCONTROL_OP_READ  	2'b01
 `define SERIALCONTROL_OP_WRITE 	2'b10
+
+// TLB
+`define TLB_OP_RANGE            2:0
+`define TLB_OP_NOP              3'b000
+`define TLB_OP_TLBWI            3'b001
+`define TLB_OP_TLBWR            3'b010
+`define TLB_EXCEPTION_RANGE     2:0
+`define TLB_EXC_NO              3'b000
+`define TLB_EXC_INVALILD        3'b001
+`define TLB_EXC_REFILL          3'b010

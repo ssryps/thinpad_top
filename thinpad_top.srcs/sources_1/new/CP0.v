@@ -17,16 +17,26 @@ module CP0 (
 	output reg[`RegBus] cp0_cause_o,
 	output reg[`RegBus] cp0_epc_o,
 	output reg[`RegBus] cp0_ebase_o,
+    output wire[31:0] cp0_index_o,
+    output wire[31:0] cp0_entryhi_o,
+    output wire[31:0] cp0_entrylo0_o,
+    output wire[31:0] cp0_entrylo1_o,
 
     input wire[`RegBus] excp_type_i,
     input wire[`RegBus] excp_inst_addr_i, 
     input wire excp_in_delay_slot_i,
-    input wire[`RegBus] excp_bad_addr
+    input wire[`RegBus] excp_bad_addr,
     
+    input wire is_load_i,    
+    input wire is_store_i
 
 );
 
     reg[31:0] cp0_registers[31:0];
+    assign cp0_index_o=cp0_registers[`CP0_INDEX];
+    assign cp0_entryhi_o=cp0_registers[`CP0_ENTRYHI];
+    assign cp0_entrylo0_o=cp0_registers[`CP0_ENTRYLO0];
+    assign cp0_entrylo1_o=cp0_registers[`CP0_ENTRYLO1];
     
 	always @(posedge clk) begin
         if(rst) begin
@@ -64,6 +74,15 @@ module CP0 (
                 cp0_registers[31] <= 0;
 
                 cp0_registers[`CP0_EBASE] <= `CP0_EBASE_ADDR;
+
+                //cp0_registers[`CP0_CONTEXT] <= 32'b0;
+                ////cp0_registers[`CP0_CONFIG] <= 32'b0;
+                //cp0_registers[`CP0_INDEX] <= 32'b0;
+                //cp0_registers[`CP0_ENTRYHI] <= 32'b0;
+                //cp0_registers[`CP0_ENTRYLO0] <= 32'b0;
+                //cp0_registers[`CP0_ENTRYLO1] <= 32'b0;
+                //cp0_registers[`CP0_WIRE] <= 32'b0;
+                //cp0_registers[`CP0_RANDOM] <= 32'b0;
                                 
         end else begin
             if(write_enabled == 1) begin 
@@ -168,6 +187,21 @@ module CP0 (
 
             if(excp_type_i[`EXCP_ERET] == 1) begin 
                 cp0_registers[`CP0_STATUS][1] <= 0;    
+            end
+
+            if(excp_type_i[`EXCP_TLB_REFILL] == 1) begin 
+                if(excp_in_delay_slot_i == 1) begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                    cp0_registers[`CP0_CAUSE][31] <= 1;
+                end else begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i;
+                    cp0_registers[`CP0_CAUSE][31] <= 0;    
+                end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                if (is_load_i) begin cp0_registers[`CP0_CAUSE][2]<=1; end //TLBL exception
+                if (is_store_i) begin cp0_registers[`CP0_CAUSE][3]<=1; end //TLBS exception
+                cp0_registers[`CP0_BAD_ADDR] <= excp_bad_addr;       
+                //cp0 entryHi should keep the value
             end
                  
             if(excp_type_i[`EXCP_BAD_PC_ADDR] == 1) begin 

@@ -1,8 +1,8 @@
 -- Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2018.1 (lin64) Build 2188600 Wed Apr  4 18:39:19 MDT 2018
--- Date        : Wed Nov 28 17:06:32 2018
--- Host        : mason running 64-bit Ubuntu 18.04.1 LTS
+-- Date        : Sat Dec  1 16:09:36 2018
+-- Host        : eric-pc running 64-bit Ubuntu 16.04.5 LTS
 -- Command     : write_vhdl -force -mode funcsim -rename_top pll_example -prefix
 --               pll_example_ pll_example_sim_netlist.vhdl
 -- Design      : pll_example

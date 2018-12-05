@@ -230,6 +230,14 @@ wire[31:0] mem_data_o;
 wire mem_data_valid_o;
 wire pause_pipeline_final_o;
 
+// TLB
+wire[31:0] cp0_index_i;
+wire[31:0] cp0_entryhi_i;
+wire[31:0] cp0_entrylo0_i;
+wire[31:0] cp0_entrylo1_i;
+wire[`TLB_EXCEPTION_RANGE] tlb_exc_o;// to MEM
+wire[`TLB_OP_RANGE] tlb_op_o;
+
 wire my_clk_50M, my_clk_11M0592;
 //reg rst;
 //
@@ -290,7 +298,14 @@ closemips closemips0(
 	
 	.cnt_correct_instruction1(cnt_correct_instruction1),
 	.cnt_correct_instruction2(cnt_correct_instruction2),
-	.excp_type(excp_type)
+	.excp_type(excp_type),
+    // to closemem, for TLB 
+    .cp0_index_o(cp0_index_i),
+    .cp0_entryhi_o(cp0_entryhi_i),
+    .cp0_entrylo0_o(cp0_entrylo0_i),
+    .cp0_entrylo1_o(cp0_entrylo1_i),
+	.tlb_op_o(tlb_op_o),
+    .tlb_exc_i(tlb_exc_o)
 );
 
 closemem closemem0(
@@ -319,7 +334,15 @@ closemem closemem0(
 	.ram2_be_n(ext_ram_be_n),
 	.ram2_ce_n(ext_ram_ce_n),
 	.ram2_oe_n(ext_ram_oe_n),
-	.ram2_we_n(ext_ram_we_n)
+	.ram2_we_n(ext_ram_we_n),
+    
+    // for TLB
+    .cp0_index_i(cp0_index_i),
+    .cp0_entryhi_i(cp0_entryhi_i),
+    .cp0_entrylo0_i(cp0_entrylo0_i),
+    .cp0_entrylo1_i(cp0_entrylo1_i),
+    .tlb_op_i(tlb_op_o),
+    .tlb_exc_o(tlb_exc_o)
 
 	);
 	

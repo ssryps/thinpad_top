@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 f_in = open("inst_rom.data", "r")
 f_out1 = open("inst_rom1.data", "w")
 f_out2 = open("inst_rom2.data", "w")

@@ -29,6 +29,13 @@ module closemips(
     input wire mem_data_valid_i,
     input wire mem_pause_pipeline_i,
 
+    // for TLB
+    input wire[`TLB_EXCEPTION_RANGE] tlb_exc_i,
+    output wire[31:0] cp0_index_o,
+    output wire[31:0] cp0_entryhi_o,
+    output wire[31:0] cp0_entrylo0_o,
+    output wire[31:0] cp0_entrylo1_o,
+	output wire[`TLB_OP_RANGE] tlb_op_o,
 
 	output wire[`RegBus] rom_addr_o,
 	output wire rom_ce_o,
@@ -209,6 +216,9 @@ wire[`RegBus] cp0_cause_i;
 wire[`RegBus] cp0_epc_i;
 wire[`RegBus] cp0_ebase_i;
 
+wire is_load_o;
+wire is_store_o;
+
 assign excp_type = mem_excp_type_o;
 
 CP0 cp0(
@@ -228,10 +238,17 @@ CP0 cp0(
     .cp0_epc_o(cp0_epc_i),
     .cp0_ebase_o(cp0_ebase_i),
 
+    .cp0_index_o(cp0_index_o),
+    .cp0_entryhi_o(cp0_entryhi_o),
+    .cp0_entrylo0_o(cp0_entrylo0_o),
+    .cp0_entrylo1_o(cp0_entrylo1_o),
+
     .excp_type_i(mem_excp_type_o),
     .excp_inst_addr_i(mem_excp_inst_addr_o), 
     .excp_in_delay_slot_i(mem_excp_in_delay_slot_o),
-    .excp_bad_addr(mem_excp_bad_addr)
+    .excp_bad_addr(mem_excp_bad_addr),
+    .is_load_i(is_load_o),
+    .is_store_i(is_store_o)
 );
 
 
@@ -477,7 +494,13 @@ MEM mem0(
     .excp_in_delay_slot_o(mem_excp_in_delay_slot_o),
     .excp_bad_addr(mem_excp_bad_addr),
 
-    .cp0_status_i(cp0_status_i)
+    // TLB to cp0
+    .cp0_status_i(cp0_status_i),
+    .is_load_o(is_load_o),
+    .is_store_o(is_store_o),
+    .tlb_exc_i(tlb_exc_i),
+    // TLB to MMU
+    .tlb_op_o(tlb_op_o)
 );
 
 MEM_WB Mem_wb(
