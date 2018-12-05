@@ -51,6 +51,10 @@ module MMUControl (
     input wire[31:0] cp0_entryhi_i,
     input wire[31:0] cp0_entrylo0_i,
     input wire[31:0] cp0_entrylo1_i,
+    // cp0 数据旁路
+    input wire mem_wb_o_cp0_reg_we_i,
+    input wire[4:0] mem_wb_o_cp0_reg_write_addr_i,
+    input wire[`RegBus] mem_wb_o_cp0_reg_data_i,
     //input wire[31:0] cp0_wire_i,
     //input wire[31:0] cp0_random_i,
 //    input wire[31:0]                       serial_data_i,            
@@ -279,6 +283,13 @@ module MMUControl (
 		end
 	end
     
+    //// cp0 multiplex
+    //reg[31:0] cp0_entryhi_m; // real register
+    //reg[31:0] cp0_entrylo0_m;
+    //reg[31:0] cp0_entrylo1_m;
+    //always @(*) begin
+    //    
+    //end
 
     // perform TLBWI and TLBWR
     wire[3:0] index=cp0_index_i[3:0]; // The size of array related to max # of tlb entry
@@ -299,16 +310,40 @@ module MMUControl (
             end
         end else begin
             if (tlb_op_i==`TLB_OP_TLBWI) begin
-                VPN2[index]<=cp0_entryhi_i[31:13];
-                ASID[index]<=cp0_entryhi_i[7:0];
-                G[index]<=cp0_entrylo0_i[0]&cp0_entrylo1_i[0];
+                // cp0 data bypass
+                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYHI) begin
+                    VPN2[index]<=mem_wb_o_cp0_reg_data_i[31:13];
+                    ASID[index]<=mem_wb_o_cp0_reg_data_i[7:0];
+                end else begin
+                    VPN2[index]<=cp0_entryhi_i[31:13];
+                    ASID[index]<=cp0_entryhi_i[7:0];
+                end
+                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
+                    G[index]<=mem_wb_o_cp0_reg_data_i[0]&cp0_entrylo1_i[0];
+                end else if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
+                    G[index]<=cp0_entrylo0_i[0]&mem_wb_o_cp0_reg_data_i[0];
+                end else begin
+                    G[index]<=cp0_entrylo0_i[0]&cp0_entrylo1_i[0];
+                end
 
-                PFN0[index]<=cp0_entrylo0_i[25:6];
-                D0[index]<=cp0_entrylo0_i[2];
-                V0[index]<=cp0_entrylo0_i[1];
-                PFN1[index]<=cp0_entrylo1_i[25:6];
-                D1[index]<=cp0_entrylo1_i[2];
-                V1[index]<=cp0_entrylo1_i[1];
+                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
+                    PFN0[index]<=mem_wb_o_cp0_reg_data_i[25:6];
+                    D0[index]<=mem_wb_o_cp0_reg_data_i[2];
+                    V0[index]<=mem_wb_o_cp0_reg_data_i[1];
+                end else begin
+                    PFN0[index]<=cp0_entrylo0_i[25:6];
+                    D0[index]<=cp0_entrylo0_i[2];
+                    V0[index]<=cp0_entrylo0_i[1];
+                end
+                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
+                    PFN1[index]<=mem_wb_o_cp0_reg_data_i[25:6];
+                    D1[index]<=mem_wb_o_cp0_reg_data_i[2];
+                    V1[index]<=mem_wb_o_cp0_reg_data_i[1];
+                end else begin
+                    PFN1[index]<=cp0_entrylo1_i[25:6];
+                    D1[index]<=cp0_entrylo1_i[2];
+                    V1[index]<=cp0_entrylo1_i[1];
+                end
             end //TODO: add TLB_OP_TLBWR
         end
 	end

@@ -121,6 +121,7 @@ module MEM(
     reg[`AluOpBus] temp_aluop_i;
     reg[`RegBus] temp_mem_addr_i;
     reg[`RegBus] temp_reg2_i ;
+	//reg[`RegBus] mem_addr_backup;
     
 	always @(posedge clk_i) begin
 		if(rst_i || flush == 1) begin
@@ -363,7 +364,7 @@ module MEM(
     	   			//excp_type_o <= 32'b0;
     	   			//excp_type_o <= excp_type_i;
                     excp_type_o <={excp_type_i[31:`EXCP_TLB_REFILL+1],1'b1,excp_type_i[`EXCP_TLB_REFILL-1:0]} ;
-                    excp_bad_addr <= mem_addr_i;
+                    excp_bad_addr <= temp_mem_addr_i;
             	end
 			end else if(excp_type_i[`EXCP_SYSCALL] == 1) begin 
 	    		if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
