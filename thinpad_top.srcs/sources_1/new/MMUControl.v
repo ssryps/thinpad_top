@@ -77,7 +77,7 @@ module MMUControl (
 
 		);
 //    assign mmu_addr_i = addr_i[3:0];
-	wire[`MEMCONTROL_ADDR_LEN - 1:0] mmu_addr;
+	reg[`MEMCONTROL_ADDR_LEN - 1:0] mmu_addr;
 	reg[`DEVICE_CHOICE_LEN - 1:0] device;
 	reg [2:0] cur_state;
     reg sram_enabled_reg;
@@ -95,10 +95,6 @@ module MMUControl (
 
     assign sram_op = (op_i == `MEMCONTROL_OP_WRITE? `SRAMCONTROL_OP_WRITE : (op_i == `MEMCONTROL_OP_READ? `SRAMCONTROL_OP_READ: `SRAMCONTROL_OP_NOP));
     assign sram_data = data_i;
-
-        // currently map to physical address directly 
-	assign mmu_addr = addr_i;
-    assign sram_addr = mmu_addr[22: 2];
 
     // TLB 
     wire mapped=(addr_i[31:30]!=2'b10); // 内核态的映射地址
@@ -235,6 +231,7 @@ module MMUControl (
 	always @(*) begin 
         if (rst==1'b1) begin
             tlb_exception_o<=`TLB_EXC_NO;
+            mmu_addr<=32'b0;
         end else begin
             //if (enable_i==1 && mapped==1'b1) begin
             if (mapped==1'b1) begin
@@ -248,8 +245,17 @@ module MMUControl (
             end else begin
                 tlb_exception_o<=`TLB_EXC_NO;
             end
+            if (mapped==1'b1) begin
+                mmu_addr = finalAddr;
+            end else begin
+                mmu_addr = addr_i;
+            end
         end
     end
+    assign sram_addr = mmu_addr[22: 2];
+
+    // currently map to physical address directly 
+    // TODO: change this mmu_addr
 
 	always @(*) begin 
 		if(~rst) begin
