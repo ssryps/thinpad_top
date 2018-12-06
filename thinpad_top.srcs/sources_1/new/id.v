@@ -1110,7 +1110,7 @@ module id(
                 //mem
                 wreg_o <= `WriteDisable;
                 instvalid <= `InstValid;
-                is_eret_excp <= 1;
+        //        is_eret_excp <= 1;
             end
 
             if(inst_i == `ZeroWord) begin 
