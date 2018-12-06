@@ -36,6 +36,7 @@ module closemem(
     input wire[31:0] cp0_entryhi_i,
     input wire[31:0] cp0_entrylo0_i,
     input wire[31:0] cp0_entrylo1_i,
+    input wire[31:0] cp0_random_i,
 	input wire[`TLB_OP_RANGE] tlb_op_i,
     output wire[`TLB_EXCEPTION_RANGE] tlb_exc_o,// to MEM
     // cp0 data bypass
@@ -185,6 +186,7 @@ MMUControl mmu_control(
     .cp0_entryhi_i(cp0_entryhi_i),
     .cp0_entrylo0_i(cp0_entrylo0_i),
     .cp0_entrylo1_i(cp0_entrylo1_i),
+    .cp0_random_i(cp0_random_i),
     // cp0 data bypass
     .mem_wb_o_cp0_reg_write_addr_i(mem_wb_o_cp0_reg_write_addr_i),
     .mem_wb_o_cp0_reg_data_i(mem_wb_o_cp0_reg_data_i),

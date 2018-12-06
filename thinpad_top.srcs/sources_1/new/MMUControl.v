@@ -28,8 +28,6 @@
 
 `define MAX_PFN2_LEN            19
 `define MAX_PFN2_RANGE          `MAX_PFN2_LEN-1:0
-`define MAX_TLB_ENTRY_NUM       16
-`define MAX_TLB_ENTRY_RANGE     `MAX_TLB_ENTRY_NUM-1:0
 
 `define HIT_ERROR               6'b111111
 
@@ -56,7 +54,7 @@ module MMUControl (
     input wire[4:0] mem_wb_o_cp0_reg_write_addr_i,
     input wire[`RegBus] mem_wb_o_cp0_reg_data_i,
     //input wire[31:0] cp0_wire_i,
-    //input wire[31:0] cp0_random_i,
+    input wire[31:0] cp0_random_i,
 //    input wire[31:0]                       serial_data_i,            
 	//output signal to lower layer
 	//SRAM 
@@ -293,7 +291,9 @@ module MMUControl (
 
     // perform TLBWI and TLBWR
     wire[3:0] index=cp0_index_i[3:0]; // The size of array related to max # of tlb entry
+    wire[3:0] random=cp0_random_i[3:0]; // The size of array related to max # of tlb entry
     integer j;
+    //always @(rst or tlb_op_i or index or mem_wb_o_cp0_reg_we_i or mem_wb_o_cp0_reg_write_addr_i or mem_wb_o_cp0_reg_data_i or cp0_entryhi_i or cp0_entrylo0_i or cp0_entrylo1_i) begin
     always @(*) begin
         if (rst==1'b1) begin // TLB reset
             for (j=0;j<`MAX_TLB_ENTRY_NUM;j=j+1) begin
@@ -309,42 +309,79 @@ module MMUControl (
                 V1[j]<=1'b0;
             end
         end else begin
-            if (tlb_op_i==`TLB_OP_TLBWI) begin
-                // cp0 data bypass
-                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYHI) begin
-                    VPN2[index]<=mem_wb_o_cp0_reg_data_i[31:13];
-                    ASID[index]<=mem_wb_o_cp0_reg_data_i[7:0];
-                end else begin
-                    VPN2[index]<=cp0_entryhi_i[31:13];
-                    ASID[index]<=cp0_entryhi_i[7:0];
-                end
-                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
-                    G[index]<=mem_wb_o_cp0_reg_data_i[0]&cp0_entrylo1_i[0];
-                end else if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
-                    G[index]<=cp0_entrylo0_i[0]&mem_wb_o_cp0_reg_data_i[0];
-                end else begin
-                    G[index]<=cp0_entrylo0_i[0]&cp0_entrylo1_i[0];
-                end
+            if (pause_pipeline_o==1'b0) begin
+                if (tlb_op_i==`TLB_OP_TLBWI) begin
+                    // cp0 data bypass
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYHI) begin
+                        VPN2[index]<=mem_wb_o_cp0_reg_data_i[31:13];
+                        ASID[index]<=mem_wb_o_cp0_reg_data_i[7:0];
+                    end else begin
+                        VPN2[index]<=cp0_entryhi_i[31:13];
+                        ASID[index]<=cp0_entryhi_i[7:0];
+                    end
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
+                        G[index]<=mem_wb_o_cp0_reg_data_i[0]&cp0_entrylo1_i[0];
+                    end else if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
+                        G[index]<=cp0_entrylo0_i[0]&mem_wb_o_cp0_reg_data_i[0];
+                    end else begin
+                        G[index]<=cp0_entrylo0_i[0]&cp0_entrylo1_i[0];
+                    end
 
-                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
-                    PFN0[index]<=mem_wb_o_cp0_reg_data_i[25:6];
-                    D0[index]<=mem_wb_o_cp0_reg_data_i[2];
-                    V0[index]<=mem_wb_o_cp0_reg_data_i[1];
-                end else begin
-                    PFN0[index]<=cp0_entrylo0_i[25:6];
-                    D0[index]<=cp0_entrylo0_i[2];
-                    V0[index]<=cp0_entrylo0_i[1];
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
+                        PFN0[index]<=mem_wb_o_cp0_reg_data_i[25:6];
+                        D0[index]<=mem_wb_o_cp0_reg_data_i[2];
+                        V0[index]<=mem_wb_o_cp0_reg_data_i[1];
+                    end else begin
+                        PFN0[index]<=cp0_entrylo0_i[25:6];
+                        D0[index]<=cp0_entrylo0_i[2];
+                        V0[index]<=cp0_entrylo0_i[1];
+                    end
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
+                        PFN1[index]<=mem_wb_o_cp0_reg_data_i[25:6];
+                        D1[index]<=mem_wb_o_cp0_reg_data_i[2];
+                        V1[index]<=mem_wb_o_cp0_reg_data_i[1];
+                    end else begin
+                        PFN1[index]<=cp0_entrylo1_i[25:6];
+                        D1[index]<=cp0_entrylo1_i[2];
+                        V1[index]<=cp0_entrylo1_i[1];
+                    end
+                end else if (tlb_op_i==`TLB_OP_TLBWR) begin
+                    // cp0 data bypass
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYHI) begin
+                        VPN2[random]<=mem_wb_o_cp0_reg_data_i[31:13];
+                        ASID[random]<=mem_wb_o_cp0_reg_data_i[7:0];
+                    end else begin
+                        VPN2[random]<=cp0_entryhi_i[31:13];
+                        ASID[random]<=cp0_entryhi_i[7:0];
+                    end
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
+                        G[random]<=mem_wb_o_cp0_reg_data_i[0]&cp0_entrylo1_i[0];
+                    end else if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
+                        G[random]<=cp0_entrylo0_i[0]&mem_wb_o_cp0_reg_data_i[0];
+                    end else begin
+                        G[random]<=cp0_entrylo0_i[0]&cp0_entrylo1_i[0];
+                    end
+
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO0) begin
+                        PFN0[random]<=mem_wb_o_cp0_reg_data_i[25:6];
+                        D0[random]<=mem_wb_o_cp0_reg_data_i[2];
+                        V0[random]<=mem_wb_o_cp0_reg_data_i[1];
+                    end else begin
+                        PFN0[random]<=cp0_entrylo0_i[25:6];
+                        D0[random]<=cp0_entrylo0_i[2];
+                        V0[random]<=cp0_entrylo0_i[1];
+                    end
+                    if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
+                        PFN1[random]<=mem_wb_o_cp0_reg_data_i[25:6];
+                        D1[random]<=mem_wb_o_cp0_reg_data_i[2];
+                        V1[random]<=mem_wb_o_cp0_reg_data_i[1];
+                    end else begin
+                        PFN1[random]<=cp0_entrylo1_i[25:6];
+                        D1[random]<=cp0_entrylo1_i[2];
+                        V1[random]<=cp0_entrylo1_i[1];
+                    end
                 end
-                if (mem_wb_o_cp0_reg_we_i==1'b1 && mem_wb_o_cp0_reg_write_addr_i==`CP0_ENTRYLO1) begin
-                    PFN1[index]<=mem_wb_o_cp0_reg_data_i[25:6];
-                    D1[index]<=mem_wb_o_cp0_reg_data_i[2];
-                    V1[index]<=mem_wb_o_cp0_reg_data_i[1];
-                end else begin
-                    PFN1[index]<=cp0_entrylo1_i[25:6];
-                    D1[index]<=cp0_entrylo1_i[2];
-                    V1[index]<=cp0_entrylo1_i[1];
-                end
-            end //TODO: add TLB_OP_TLBWR
+            end
         end
 	end
 

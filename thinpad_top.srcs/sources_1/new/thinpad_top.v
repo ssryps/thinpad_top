@@ -235,6 +235,7 @@ wire[31:0] cp0_index_i;
 wire[31:0] cp0_entryhi_i;
 wire[31:0] cp0_entrylo0_i;
 wire[31:0] cp0_entrylo1_i;
+wire[31:0] cp0_random_o;
 wire[`TLB_EXCEPTION_RANGE] tlb_exc_o;// to MEM
 wire[`TLB_OP_RANGE] tlb_op_o;
 // CP0 data bypass
@@ -308,6 +309,7 @@ closemips closemips0(
     .cp0_entryhi_o(cp0_entryhi_i),
     .cp0_entrylo0_o(cp0_entrylo0_i),
     .cp0_entrylo1_o(cp0_entrylo1_i),
+    .cp0_random_o(cp0_random_o),
 	.tlb_op_o(tlb_op_o),
     .tlb_exc_i(tlb_exc_o),
     // cp0 data bypass
@@ -349,6 +351,7 @@ closemem closemem0(
     .cp0_entryhi_i(cp0_entryhi_i),
     .cp0_entrylo0_i(cp0_entrylo0_i),
     .cp0_entrylo1_i(cp0_entrylo1_i),
+    .cp0_random_i(cp0_random_o),
     .tlb_op_i(tlb_op_o),
     .tlb_exc_o(tlb_exc_o),
     // cp0 data bypass

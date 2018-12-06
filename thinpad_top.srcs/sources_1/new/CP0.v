@@ -21,6 +21,7 @@ module CP0 (
     output wire[31:0] cp0_entryhi_o,
     output wire[31:0] cp0_entrylo0_o,
     output wire[31:0] cp0_entrylo1_o,
+    output wire[31:0] cp0_random_o,
 
     input wire[`RegBus] excp_type_i,
     input wire[`RegBus] excp_inst_addr_i, 
@@ -37,11 +38,12 @@ module CP0 (
     assign cp0_entryhi_o=cp0_registers[`CP0_ENTRYHI];
     assign cp0_entrylo0_o=cp0_registers[`CP0_ENTRYLO0];
     assign cp0_entrylo1_o=cp0_registers[`CP0_ENTRYLO1];
+    assign cp0_random_o=cp0_registers[`CP0_RANDOM];
     
 	always @(posedge clk) begin
         if(rst) begin
                 cp0_registers[0] <= 0;
-                cp0_registers[1] <= 0;
+                cp0_registers[1] <= `MAX_TLB_ENTRY_NUM-1;//RANDOM
                 cp0_registers[2] <= 0;
                 cp0_registers[3] <= 0;
                 cp0_registers[4] <= 0;
@@ -85,6 +87,13 @@ module CP0 (
                 //cp0_registers[`CP0_RANDOM] <= 32'b0;
                                 
         end else begin
+            // decrease RANDOM register
+            if (cp0_registers[`CP0_RANDOM]>cp0_registers[`CP0_WIRED]) begin
+                cp0_registers[`CP0_RANDOM] <=cp0_registers[`CP0_RANDOM]-1;
+            end else begin
+                cp0_registers[`CP0_RANDOM] <=`MAX_TLB_ENTRY_NUM-1; 
+            end
+
             if(write_enabled == 1) begin 
             	case (write_addr_i)
             		`CP0_STATUS: begin

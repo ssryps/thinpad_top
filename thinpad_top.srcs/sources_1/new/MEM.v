@@ -321,6 +321,8 @@ module MEM(
 					
                 if (aluop_i==`EXE_TLBWI_OP)	begin
                     tlb_op_o <= `TLB_OP_TLBWI;	
+                end else if (aluop_i==`EXE_TLBWR_OP) begin
+                    tlb_op_o <= `TLB_OP_TLBWR;	
                 end else begin
                     tlb_op_o <= `TLB_OP_NOP;	
                 end

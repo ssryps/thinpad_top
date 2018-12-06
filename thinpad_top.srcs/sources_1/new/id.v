@@ -1113,6 +1113,18 @@ module id(
         //        is_eret_excp <= 1;
             end
 
+            if(inst_i == `EXE_TLBWR) begin
+                reg1_read_o <= 1'b0;
+                reg2_read_o <= 1'b0; 
+                //ex
+                aluop_o <= `EXE_TLBWR_OP;
+                alusel_o<=`EXE_RES_NOP;
+                //mem
+                wreg_o <= `WriteDisable;
+                instvalid <= `InstValid;
+        //        is_eret_excp <= 1;
+            end
+
             if(inst_i == `ZeroWord) begin 
                 instvalid <= `InstValid;
             end

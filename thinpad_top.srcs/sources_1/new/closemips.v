@@ -35,6 +35,7 @@ module closemips(
     output wire[31:0] cp0_entryhi_o,
     output wire[31:0] cp0_entrylo0_o,
     output wire[31:0] cp0_entrylo1_o,
+    output wire[31:0] cp0_random_o,
 	output wire[`TLB_OP_RANGE] tlb_op_o,
 
 	output wire[`RegBus] rom_addr_o,
@@ -242,6 +243,7 @@ CP0 cp0(
     .cp0_entryhi_o(cp0_entryhi_o),
     .cp0_entrylo0_o(cp0_entrylo0_o),
     .cp0_entrylo1_o(cp0_entrylo1_o),
+    .cp0_random_o(cp0_random_o),
 
     .excp_type_i(mem_excp_type_o),
     .excp_inst_addr_i(mem_excp_inst_addr_o), 
