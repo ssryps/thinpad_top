@@ -297,7 +297,7 @@ module MMUControl (
 
     // perform TLBWI and TLBWR
     wire[3:0] index=cp0_index_i[3:0]; // The size of array related to max # of tlb entry
-    wire[3:0] random=cp0_random_i[3:0]; // The size of array related to max # of tlb entry
+    wire[3:0] random=4'b0000;//cp0_random_i[3:0]; // The size of array related to max # of tlb entry
     integer j;
     //always @(rst or tlb_op_i or index or mem_wb_o_cp0_reg_we_i or mem_wb_o_cp0_reg_write_addr_i or mem_wb_o_cp0_reg_data_i or cp0_entryhi_i or cp0_entrylo0_i or cp0_entrylo1_i) begin
     always @(*) begin

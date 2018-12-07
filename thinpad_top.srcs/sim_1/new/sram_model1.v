@@ -92,7 +92,7 @@ reg   initiate_read1,initiate_read2;
 
 
 wire[15:0] test_flag2 ;
-assign test_flag2 = {mem_array1[20'h001d9], mem_array0[20'h001d9]};
+assign test_flag2 = {mem_array1[20'h00049], mem_array0[20'h00049]};
 
 //Intializing values 
 

@@ -169,6 +169,7 @@ module MEM(
             bad_addr <= `ZeroWord;
             is_load_o<=0;
             is_store_o<=0;
+            tlb_op_o <= `TLB_OP_NOP;	
 
         end else begin
 		    wdata_o<=temp_wdata_i;
@@ -190,6 +191,7 @@ module MEM(
             bad_addr <= `ZeroWord;
             is_load_o<=0;
             is_store_o<=0;
+            tlb_op_o <= `TLB_OP_NOP;	
 
             if(mem_pause_pipeline_i == 0) begin
 	            if(mem_data_valid_i == 1) begin 
@@ -319,9 +321,9 @@ module MEM(
 					end
 				endcase	
 					
-                if (aluop_i==`EXE_TLBWI_OP)	begin
+                if (temp_aluop_i==`EXE_TLBWI_OP)	begin
                     tlb_op_o <= `TLB_OP_TLBWI;	
-                end else if (aluop_i==`EXE_TLBWR_OP) begin
+                end else if (temp_aluop_i==`EXE_TLBWR_OP) begin
                     tlb_op_o <= `TLB_OP_TLBWR;	
                 end else begin
                     tlb_op_o <= `TLB_OP_NOP;	
