@@ -156,41 +156,41 @@ reg  [7:0] ext_uart_buffer, ext_uart_tx;
 wire ext_uart_reay, ext_uart_busy;
 reg ext_uart_start, ext_uart_avai;
 
-async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无检验位
-    ext_uart_r(
-        .clk(clk_50M),                       //外部时钟信号
-        .RxD(rxd),                           //外部串行信号输入
-        .RxD_data_ready(ext_uart_ready),  //数据接收到标志
-        .RxD_clear(ext_uart_ready),       //清除接收标志
-        .RxD_data(ext_uart_rx)             //接收到的一字节数据
-    );
+// async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无检验位
+//     ext_uart_r(
+//         .clk(clk_50M),                       //外部时钟信号
+//         .RxD(rxd),                           //外部串行信号输入
+//         .RxD_data_ready(ext_uart_ready),  //数据接收到标志
+//         .RxD_clear(ext_uart_ready),       //清除接收标志
+//         .RxD_data(ext_uart_rx)             //接收到的一字节数据
+//     );
 
-always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
-    if(ext_uart_ready)begin
-        ext_uart_buffer <= ext_uart_rx;
-        ext_uart_avai <= 1;
-    end else if(!ext_uart_busy && ext_uart_avai)begin
-        ext_uart_avai <= 0;
-    end
-end
+// always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
+//     if(ext_uart_ready)begin
+//         ext_uart_buffer <= ext_uart_rx;
+//         ext_uart_avai <= 1;
+//     end else if(!ext_uart_busy && ext_uart_avai)begin
+//         ext_uart_avai <= 0;
+//     end
+// end
 
-always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
-    if(!ext_uart_busy && ext_uart_avai)begin
-        ext_uart_tx <= ext_uart_buffer;
-        ext_uart_start <= 1;
-    end else begin
-        ext_uart_start <= 0;
-    end
-end
+// always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
+//     if(!ext_uart_busy && ext_uart_avai)begin
+//         ext_uart_tx <= ext_uart_buffer + 1;
+//         ext_uart_start <= 1;
+//     end else begin
+//         ext_uart_start <= 0;
+//     end
+// end
 
-async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发送模块，9600无检验位
-    ext_uart_t(
-        .clk(clk_50M),                  //外部时钟信号
-        .TxD(txd),                      //串行信号输出
-        .TxD_busy(ext_uart_busy),       //发送器忙状态指示
-        .TxD_start(ext_uart_start),    //开始发送信号
-        .TxD_data(ext_uart_tx)        //待发送的数据
-    );
+// async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发送模块，9600无检验位
+//     ext_uart_t(
+//         .clk(clk_50M),                  //外部时钟信号
+//         .TxD(txd),                      //串行信号输出
+//         .TxD_busy(ext_uart_busy),       //发送器忙状态指示
+//         .TxD_start(ext_uart_start),    //开始发送信号
+//         .TxD_data(ext_uart_tx)        //待发送的数据
+//     );
 
 //图像输出演示，分辨率800x600@75Hz，像素时钟为50MHz
 wire [11:0] hdata;
@@ -357,7 +357,10 @@ closemem closemem0(
     // cp0 data bypass
     .mem_wb_o_cp0_reg_write_addr_i(mem_wb_o_cp0_reg_write_addr_o),
     .mem_wb_o_cp0_reg_data_i(mem_wb_o_cp0_reg_data_o),
-    .mem_wb_o_cp0_reg_we_i(mem_wb_o_cp0_reg_we_o)
+    .mem_wb_o_cp0_reg_we_i(mem_wb_o_cp0_reg_we_o),
+
+    .RxD(rxd),
+    .TxD(txd)
 
 	);
 	

@@ -22,50 +22,53 @@
 `include "MemoryUtils.v"
 
 module closemem(
-	input wire clk_50M,
-	input wire rst,
-	input wire[`MEMCONTROL_ADDR_LEN - 1:0] pc_addr_i,
-	input wire[31:0] mem_addr_i,
-	input wire[31:0] mem_data_i,
-	input wire[5:0]	 mem_data_sz_i,	
-	input wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i,
-    input wire mem_enabled,
+    	input wire clk_50M,
+    	input wire rst,
+    	input wire[`MEMCONTROL_ADDR_LEN - 1:0] pc_addr_i,
+    	input wire[31:0] mem_addr_i,
+    	input wire[31:0] mem_data_i,
+    	input wire[5:0]	 mem_data_sz_i,	
+    	input wire[`MEMCONTROL_OP_LEN - 1:0] mem_op_i,
+        input wire mem_enabled,
 
-    // TLB
-    input wire[31:0] cp0_index_i,
-    input wire[31:0] cp0_entryhi_i,
-    input wire[31:0] cp0_entrylo0_i,
-    input wire[31:0] cp0_entrylo1_i,
-    input wire[31:0] cp0_random_i,
-	input wire[`TLB_OP_RANGE] tlb_op_i,
-    output wire[`TLB_EXCEPTION_RANGE] tlb_exc_o,// to MEM
-    // cp0 data bypass
-    input wire mem_wb_o_cp0_reg_we_i,
-    input wire[4:0] mem_wb_o_cp0_reg_write_addr_i,
-    input wire[`RegBus] mem_wb_o_cp0_reg_data_i,
-    
-	output wire[31:0] pc_data_o,
-	output wire[31:0] mem_data_o,
-    output wire mem_data_valid_o,
-	output wire pause_pipeline_final_o,
+        // TLB
+        input wire[31:0] cp0_index_i,
+        input wire[31:0] cp0_entryhi_i,
+        input wire[31:0] cp0_entrylo0_i,
+        input wire[31:0] cp0_entrylo1_i,
+        input wire[31:0] cp0_random_i,
+    	input wire[`TLB_OP_RANGE] tlb_op_i,
+        output wire[`TLB_EXCEPTION_RANGE] tlb_exc_o,// to MEM
+        // cp0 data bypass
+        input wire mem_wb_o_cp0_reg_we_i,
+        input wire[4:0] mem_wb_o_cp0_reg_write_addr_i,
+        input wire[`RegBus] mem_wb_o_cp0_reg_data_i,
 
-    // signal to outer devices
-    inout wire[31:0] ram1_data,  //BaseRAM数据，低8位与CPLD串口控制器共享
-    output wire[19:0] ram1_addr, //BaseRAM地址
-    output wire[3:0] ram1_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire ram1_ce_n,       //BaseRAM片选，低有效
-    output wire ram1_oe_n,       //BaseRAM读使能，低有效
-    output wire ram1_we_n,       //BaseRAM写使能，低有效
+        input wire RxD,
+        
+    	output wire[31:0] pc_data_o,
+    	output wire[31:0] mem_data_o,
+        output wire mem_data_valid_o,
+    	output wire pause_pipeline_final_o,
 
-    //ExtRAM信号
-    inout wire[31:0] ram2_data,  //ExtRAM数据
-    output wire[19:0] ram2_addr, //ExtRAM地址
-    output wire[3:0] ram2_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire ram2_ce_n,       //ExtRAM片选，低有效
-    output wire ram2_oe_n,       //ExtRAM读使能，低有效
-    output wire ram2_we_n      //ExtRAM写使能，低有效
+        // signal to outer devices
+        inout wire[31:0] ram1_data,  //BaseRAM数据，低8位与CPLD串口控制器共享
+        output wire[19:0] ram1_addr, //BaseRAM地址
+        output wire[3:0] ram1_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
+        output wire ram1_ce_n,       //BaseRAM片选，低有效
+        output wire ram1_oe_n,       //BaseRAM读使能，低有效
+        output wire ram1_we_n,       //BaseRAM写使能，低有效
 
-    // debug
+        //ExtRAM信号
+        inout wire[31:0] ram2_data,  //ExtRAM数据
+        output wire[19:0] ram2_addr, //ExtRAM地址
+        output wire[3:0] ram2_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
+        output wire ram2_ce_n,       //ExtRAM片选，低有效
+        output wire ram2_oe_n,       //ExtRAM读使能，低有效
+        output wire ram2_we_n,      //ExtRAM写使能，低有效
+
+        // serial signal
+        output wire TxD
 
 	);
 
@@ -76,20 +79,18 @@ wire[`MEMCONTROL_ADDR_LEN - 1 : 0] 	addr_i;
 wire[31:0]						data_i;
 wire enable_i;
 
-
-wire [31:0] sram_data_i;
-wire [31:0] serial_data_i;
-
-wire 						      sram_enabled;
+// Sram
+wire 	               		       sram_enabled;
 wire[`SRAMCONTROL_OP_LEN   - 1: 0] sram_op;
 wire[`SRAMCONTROL_DATA_LEN - 1: 0] sram_data;
 wire[`SRAMCONTROL_ADDR_LEN - 1: 0] sram_addr;
+wire [31:0] sram_data_i;
 	
-	// Serial
-wire									serial_enabled;
-wire[`SERIALCONTROL_OP_LEN - 1: 0]   serial_op;
-wire[`SERIALCONTROL_DATA_LEN - 1: 0]	serial_data;
-wire[`SERIALCONTROL_ADDR_LEN - 1: 0]	serial_addr;
+// Serial
+wire[`SERIALCONTROL_OP_LEN - 1: 0] serial_op;
+wire[7: 0] serial_data;
+wire serial_mode;
+wire[31:0] serial_data_i;
 
 
 wire[31:0] result_o;
@@ -179,7 +180,7 @@ MMUControl mmu_control(
 
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),
-	//.serial_data_i(serial_data_i),
+	.serial_data_i(serial_data_i),
     // TLB
     
     .cp0_index_i(cp0_index_i),
@@ -196,10 +197,11 @@ MMUControl mmu_control(
 	.sram_op(sram_op),
 	.sram_data(sram_data),
 	.sram_addr(sram_addr),
-	// .serial_enabled(serial_enabled),
-	// .serial_op(serial_op),
-	// .serial_data(serial_data),
-	// .serial_addr(serial_addr),
+
+	.serial_op(serial_op),
+	.serial_data(serial_data),
+	.serial_mode(serial_mode),
+
 	.result_o(result_o),
 	.pause_pipeline_o(pause_pipeline_o),
     .tlb_exception_o(tlb_exc_o),
@@ -229,6 +231,17 @@ SRAMControl sram_control(
             .ram2_be(ram2_be_n)
     );
 
+SerialControl serial_control(
+            .clk(clk_50M),
+            .rst(rst),
 
+            .op_i(serial_op),
+            .mode_i(serial_mode),
+            .data_i(serial_data),
+            .result_o(serial_data_i),
+
+            .RxD(RxD),
+            .TxD(TxD)
+    );
 endmodule
 
