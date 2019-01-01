@@ -25,6 +25,7 @@
 `define MMUCONTROL_STATE_INIT	 3'b000
 `define MMUCONTROL_STATE_INPUT_DATA	 3'b001
 `define MMUCONTROL_STATE_RESULT  3'b010
+`define MMUCONTROL_STATE_PAUSE_FLASH	 3'b011
 
 `define MAX_PFN2_LEN            19
 `define MAX_PFN2_RANGE          `MAX_PFN2_LEN-1:0
@@ -42,6 +43,11 @@ module MMUControl (
     input wire[31:0] sram_data_i,
     input wire[31:0] serial_data_i,                           
 	input wire[`TLB_OP_RANGE] tlb_op_i,
+
+    //flash
+    input wire[31:0] flash_result_i,
+    input wire pause_from_flash_i,
+    input wire[31:0] rom_result_i,
     // Config from CP0
     //input wire[31:0] cp0_context_i,
     //input wire[31:0] cp0_config1_i,
@@ -62,6 +68,15 @@ module MMUControl (
 	output wire[`SRAMCONTROL_OP_LEN   - 1: 0] sram_op, 
 	output wire[`SRAMCONTROL_DATA_LEN - 1: 0] sram_data,
 	output wire[`SRAMCONTROL_ADDR_LEN - 1: 0] sram_addr,
+
+    //output to Flash
+    output wire flash_enabled,
+    output wire flash_op,
+    output wire[`FLASHCONTROL_ADDR_LEN - 1:0] flash_addr,
+
+    //output to rom
+    output wire rom_enabled,
+    output wire[`ROM_ADDR_LEN - 1:0] rom_addr,
 	
 	// Serial
 	output reg[`SERIALCONTROL_OP_LEN - 1: 0]   serial_op,
@@ -80,6 +95,8 @@ module MMUControl (
 	reg[`DEVICE_CHOICE_LEN - 1:0] device;
 	reg [2:0] cur_state;
     reg sram_enabled_reg;
+    reg flash_enabled_reg;
+    reg rom_enable_reg;
 //    reg serial_enabled_reg;
     reg [31:0]result_o_reg;
     
@@ -87,9 +104,11 @@ module MMUControl (
 //    assign mmu_op_i = op_i;
     
     assign sram_enabled = sram_enabled_reg;
+    assign flash_enabled = flash_enabled_reg;
+    assign rom_enabled = rom_enable_reg;
   //  assign serial_enabled = serial_enabled_reg;
 
-    assign pause_pipeline_o = (cur_state == `MMUCONTROL_STATE_INPUT_DATA);
+    assign pause_pipeline_o = (cur_state == `MMUCONTROL_STATE_PAUSE || cur_state == `MMUCONTROL_STATE_PAUSE_FLASH);
     assign result_o = result_o_reg;//(cur_state == `MMUCONTROL_STATE_RESULT? sram_data_i: `SRAMCONTROL_DEFAULT_DATA);
 
     assign sram_op = (op_i == `MEMCONTROL_OP_WRITE? `SRAMCONTROL_OP_WRITE : (op_i == `MEMCONTROL_OP_READ? `SRAMCONTROL_OP_READ: `SRAMCONTROL_OP_NOP));
@@ -97,6 +116,11 @@ module MMUControl (
 
     //assign serial_op = (op_i == `MEMCONTROL_OP_WRITE? `SRAMCONTROL_OP_WRITE : (op_i == `MEMCONTROL_OP_READ? `SRAMCONTROL_OP_READ: `SRAMCONTROL_OP_NOP));
     assign serial_data = data_i[7:0];
+
+    assign flash_op = (op_i == `MEMCONTROL_OP_READ? `FLASHCONTROL_OP_READ : `FLASHCONTROL_OP_NOP);
+    assign flash_addr = addr_i[`FLASHCONTROL_ADDR_LEN - 1:0];
+
+    assign rom_addr = addr_i[`ROM_ADDR_LEN - 1:0];
 
     // TLB 
 //    wire mapped=(addr_i[31:30]!=2'b10); // 内核态的映射地址
@@ -263,6 +287,7 @@ module MMUControl (
 	always @(*) begin 
 		if(~rst) begin
             sram_enabled_reg <= 0;
+            flash_enabled_reg <= 1'b0;
             serial_mode <= 1;
             serial_op <= `SRAMCONTROL_OP_NOP;
 
@@ -271,8 +296,22 @@ module MMUControl (
 			if( enable_i == 1 && tlb_exception_o==`TLB_EXC_NO) begin
 				if(mmu_addr >= `MMU_ADDR_ROM_START && mmu_addr <= `MMU_ADDR_ROM_END) begin
 					device <= `DEVICE_ROM;
+                    rom_enable_reg <= 1'b1;
+					flash_enabled_reg <= 1'b0;
+					sram_enabled_reg <= 1'b0;
+					result_o_reg <= rom_result_i;
 				end else if (mmu_addr >= `MMU_ADDR_FLASH_START && mmu_addr <= `MMU_ADDR_FLASH_END) begin
-					device <= `DEVICE_FLASH;
+                    if(flash_op == `FLASHCONTROL_OP_READ)begin 
+					   device <= `DEVICE_FLASH;
+					   flash_enabled_reg <= 1'b1;
+					   sram_enabled_reg <= 1'b0;
+					   rom_enable_reg <= 1'b0;
+					   result_o_reg <= flash_result_i;
+					end else begin
+					    sram_enabled_reg <= 0;
+                        device  <= `DEVICE_NOP;
+                        result_o_reg <= `ZeroWord;
+					end
 				end else if (mmu_addr == `MMU_ADDR_SERIAL_DATA || mmu_addr == `MMU_ADDR_SERIAL_STATE) begin
 					device <= `DEVICE_SERIAL;
                     result_o_reg <= serial_data_i;
@@ -286,6 +325,8 @@ module MMUControl (
 				end else begin
 					device <= `DEVICE_RAM;
 	                sram_enabled_reg <= 1;
+                    flash_enabled_reg <= 1'b0;
+	                rom_enable_reg <= 1'b0;
                     result_o_reg <= sram_data_i;
 	    		end
 			end
@@ -412,18 +453,30 @@ module MMUControl (
 		end else begin	
 //			sram_enabled_reg <= 0;
 			if(cur_state == `MMUCONTROL_STATE_INIT  ||  enable_i == 0) begin
-                cur_state <= `MMUCONTROL_STATE_INPUT_DATA;
+                cur_state <= `MMUCONTROL_STATE_PAUSE;
                 // case (device)
                 //     `DEVICE_RAM : begin
                 //     end
                 //     default : /* default */;
                 // endcase
 					
-			end else if(cur_state == `MMUCONTROL_STATE_INPUT_DATA) begin
-				cur_state <= `MMUCONTROL_STATE_RESULT;
-
+			end else if(cur_state == `MMUCONTROL_STATE_PAUSE) begin
+				//cur_state <= `MMUCONTROL_STATE_RESULT;
+                case (device)
+					`DEVICE_RAM: begin
+                        cur_state <= `MMUCONTROL_STATE_RESULT;
+                    end
+                    DEVICE_FLASH: begin
+                       cur_state <= `MMUCONTROL_STATE_PAUSE_FLASH;
+                    end
+					default : cur_state <= `MMUCONTROL_STATE_RESULT;
+                endcase
+            end else if(cur_state == `MMUCONTROL_STATE_PAUSE_FLASH) begin
+                if(pause_from_flash_i == 1'b0) begin
+                    cur_state <= `MMUCONTROL_STATE_RESULT;
+                end
             end else begin
-				cur_state <= `MMUCONTROL_STATE_INPUT_DATA;
+				cur_state <= `MMUCONTROL_STATE_PAUSE;
 				// case (device)
 				// 	`DEVICE_RAM : begin
     //         		end

@@ -69,7 +69,17 @@ module closemem(
 
         // serial signal
         output wire TxD,
-        output wire serial_excp
+        output wire serial_excp,
+
+        //flash信号
+        output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效，16bit模式无意义
+        inout  wire [15:0]flash_d,      //Flash数据
+        output wire flash_rp_n,         //Flash复位信号，低有效
+        output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧写
+        output wire flash_ce_n,         //Flash片选信号，低有效
+        output wire flash_oe_n,         //Flash读使能信号，低有效
+        output wire flash_we_n,         //Flash写使能信号，低有效
+        output wire flash_byte_n       //Flash 8bit模式选择，低有效。在使用flash的16位模式时请设为1
 	);
 
 
@@ -95,6 +105,16 @@ wire[31:0] serial_data_i;
 
 wire[31:0] result_o;
 wire pause_pipeline_o;
+
+wire[31:0] flash_result_i;
+wire pause_from_flash_i;
+wire flash_enabled;
+wire flash_op;
+wire[`FLASHCONTROL_ADDR_LEN - 1:0] flash_addr;
+
+wire[31:0] rom_data;
+wire[`ROM_ADDR_LEN - 1:0] rom_addr;
+wire rom_enabled;
 
 // output to Memcontrol
 
@@ -180,6 +200,9 @@ MMUControl mmu_control(
 
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),
+    .flash_result_i(flash_result_i),
+	.pause_from_flash_i(pause_from_flash_i),
+	.rom_result_i(rom_data),
 	.serial_data_i(serial_data_i),
     // TLB
     
@@ -197,6 +220,12 @@ MMUControl mmu_control(
 	.sram_op(sram_op),
 	.sram_data(sram_data),
 	.sram_addr(sram_addr),
+
+    .flash_enabled(flash_enabled),
+	.flash_op(flash_op),
+	.flash_addr(flash_addr),
+	.rom_enabled(rom_enabled),
+	.rom_addr(rom_addr),
 
 	.serial_op(serial_op),
 	.serial_data(serial_data),
@@ -244,5 +273,29 @@ SerialControl serial_control(
             .RxD(RxD),
             .TxD(TxD)
     );
+
+FlashControl flash_control(
+    .clock(clk_50M),
+    .rst(rst),
+    .enabled_i(flash_enabled),
+    .op_i(flash_op),
+    .addr_i(flash_addr),
+    .result_o(flash_result_i),
+    .pause_from_flash(pause_from_flash_i),
+    .flash_a(flash_a),
+    .flash_d(flash_d),
+    .flash_rp_n(flash_rp_n),
+    .flash_vpen(flash_vpen),
+    .flash_ce_n(flash_ce_n),
+    .flash_oe_n(flash_oe_n),
+    .flash_we_n(flash_we_n),
+    .flash_byte_n(flash_byte_n)
+);
+
+rom ROM(
+    .ce(rom_enabled),
+    .addr(rom_addr),
+    .inst(rom_data)
+);
 endmodule
 

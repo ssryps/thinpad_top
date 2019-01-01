@@ -62,3 +62,11 @@
 `define TLB_EXC_NO              3'b000
 `define TLB_EXC_INVALILD        3'b001
 `define TLB_EXC_REFILL          3'b010
+
+//instructions for Flash
+`define FLASHCONTROL_ADDR_LEN 22
+`define FLASHCONTROL_OP_READ 1'b1
+`define FLASHCONTROL_OP_NOP 1'b0
+
+//rom
+`define ROM_ADDR_LEN 12
