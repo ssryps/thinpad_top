@@ -8,8 +8,8 @@
 `define MMU_ADDR_ROM_END      32'hbfc00fff
 `define MMU_ADDR_FLASH_START  32'hbe000000
 `define MMU_ADDR_FLASH_END    32'hbeffffff
-`define MMU_ADDR_SERIAL_START 32'hbfd003f8
-`define MMU_ADDR_SERIAL_END   32'hbfd003fc
+`define MMU_ADDR_SERIAL_DATA 32'hbfd003f8
+`define MMU_ADDR_SERIAL_STATE   32'hbfd003fc
 `define MMU_ADDR_VGA_POS      32'hbfc03000
 `define MMU_ADDR_PS2_POS	     32'haf000000
 
@@ -23,7 +23,7 @@
 `define DEVICE_NOP				3'b110
 
 `define MMUCONTROL_STATE_INIT	 3'b000
-`define MMUCONTROL_STATE_PAUSE	 3'b001
+`define MMUCONTROL_STATE_INPUT_DATA	 3'b001
 `define MMUCONTROL_STATE_RESULT  3'b010
 
 `define MAX_PFN2_LEN            19
@@ -39,8 +39,8 @@ module MMUControl (
 	input wire[31:0]						data_i,
 	input wire enable_i,
 
-    input wire[31:0]                       sram_data_i,
-    
+    input wire[31:0] sram_data_i,
+    input wire[31:0] serial_data_i,                           
 	input wire[`TLB_OP_RANGE] tlb_op_i,
     // Config from CP0
     //input wire[31:0] cp0_context_i,
@@ -64,10 +64,9 @@ module MMUControl (
 	output wire[`SRAMCONTROL_ADDR_LEN - 1: 0] sram_addr,
 	
 	// Serial
-//	output wire									serial_enabled,
-//	output wire[`SERIALCONTROL_OP_LEN - 1: 0]   serial_op,
-//	output wire[`SERIALCONTROL_DATA_LEN - 1: 0]	serial_data,
-//	output wire[`SERIALCONTROL_ADDR_LEN - 1: 0]	serial_addr,
+	output reg[`SERIALCONTROL_OP_LEN - 1: 0]   serial_op,
+    output reg[`SERIALCONTROL_ADDR_LEN - 1: 0] serial_mode,
+	output wire[`SERIALCONTROL_DATA_LEN - 1: 0]	serial_data,
 	
 	// output to Memcontrol
 
@@ -90,15 +89,19 @@ module MMUControl (
     assign sram_enabled = sram_enabled_reg;
   //  assign serial_enabled = serial_enabled_reg;
 
-    assign pause_pipeline_o = (cur_state == `MMUCONTROL_STATE_PAUSE);
+    assign pause_pipeline_o = (cur_state == `MMUCONTROL_STATE_INPUT_DATA);
     assign result_o = result_o_reg;//(cur_state == `MMUCONTROL_STATE_RESULT? sram_data_i: `SRAMCONTROL_DEFAULT_DATA);
 
     assign sram_op = (op_i == `MEMCONTROL_OP_WRITE? `SRAMCONTROL_OP_WRITE : (op_i == `MEMCONTROL_OP_READ? `SRAMCONTROL_OP_READ: `SRAMCONTROL_OP_NOP));
     assign sram_data = data_i;
 
+    //assign serial_op = (op_i == `MEMCONTROL_OP_WRITE? `SRAMCONTROL_OP_WRITE : (op_i == `MEMCONTROL_OP_READ? `SRAMCONTROL_OP_READ: `SRAMCONTROL_OP_NOP));
+    assign serial_data = data_i[7:0];
+
     // TLB 
-    wire mapped=(addr_i[31:30]!=2'b10); // 内核态的映射地址
-    
+//    wire mapped=(addr_i[31:30]!=2'b10); // 内核态的映射地址
+    wire mapped = 0;
+
     reg[`MAX_PFN2_RANGE] VPN2[`MAX_TLB_ENTRY_RANGE];
     reg[`MAX_TLB_ENTRY_RANGE] G;
     reg[7:0] ASID[`MAX_TLB_ENTRY_RANGE];
@@ -260,6 +263,9 @@ module MMUControl (
 	always @(*) begin 
 		if(~rst) begin
             sram_enabled_reg <= 0;
+            serial_mode <= 1;
+            serial_op <= `SRAMCONTROL_OP_NOP;
+
 			device  <= `DEVICE_NOP;
 			result_o_reg <= `ZeroWord;
 			if( enable_i == 1 && tlb_exception_o==`TLB_EXC_NO) begin
@@ -267,8 +273,12 @@ module MMUControl (
 					device <= `DEVICE_ROM;
 				end else if (mmu_addr >= `MMU_ADDR_FLASH_START && mmu_addr <= `MMU_ADDR_FLASH_END) begin
 					device <= `DEVICE_FLASH;
-				end else if (mmu_addr >= `MMU_ADDR_SERIAL_START && mmu_addr <= `MMU_ADDR_SERIAL_END) begin
+				end else if (mmu_addr == `MMU_ADDR_SERIAL_DATA || mmu_addr == `MMU_ADDR_SERIAL_STATE) begin
 					device <= `DEVICE_SERIAL;
+                    result_o_reg <= serial_data_i;
+                    
+                    serial_op <= op_i[1:0];
+                    serial_mode <= (mmu_addr == `MMU_ADDR_SERIAL_DATA? 0 : 1);
 				end else if (mmu_addr == `MMU_ADDR_VGA_POS) begin
 					device <= `DEVICE_VGA;
 				end else if (mmu_addr == `MMU_ADDR_PS2_POS) begin
@@ -284,6 +294,10 @@ module MMUControl (
             sram_enabled_reg <= 0;
 			device  <= `DEVICE_NOP;
 			result_o_reg <= `ZeroWord;
+
+            serial_mode <= 1;
+            serial_op <= `SRAMCONTROL_OP_NOP;
+
 		end
 	end
     
@@ -398,39 +412,23 @@ module MMUControl (
 		end else begin	
 //			sram_enabled_reg <= 0;
 			if(cur_state == `MMUCONTROL_STATE_INIT  ||  enable_i == 0) begin
-				//if(op_i == `MEMCONTROL_OP_READ || op_i == `MEMCONTROL_OP_WRITE) begin
-					cur_state <= `MMUCONTROL_STATE_PAUSE;
-					case (device)
-						`DEVICE_RAM: begin
-//							sram_enabled_reg <= 1;
-                
-                		end
-						default : /* default */;
-					endcase
-				// end else begin
-				// 	cur_state <= `MMUCONTROL_STATE_INIT;
-				// end
-
-			end else if(cur_state == `MMUCONTROL_STATE_PAUSE) begin
+                cur_state <= `MMUCONTROL_STATE_INPUT_DATA;
+                // case (device)
+                //     `DEVICE_RAM : begin
+                //     end
+                //     default : /* default */;
+                // endcase
+					
+			end else if(cur_state == `MMUCONTROL_STATE_INPUT_DATA) begin
 				cur_state <= `MMUCONTROL_STATE_RESULT;
-				case (device)
-					`DEVICE_RAM: begin
-  //                      sram_enabled_reg <= 1;
-
-                	end
-					default : /* default */;
-				endcase
-//			end else if(cur_state == `MMUCONTROL_STATE_RESULT) begin
 
             end else begin
-				cur_state <= `MMUCONTROL_STATE_PAUSE;
-				case (device)
-					`DEVICE_RAM : begin
-        //                sram_enabled_reg <= 1;
-
-            		end
-					default : /* default */;
-				endcase
+				cur_state <= `MMUCONTROL_STATE_INPUT_DATA;
+				// case (device)
+				// 	`DEVICE_RAM : begin
+    //         		end
+				// 	default : /* default */;
+				// endcase
 			end
 		end
 	end

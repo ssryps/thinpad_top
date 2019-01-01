@@ -86,6 +86,10 @@ module CTRL(
                 new_pc <= cp0_epc_i;      
           //      recovery <= 1;
             end
+
+            if(excp_type_i[`EXCP_SERIAL_RECV] == 1) begin 
+                new_pc <= cp0_ebase_i + 32'h0000_0180;
+            end
       
 
         end else if (stall_from_mem_i==`Stall) begin

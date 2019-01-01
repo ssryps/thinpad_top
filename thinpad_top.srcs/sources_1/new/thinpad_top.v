@@ -82,6 +82,7 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
+ // assign txd = rxd;
 
 /* =========== Demo code begin =========== */
 
@@ -156,41 +157,41 @@ reg  [7:0] ext_uart_buffer, ext_uart_tx;
 wire ext_uart_reay, ext_uart_busy;
 reg ext_uart_start, ext_uart_avai;
 
-async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无检验位
-    ext_uart_r(
-        .clk(clk_50M),                       //外部时钟信号
-        .RxD(rxd),                           //外部串行信号输入
-        .RxD_data_ready(ext_uart_ready),  //数据接收到标志
-        .RxD_clear(ext_uart_ready),       //清除接收标志
-        .RxD_data(ext_uart_rx)             //接收到的一字节数据
-    );
+// async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无检验位
+//     ext_uart_r(
+//         .clk(clk_50M),                       //外部时钟信号
+//         .RxD(rxd),                           //外部串行信号输入
+//         .RxD_data_ready(ext_uart_ready),  //数据接收到标志
+//         .RxD_clear(ext_uart_ready),       //清除接收标志
+//         .RxD_data(ext_uart_rx)             //接收到的一字节数据
+//     );
 
-always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
-    if(ext_uart_ready)begin
-        ext_uart_buffer <= ext_uart_rx;
-        ext_uart_avai <= 1;
-    end else if(!ext_uart_busy && ext_uart_avai)begin
-        ext_uart_avai <= 0;
-    end
-end
+// always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
+//     if(ext_uart_ready)begin
+//         ext_uart_buffer <= ext_uart_rx;
+//         ext_uart_avai <= 1;
+//     end else if(!ext_uart_busy && ext_uart_avai)begin
+//         ext_uart_avai <= 0;
+//     end
+// end
 
-always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
-    if(!ext_uart_busy && ext_uart_avai)begin
-        ext_uart_tx <= ext_uart_buffer;
-        ext_uart_start <= 1;
-    end else begin
-        ext_uart_start <= 0;
-    end
-end
+// always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
+//     if(!ext_uart_busy && ext_uart_avai)begin
+//         ext_uart_tx <= ext_uart_buffer + 1;
+//         ext_uart_start <= 1;
+//     end else begin
+//         ext_uart_start <= 0;
+//     end
+// end
 
-async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发送模块，9600无检验位
-    ext_uart_t(
-        .clk(clk_50M),                  //外部时钟信号
-        .TxD(txd),                      //串行信号输出
-        .TxD_busy(ext_uart_busy),       //发送器忙状态指示
-        .TxD_start(ext_uart_start),    //开始发送信号
-        .TxD_data(ext_uart_tx)        //待发送的数据
-    );
+// async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发送模块，9600无检验位
+//     ext_uart_t(
+//         .clk(clk_50M),                  //外部时钟信号
+//         .TxD(txd),                      //串行信号输出
+//         .TxD_busy(ext_uart_busy),       //发送器忙状态指示
+//         .TxD_start(ext_uart_start),    //开始发送信号
+//         .TxD_data(ext_uart_tx)        //待发送的数据
+//     );
 
 //图像输出演示，分辨率800x600@75Hz，像素时钟为50MHz
 wire [11:0] hdata;
@@ -259,6 +260,8 @@ wire my_clk_50M, my_clk_11M0592;
 //    .clk_50M    (my_clk_50M)
 //);
 
+wire serial_excp;
+
 wire [2:0 ] mmu_state;
 wire [2:0 ] sram_state;
 wire [2:0] mmu_op_i;
@@ -267,6 +270,7 @@ wire[3:0] sram_addr_i;
 wire [3:0] mem_state;
 wire[31:0] excp_type;
 wire pc_flush;
+
 assign my_clk_50M = clk_50M;
 //assign my_clk_50M = clock_btn;
 
@@ -279,7 +283,7 @@ assign my_clk_50M = clk_50M;
 //assign leds[12:10] = sram_state[2:0]; //debug
 
 //assign leds[15:0] = inst_addr[15:0] ;
-assign leds[15:0] =cnt_correct_instruction1[15:0];
+assign leds[3:0] = cnt_correct_instruction1[15:0];
 
 SEG7_LUT segL(.oSEG1(dpy0), .iDIG(cnt_correct_instruction2[3:0] )); //dpy0是低位数码管
 SEG7_LUT segH(.oSEG1(dpy1), .iDIG(cnt_correct_instruction2[7:4 ])); //dpy1是高位数码管
@@ -300,7 +304,7 @@ closemips closemips0(
 	.mem_data_i(mem_data_o),
     .mem_data_valid_i(mem_data_valid_o),
 	.mem_pause_pipeline_i(pause_pipeline_final_o),
-	
+
 	.cnt_correct_instruction1(cnt_correct_instruction1),
 	.cnt_correct_instruction2(cnt_correct_instruction2),
 	.excp_type(excp_type),
@@ -315,7 +319,9 @@ closemips closemips0(
     // cp0 data bypass
     .mem_wb_o_cp0_reg_write_addr_o(mem_wb_o_cp0_reg_write_addr_o),
     .mem_wb_o_cp0_reg_data_o(mem_wb_o_cp0_reg_data_o),
-    .mem_wb_o_cp0_reg_we_o(mem_wb_o_cp0_reg_we_o)
+    .mem_wb_o_cp0_reg_we_o(mem_wb_o_cp0_reg_we_o),
+    .serial_excp(serial_excp)
+
 );
 
 closemem closemem0(
@@ -357,7 +363,11 @@ closemem closemem0(
     // cp0 data bypass
     .mem_wb_o_cp0_reg_write_addr_i(mem_wb_o_cp0_reg_write_addr_o),
     .mem_wb_o_cp0_reg_data_i(mem_wb_o_cp0_reg_data_o),
-    .mem_wb_o_cp0_reg_we_i(mem_wb_o_cp0_reg_we_o)
+    .mem_wb_o_cp0_reg_we_i(mem_wb_o_cp0_reg_we_o),
+
+    .RxD(rxd),
+    .TxD(txd),
+    .serial_excp(serial_excp)
 
 	);
 	

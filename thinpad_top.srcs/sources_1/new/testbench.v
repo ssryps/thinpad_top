@@ -47,17 +47,37 @@ wire ram2_oe_n;       //ExtRAM读使能，低有效
 wire ram2_we_n;       //ExtRAM写使能，低有效
 
 
-
+reg RxD;
 
 wire my_clk_50M, my_clk_11M0592;
 reg rst;
 
 initial begin
   rst = 1;
+  RxD = 1;
   #200;
   rst = 0;
   #1000;
   rst = 0;
+  #3801150;
+  RxD = 0;
+  #17380;
+  RxD = 1;
+  #8680;
+  RxD = 0;
+  #8680;
+  RxD = 0;
+  #8680;
+  RxD = 1;
+  #8680;
+  RxD = 0;
+  #8680;
+  RxD = 1;
+  #8680;
+  RxD = 0;
+  #9680;
+  RxD = 1;
+      
 end
 
 clock osc0 (
@@ -142,7 +162,8 @@ thinpad_top thinpad_top__ (
     .ext_ram_be_n(ram2_be_n),
     .ext_ram_ce_n(ram2_ce_n),
     .ext_ram_oe_n(ram2_oe_n),
-    .ext_ram_we_n(ram2_we_n)
+    .ext_ram_we_n(ram2_we_n),
+    .rxd(RxD)
     );
  
 

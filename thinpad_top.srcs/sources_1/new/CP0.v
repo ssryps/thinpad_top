@@ -111,6 +111,20 @@ module CP0 (
                 cp0_registers[write_addr_i] <= write_data_i; 
             end           
 
+            if(excp_type_i[`EXCP_SERIAL_RECV] == 1) begin 
+                if(excp_in_delay_slot_i == 1) begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
+                    cp0_registers[`CP0_CAUSE][31] <= 1;
+                end else begin 
+                    cp0_registers[`CP0_EPC] <= excp_inst_addr_i ;
+                    cp0_registers[`CP0_CAUSE][31] <= 0;    
+                end
+                cp0_registers[`CP0_STATUS][1] <= 1;    
+                cp0_registers[`CP0_CAUSE][6:2] <= 5'b00000;         
+
+            end
+
+
             if(excp_type_i[`EXCP_BAD_LOAD_ADDR] == 1) begin 
                 if(excp_in_delay_slot_i == 1) begin 
                     cp0_registers[`CP0_EPC] <= excp_inst_addr_i - 4;
