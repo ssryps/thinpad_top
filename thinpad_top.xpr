@@ -31,7 +31,7 @@
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSAVendor" Val="xilinx"/>
     <Option Name="DSANumComputeUnits" Val="16"/>
-    <Option Name="WTXSimLaunchSim" Val="1978"/>
+    <Option Name="WTXSimLaunchSim" Val="2114"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -477,7 +477,7 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/../test_MMUControl_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/closemips_testbench_behav1.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/closemips_testbench_behav2.wcfg"/>
-        <Option Name="xsim.simulate.runtime" Val="12ms"/>
+        <Option Name="xsim.simulate.runtime" Val="30ms"/>
       </Config>
     </FileSet>
     <FileSet Name="pll_example" Type="BlockSrcs" RelSrcDir="$PSRCDIR/pll_example">

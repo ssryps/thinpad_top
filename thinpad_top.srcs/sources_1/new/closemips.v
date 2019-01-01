@@ -31,6 +31,7 @@ module closemips(
 
     // for TLB
     input wire[`TLB_EXCEPTION_RANGE] tlb_exc_i,
+    input wire serial_excp,
     output wire[31:0] cp0_index_o,
     output wire[31:0] cp0_entryhi_o,
     output wire[31:0] cp0_entrylo0_o,
@@ -502,7 +503,10 @@ MEM mem0(
     .is_store_o(is_store_o),
     .tlb_exc_i(tlb_exc_i),
     // TLB to MMU
-    .tlb_op_o(tlb_op_o)
+    .tlb_op_o(tlb_op_o),
+
+    .serial_excp(serial_excp)
+
 );
 
 MEM_WB Mem_wb(

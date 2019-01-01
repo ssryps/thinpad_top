@@ -99,8 +99,9 @@ module MMUControl (
     assign serial_data = data_i[7:0];
 
     // TLB 
-    wire mapped=(addr_i[31:30]!=2'b10); // 内核态的映射地址
-    
+//    wire mapped=(addr_i[31:30]!=2'b10); // 内核态的映射地址
+    wire mapped = 0;
+
     reg[`MAX_PFN2_RANGE] VPN2[`MAX_TLB_ENTRY_RANGE];
     reg[`MAX_TLB_ENTRY_RANGE] G;
     reg[7:0] ASID[`MAX_TLB_ENTRY_RANGE];

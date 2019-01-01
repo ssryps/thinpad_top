@@ -82,6 +82,7 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
+ // assign txd = rxd;
 
 /* =========== Demo code begin =========== */
 
@@ -259,6 +260,8 @@ wire my_clk_50M, my_clk_11M0592;
 //    .clk_50M    (my_clk_50M)
 //);
 
+wire serial_excp;
+
 wire [2:0 ] mmu_state;
 wire [2:0 ] sram_state;
 wire [2:0] mmu_op_i;
@@ -267,6 +270,7 @@ wire[3:0] sram_addr_i;
 wire [3:0] mem_state;
 wire[31:0] excp_type;
 wire pc_flush;
+
 assign my_clk_50M = clk_50M;
 //assign my_clk_50M = clock_btn;
 
@@ -279,7 +283,7 @@ assign my_clk_50M = clk_50M;
 //assign leds[12:10] = sram_state[2:0]; //debug
 
 //assign leds[15:0] = inst_addr[15:0] ;
-assign leds[15:0] =cnt_correct_instruction1[15:0];
+assign leds[3:0] = cnt_correct_instruction1[15:0];
 
 SEG7_LUT segL(.oSEG1(dpy0), .iDIG(cnt_correct_instruction2[3:0] )); //dpy0是低位数码管
 SEG7_LUT segH(.oSEG1(dpy1), .iDIG(cnt_correct_instruction2[7:4 ])); //dpy1是高位数码管
@@ -300,7 +304,7 @@ closemips closemips0(
 	.mem_data_i(mem_data_o),
     .mem_data_valid_i(mem_data_valid_o),
 	.mem_pause_pipeline_i(pause_pipeline_final_o),
-	
+
 	.cnt_correct_instruction1(cnt_correct_instruction1),
 	.cnt_correct_instruction2(cnt_correct_instruction2),
 	.excp_type(excp_type),
@@ -315,7 +319,9 @@ closemips closemips0(
     // cp0 data bypass
     .mem_wb_o_cp0_reg_write_addr_o(mem_wb_o_cp0_reg_write_addr_o),
     .mem_wb_o_cp0_reg_data_o(mem_wb_o_cp0_reg_data_o),
-    .mem_wb_o_cp0_reg_we_o(mem_wb_o_cp0_reg_we_o)
+    .mem_wb_o_cp0_reg_we_o(mem_wb_o_cp0_reg_we_o),
+    .serial_excp(serial_excp)
+
 );
 
 closemem closemem0(
@@ -360,7 +366,8 @@ closemem closemem0(
     .mem_wb_o_cp0_reg_we_i(mem_wb_o_cp0_reg_we_o),
 
     .RxD(rxd),
-    .TxD(txd)
+    .TxD(txd),
+    .serial_excp(serial_excp)
 
 	);
 	

@@ -68,8 +68,8 @@ module closemem(
         output wire ram2_we_n,      //ExtRAM写使能，低有效
 
         // serial signal
-        output wire TxD
-
+        output wire TxD,
+        output wire serial_excp
 	);
 
 
@@ -239,6 +239,7 @@ SerialControl serial_control(
             .mode_i(serial_mode),
             .data_i(serial_data),
             .result_o(serial_data_i),
+            .serial_excp(serial_excp),
 
             .RxD(RxD),
             .TxD(TxD)

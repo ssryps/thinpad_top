@@ -33,16 +33,18 @@ module SerialControl(
 
 	    input wire RxD,
 	    output wire TxD
-    );
+	    );
     
 	reg[7:0] buffer[0:15];
     reg[3:0] readPos;
     reg[3:0] recvPos;
-    
+    assign readPos__ = readPos;
     wire data_ready;
     wire[7:0] data_receive;
     wire write_busy;
     reg[7:0] ramData;
+
+    reg RxD_clear;
     
     wire[3:0] nextRecvPos = (recvPos == 15) ? 0 : recvPos + 1;
     wire[3:0] nextReadPos = (readPos == 15) ? 0 : readPos + 1;
@@ -52,7 +54,7 @@ module SerialControl(
     wire[7:0] controlData = {6'h0, ~bufferEmpty, ~write_busy};
     
     assign result_o = {24'h0, mode_i ? controlData : ramData};
-    assign serial_excp = data_ready | !bufferEmpty;
+    assign serial_excp = data_ready & !bufferEmpty;
         
     //Receive buffer
     always @(posedge clk) begin
@@ -73,8 +75,13 @@ module SerialControl(
             buffer[13] <= 8'b0000_0000;
             buffer[14] <= 8'b0000_0000;
             buffer[15] <= 8'b0000_0000;
+        	RxD_clear <= 0;
+
         end else if (data_ready == `Enable) begin
             buffer[recvPos] <= data_receive;
+        	RxD_clear <= 1;
+        end else if(RxD_clear == 1) begin 
+        	RxD_clear <= 0;
         end
     end
     
@@ -128,6 +135,7 @@ module SerialControl(
     async_receiver #(.ClkFrequency(50000000), .Baud(115200)) ext_uart_r(
         .clk(clk),
         .RxD(RxD),
+        .RxD_clear(RxD_clear),
         .RxD_data_ready(data_ready),
         .RxD_data(data_receive)
     );

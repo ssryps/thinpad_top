@@ -89,7 +89,9 @@ module MEM(
     input wire[`TLB_EXCEPTION_RANGE] tlb_exc_i,
 	output reg[`TLB_OP_RANGE] tlb_op_o,
 	reg is_load_o,
-    reg is_store_o
+    reg is_store_o,
+
+    input wire serial_excp
 	);
     wire[`RegBus] zero32;
 	reg mem_we;
@@ -394,6 +396,10 @@ module MEM(
             	if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
     	  			excp_type_o <= {excp_type_i[31:`EXCP_BAD_STORE_ADDR + 1], __is_store_bad_addr, __is_load_bad_addr, excp_type_i[`EXCP_BAD_LOAD_ADDR - 1: 0]};
     	  			excp_bad_addr <= __bad_addr;
+              	end
+            end else if(serial_excp == 1) begin 
+            	if((cp0_status_i[1] == 0) ) begin //&& (cp0_status_i[0] == 1)
+    	  			excp_type_o <= {excp_type_i[31:`EXCP_SERIAL_RECV+ 1], serial_excp, excp_type_i[`EXCP_SERIAL_RECV - 1: 0]};
               	end
             end
     	end
