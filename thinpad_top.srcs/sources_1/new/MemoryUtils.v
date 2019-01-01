@@ -42,6 +42,11 @@
 `define SRAMCONTROL_DEFALUT_ADDR 20'bzzzzz_zzzzz_zzzzz_zzzzz
 `define SRAMCONTROL_DEFAULT_DATA 32'bzzzzzzzz_zzzzzzzz_zzzzzzzz_zzzzzzzz
 
+//instructions for Flash
+`define FLASHCONTROL_ADDR_LEN 22
+`define FLASHCONTROL_OP_READ 1'b1
+`define FLASHCONTROL_OP_NOP 1'b0
+
 // definition used between memcontrol and serialcontrol
 `define SERIALCONTROL_ADDR_LEN	3
 `define SERIALCONTROL_OP_LEN	2
@@ -49,3 +54,6 @@
 `define SERIALCONTROL_OP_NOP   	2'b00
 `define SERIALCONTROL_OP_READ  	2'b01
 `define SERIALCONTROL_OP_WRITE 	2'b10
+
+//rom
+`define ROM_ADDR_LEN 12

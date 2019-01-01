@@ -92,6 +92,16 @@ wire[`SERIALCONTROL_ADDR_LEN - 1: 0]	serial_addr;
 wire[31:0] result_o;
 wire pause_pipeline_o;
 
+wire[31:0] flash_result_i;
+wire pause_from_flash_i;
+wire flash_enabled;
+wire flash_op;
+wire[`FLASHCONTROL_ADDR_LEN - 1:0] flash_addr;
+
+wire[31:0] rom_data;
+wire[`ROM_ADDR_LEN - 1:0] rom_addr;
+wire rom_enabled;
+
 // output to Memcontrol
 
 
@@ -176,11 +186,19 @@ MMUControl mmu_control(
 
 	.data_i(data_i),
 	.sram_data_i(sram_data_i),
+	.flash_result_i(flash_result_i),
+	.pause_from_flash_i(pause_from_flash_i),
+	.rom_result_i(rom_data),
 	//.serial_data_i(serial_data_i),
 	.sram_enabled(sram_enabled),
 	.sram_op(sram_op),
 	.sram_data(sram_data),
 	.sram_addr(sram_addr),
+	.flash_enabled(flash_enabled),
+	.flash_op(flash_op),
+	.flash_addr(flash_addr),
+	.rom_enabled(rom_enabled),
+	.rom_addr(rom_addr),
 	// .serial_enabled(serial_enabled),
 	// .serial_op(serial_op),
 	// .serial_data(serial_data),
@@ -211,6 +229,30 @@ SRAMControl sram_control(
             .ram2_we_o(ram2_we_n),
             .ram2_be(ram2_be_n)
     );
+    
+FlashControl flash_control(
+    .clock(clk_50M),
+    .rst(rst),
+    .enabled_i(flash_enabled),
+    .op_i(flash_op),
+    .addr_i(flash_addr),
+    .result_o(flash_result_i),
+    .pause_from_flash(pause_from_flash_i),
+    .flash_a(flash_a),
+    .flash_d(flash_d),
+    .flash_rp_n(flash_rp_n),
+    .flash_vpen(flash_vpen),
+    .flash_ce_n(flash_ce_n),
+    .flash_oe_n(flash_oe_n),
+    .flash_we_n(flash_we_n),
+    .flash_byte_n(flash_byte_n)
+);
+
+rom ROM(
+    .ce(rom_enabled),
+    .addr(rom_addr),
+    .inst(rom_data)
+);
 
 
 endmodule

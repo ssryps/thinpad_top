@@ -66,7 +66,8 @@ module PC(
 	always @ (posedge clk_i) begin
         if (ce_o == 1'b0) begin
                 //pc_o <= 32'h00000000;
-                pc_o <= 32'h80000000;
+                pc_o <= 32'hbfc00000;
+                //pc_o <= 32'h80000000;
         end else if(flush == 1) begin
             pc_o <= ex_pc;
 
