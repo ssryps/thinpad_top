@@ -20,14 +20,21 @@ module vga
     output wire vsync,
     output reg [WIDTH - 1:0] hdata,
     output reg [WIDTH - 1:0] vdata,
-    output wire data_enable
+    output wire data_enable,
+
+    output reg read_en_o,
+    output reg [18:0] read_addr_o,
+    input wire [7:0] read_data_i
 );
 
 // init
 initial begin
     hdata <= 0;
     vdata <= 0;
+	read_en_o<=1;
+	read_addr_o<=1;
 end
+reg [7:0] prev_pixel;
 
 // hdata
 always @ (posedge clk)
@@ -48,6 +55,16 @@ begin
         else
             vdata <= vdata + 1;
     end
+end
+
+always @ (posedge clk)
+begin
+	read_en_o<=1;
+	prev_pixel<=read_data_i;
+	if (read_addr_o==479999)
+		read_addr_o<=0;
+	else
+		read_addr_o<=read_addr_o+1;
 end
 
 // hsync & vsync & blank
