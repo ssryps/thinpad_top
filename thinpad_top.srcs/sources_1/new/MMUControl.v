@@ -23,7 +23,7 @@
 `define DEVICE_NOP				3'b110
 
 `define MMUCONTROL_STATE_INIT	 3'b000
-`define MMUCONTROL_STATE_INPUT_DATA	 3'b001
+`define MMUCONTROL_STATE_PAUSE	 3'b001
 `define MMUCONTROL_STATE_RESULT  3'b010
 `define MMUCONTROL_STATE_PAUSE_FLASH	 3'b011
 
@@ -466,7 +466,7 @@ module MMUControl (
 					`DEVICE_RAM: begin
                         cur_state <= `MMUCONTROL_STATE_RESULT;
                     end
-                    DEVICE_FLASH: begin
+                    `DEVICE_FLASH: begin
                        cur_state <= `MMUCONTROL_STATE_PAUSE_FLASH;
                     end
 					default : cur_state <= `MMUCONTROL_STATE_RESULT;

@@ -351,6 +351,15 @@ closemem closemem0(
 	.ram2_ce_n(ext_ram_ce_n),
 	.ram2_oe_n(ext_ram_oe_n),
 	.ram2_we_n(ext_ram_we_n),
+	
+	.flash_a(flash_a),
+        .flash_d(flash_d),
+        .flash_rp_n(flash_rp_n),
+        .flash_vpen(flash_vpen),
+        .flash_ce_n(flash_ce_n),
+        .flash_oe_n(flash_oe_n),
+        .flash_we_n(flash_we_n),
+        .flash_byte_n(flash_byte_n),
     
     // for TLB
     .cp0_index_i(cp0_index_i),

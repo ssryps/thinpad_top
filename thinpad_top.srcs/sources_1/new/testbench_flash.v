@@ -55,16 +55,14 @@ wire flash_oe_n;         //Flash读使能信号，低有效
 wire flash_we_n;         //Flash写使能信号，低有效
 wire flash_byte_n;       //Flash 8bit模式选择，低有效。在使用flash的16位模式时请设为1
 
-parameter FLASH_INIT_FILE = "/home/yw-zhang/Desktop/main.elf";    //Flash初始化文件，请修改为实际的绝对路径
+parameter FLASH_INIT_FILE = "/home/yw-zhang/Desktop/kernel.elf";    //Flash初始化文件，请修改为实际的绝对路径
 
 wire my_clk_50M, my_clk_11M0592;
 reg rst;
 
 initial begin
   rst = 1;
-  #200;
-  rst = 0;
-  #1000;
+  #400;
   rst = 0;
 end
 

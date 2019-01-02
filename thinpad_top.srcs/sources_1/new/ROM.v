@@ -98,11 +98,16 @@ always @ (*) begin
             324: inst = 32'h3c11bfd0;
             328: inst = 32'h363103f8;
             332: inst = 32'hae330000;
-            336: inst = 32'h02600008;
-            340: inst = 32'h00000000;
-            344: inst = 32'h1000ffff;
-            348: inst = 32'h00000000;
-            352: inst = 32'h1000ffff;
+            336: inst = 32'h3C138000;
+            340: inst = 32'h00004825;
+            344: inst = 32'h00008025;
+            348: inst = 32'h00008825;
+            352: inst = 32'h00009025;
+            356: inst = 32'h02600008;
+            360: inst = 32'h00000000;
+            364: inst = 32'h1000ffff;
+            368: inst = 32'h00000000;
+            372: inst = 32'h1000ffff;
             default: inst = 0;
         endcase
 	end
