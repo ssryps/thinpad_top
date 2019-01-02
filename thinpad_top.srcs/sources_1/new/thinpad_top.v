@@ -195,17 +195,48 @@ reg ext_uart_start, ext_uart_avai;
 
 //图像输出演示，分辨率800x600@75Hz，像素时钟为50MHz
 wire [11:0] hdata;
-assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
-assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
-assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
-assign video_clk = clk_10M;
+
+wire vga_read_enable;
+wire[16:0] vga_read_addr;
+wire[31:0] vga_read_data;
+wire[7:0] pixel_data;
+wire my_clk_50M, my_clk_11M0592;
+
+assign video_red = pixel_data[7:5]; //红色竖条
+assign video_green = pixel_data[4:2]; //绿色竖条
+assign video_blue = pixel_data[1:0]; //蓝色竖条
+//assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
+//assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
+//assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
+assign video_clk = clk_50M;
+
+wire [31:0]zero32;
+assign zero32 = `ZeroWord;
+blk_mem_gen_0 graphicmem (
+  .clka(zero32),    // input wire clka
+  .ena(zero32),      // input wire ena
+  .wea(zero32),      // input wire [0 : 0] wea
+  .addra(zero32),  // input wire [16 : 0] addra
+  .dina(zero32),    // input wire [31 : 0] dina
+  .clkb(my_clk_50M),    // input wire clkb
+  .enb(vga_read_enable),      // input wire enb
+  .addrb(vga_read_addr),  // input wire [16 : 0] addrb
+  .doutb(vga_read_data)  // output wire [31 : 0] doutb
+);
+
+
 vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .clk(clk_50M),
     .hdata(hdata), //横坐标
     .vdata(),      //纵坐标
     .hsync(video_hsync),
     .vsync(video_vsync),
-    .data_enable(video_de)
+    .data_enable(video_de),
+    // read from graphic MEM
+    .read_en_o(vga_read_enable),
+	.read_addr_o(vga_read_addr),
+	.pixel_data_o(pixel_data),
+    .read_data_i(vga_read_data)
 );
 /* =========== Demo code end =========== */
 wire[`InstAddrBus] inst_addr;
@@ -244,7 +275,6 @@ wire mem_wb_o_cp0_reg_we_o;
 wire[4:0] mem_wb_o_cp0_reg_write_addr_o;
 wire[`RegBus] mem_wb_o_cp0_reg_data_o;
 
-wire my_clk_50M, my_clk_11M0592;
 //reg rst;
 //
 //initial begin
